@@ -1,0 +1,25 @@
+.black-bg {
+  background-color: #282c34;
+  color: white;
+}
+
+.paginationDiv {
+  width: 50%;
+  margin: 0 auto;
+  margin-left: 16rem;
+}
+
+.paginationDiv ul {
+  width: 50%;
+  margin: auto;
+}
+
+.paginationDiv .page-link {
+  background-color: #212529;
+  color: aliceblue;
+  border-color: #212529;
+}
+
+.paginationBottom {
+  margin-top: 5em;
+}

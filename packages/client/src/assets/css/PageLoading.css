@@ -1,0 +1,14 @@
+.loading {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.black-bg {
+  background-color: #282c34;
+  color: white;
+}
+
+.loading-tag {
+  text-align: center;
+  padding-top: 20vw;
+}

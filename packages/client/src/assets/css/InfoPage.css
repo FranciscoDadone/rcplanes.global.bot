@@ -1,0 +1,19 @@
+.allCards {
+  color: white;
+  margin-top: 1em;
+}
+
+.cardBody {
+  background-color: #212529;
+  font-size: x-large;
+}
+
+.cardContainer {
+  margin-top: 5.5em;
+  margin-left: 1%;
+  width: 98%;
+}
+
+.cardTitle {
+  font-size: xx-large;
+}

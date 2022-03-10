@@ -1,0 +1,9 @@
+.black-bg {
+  background-color: #282c34;
+  color: white;
+}
+
+.vertical-middle {
+  vertical-align: middle;
+  text-align: center;
+}

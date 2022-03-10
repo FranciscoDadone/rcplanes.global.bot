@@ -1,0 +1,35 @@
+.cardStyle {
+  padding: 1rem;
+  cursor: "pointer";
+  position: relative;
+}
+
+.cardStyle:hover {
+  background-color: rgb(160, 160, 160);
+  border-radius: 1em;
+
+}
+
+.footer-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.trashcan {
+  float: right;
+}
+
+.modal-container {
+  display: flex;
+  position: relative;
+}
+
+.modal .modal-content {
+  background-color: #1c1e22;
+  color: white;
+}
+
+.modal .btn-close {
+  background-color: white;
+}
