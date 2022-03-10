@@ -303,6 +303,16 @@ export async function addUserToDB(username: string, hashedPassword: any) {
   db.run(sql, [username, hashedPassword]);
 }
 
+export async function getTotalOfUsers(): Promise<number> {
+  const db = DatabaseHandler.getDatabase();
+  const sql = 'SELECT COUNT(*) FROM users';
+  return new Promise<number>((resolve) => {
+    db.all(sql, (_err, count) => {
+      resolve(count[0]['COUNT(*)']);
+    });
+  });
+}
+
 module.exports = {
   savePostFromHashtag,
   getPostFromIdJSON,
@@ -327,4 +337,5 @@ module.exports = {
   getUserByUsername,
   addUserToDB,
   getUserById,
+  getTotalOfUsers,
 };

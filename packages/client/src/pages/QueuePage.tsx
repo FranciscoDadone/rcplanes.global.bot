@@ -5,9 +5,9 @@ import {
   faArrowUpLong,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Media from './Media';
+import Media from '../components/Media';
 import '../assets/css/QueuePage.css';
-import EditModal from './EditModal';
+import EditModal from '../components/EditModal';
 import PageLoading from './PageLoading';
 
 function QueuePage() {

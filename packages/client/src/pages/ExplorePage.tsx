@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import PostsPanel from './PostsPanel';
+import PostsPanel from '../components/PostsPanel';
 import PageLoading from './PageLoading';
 
 function ExplorePage() {

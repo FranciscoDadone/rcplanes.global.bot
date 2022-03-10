@@ -9,22 +9,18 @@ import {
   faCircleInfo,
 } from '@fortawesome/free-solid-svg-icons';
 import AppStatus from './AppStatus';
-import ExplorePage from './ExplorePage';
-import ConfigurationPage from './ConfigurationPage';
-import DatabasePage from './DatabasePage';
-import QueuePage from './QueuePage';
-import InfoPage from './InfoPage';
+import ExplorePage from '../pages/ExplorePage';
+import ConfigurationPage from '../pages/ConfigurationPage';
+import DatabasePage from '../pages/DatabasePage';
+import QueuePage from '../pages/QueuePage';
+import InfoPage from '../pages/InfoPage';
 import appIcon from '../assets/images/icon.png';
 import '../assets/css/AppNavbar.css';
 
 export default function AppNavbar() {
   const [Status, setStatus] = useState('Booting up...');
   const [Component, setComponent] = useState(<ExplorePage />);
-
-  // ipcRenderer.on('status', (_event, newStatus) => {
-  //   setStatus(newStatus);
-  // });
-
+  
   return (
     <>
       <Navbar bg="dark" variant="dark" fixed="top" expand="lg">

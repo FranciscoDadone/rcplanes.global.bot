@@ -1,6 +1,10 @@
 import bcrypt from 'bcryptjs';
 import express from 'express';
-import { addUserToDB, getUserByUsername } from '../database/DatabaseQueries';
+import {
+  addUserToDB,
+  getUserByUsername,
+  getTotalOfUsers,
+} from '../database/DatabaseQueries';
 
 module.exports = (passport) => {
   const router = express.Router();
@@ -20,14 +24,23 @@ module.exports = (passport) => {
   });
 
   router.post('/register', (req, res) => {
-    getUserByUsername(req.body.username).then(async (user) => {
-      if (user) res.send('USER_ALREADY_EXISTS');
-      if (!user) {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        await addUserToDB(req.body.username, hashedPassword);
-        res.send('SUCCESS');
-      }
+    getTotalOfUsers().then((res1) => {
+      if (res1 === 0) {
+        getUserByUsername(req.body.username).then(async (user) => {
+          if (user) res.send('USER_ALREADY_EXISTS');
+          if (!user) {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            await addUserToDB(req.body.username, hashedPassword);
+            res.send('SUCCESS');
+          }
+        });
+      } else res.send('MAX_USERS_COUNT');
     });
   });
+
+  router.get('/user', (req: any, res) => {
+    res.send(req.user);
+  });
+
   return router;
 };
