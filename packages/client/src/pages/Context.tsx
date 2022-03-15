@@ -15,7 +15,6 @@ export default function Context(props: PropsWithChildren<any>) {
       })
       .then((res) => {
         setUser(res.data);
-        console.log(res.data)
       });
   }, []);
 

@@ -277,41 +277,31 @@ export async function updateQueuePostCaption(id: string, caption: string) {
   db.run(sql, [caption]);
 }
 
-export async function getUserByUsername(username: string) {
+export async function getUser() {
   const db = DatabaseHandler.getDatabase();
-  const sql = 'SELECT rowid AS id, * FROM users WHERE username = ?';
+  const sql = 'SELECT * FROM user WHERE id = 1';
   return new Promise((resolve) => {
-    db.all(sql, [username], (_err: any, rows: any) => {
+    db.all(sql, (_err: any, rows: any) => {
       resolve(rows[0]);
     });
   });
 }
 
-export async function getUserById(id: number) {
-  const db = DatabaseHandler.getDatabase();
-  const sql = 'SELECT * FROM users WHERE id = ?';
-  return new Promise((resolve) => {
-    db.all(sql, [id], (_err: any, rows: any) => {
-      resolve(rows[0]);
-    });
-  });
-}
+// export async function addUserToDB(username: string, hashedPassword: any) {
+//   const db = DatabaseHandler.getDatabase();
+//   const sql = 'INSERT INTO users (username, hashed_password) VALUES (?, ?)';
+//   db.run(sql, [username, hashedPassword]);
+// }
 
-export async function addUserToDB(username: string, hashedPassword: any) {
-  const db = DatabaseHandler.getDatabase();
-  const sql = 'INSERT INTO users (username, hashed_password) VALUES (?, ?)';
-  db.run(sql, [username, hashedPassword]);
-}
-
-export async function getTotalOfUsers(): Promise<number> {
-  const db = DatabaseHandler.getDatabase();
-  const sql = 'SELECT COUNT(*) FROM users';
-  return new Promise<number>((resolve) => {
-    db.all(sql, (_err, count) => {
-      resolve(count[0]['COUNT(*)']);
-    });
-  });
-}
+// export async function getTotalOfUsers(): Promise<number> {
+//   const db = DatabaseHandler.getDatabase();
+//   const sql = 'SELECT COUNT(*) FROM users';
+//   return new Promise<number>((resolve) => {
+//     db.all(sql, (_err, count) => {
+//       resolve(count[0]['COUNT(*)']);
+//     });
+//   });
+// }
 
 module.exports = {
   savePostFromHashtag,
@@ -334,8 +324,5 @@ module.exports = {
   addPostToHistory,
   swapInQueue,
   updateQueuePostCaption,
-  getUserByUsername,
-  addUserToDB,
-  getUserById,
-  getTotalOfUsers,
+  getUser,
 };

@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
 import AppNavbar from '../components/AppNavbar';
 import { context } from './Context';
 import LoginPage from './LoginPage';

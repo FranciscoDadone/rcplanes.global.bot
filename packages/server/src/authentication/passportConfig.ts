@@ -1,4 +1,4 @@
-import { getUserByUsername, getUserById } from '../database/DatabaseQueries';
+import { getUser } from '../database/DatabaseQueries';
 
 const bcrypt = require('bcryptjs');
 const localStrategy = require('passport-local').Strategy;
@@ -7,7 +7,7 @@ module.exports = (passport) => {
   passport.use(
     // eslint-disable-next-line new-cap
     new localStrategy((username, password, done) => {
-      return getUserByUsername(username).then((user: any) => {
+      return getUser().then((user: any) => {
         if (!user) return done(null, false);
         return bcrypt.compare(
           password,
@@ -29,7 +29,7 @@ module.exports = (passport) => {
   });
 
   passport.deserializeUser((id, cb) => {
-    getUserById(id).then((user: any) => {
+    getUser().then((user: any) => {
       if (user === undefined) cb('User not found', null);
       else {
         const userInformation = {
@@ -38,6 +38,5 @@ module.exports = (passport) => {
         cb(null, userInformation);
       }
     });
-    // cb(null, {username: 'lol'});
   });
 };

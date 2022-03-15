@@ -7,7 +7,9 @@ import {
   faDatabase,
   faList,
   faCircleInfo,
+  faArrowRightFromBracket,
 } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 import AppStatus from './AppStatus';
 import ExplorePage from '../pages/ExplorePage';
 import ConfigurationPage from '../pages/ConfigurationPage';
@@ -20,7 +22,15 @@ import '../assets/css/AppNavbar.css';
 export default function AppNavbar() {
   const [Status, setStatus] = useState('Booting up...');
   const [Component, setComponent] = useState(<ExplorePage />);
-  
+
+  const logout = () => {
+    axios.get('/auth/logout').then((res) => {
+      if (res.data === 'SUCCESS') {
+        window.location.href = '/';
+      }
+    });
+  };
+
   return (
     <>
       <Navbar bg="dark" variant="dark" fixed="top" expand="lg">
@@ -60,6 +70,10 @@ export default function AppNavbar() {
               <Nav.Link onClick={() => setComponent(<InfoPage />)}>
                 <FontAwesomeIcon icon={faCircleInfo} />
                 &nbsp;Info
+              </Nav.Link>
+              <Nav.Link onClick={logout}>
+                <FontAwesomeIcon icon={faArrowRightFromBracket} />
+                &nbsp;Logout
               </Nav.Link>
             </Nav>
             <Navbar.Text>

@@ -1,10 +1,4 @@
-import bcrypt from 'bcryptjs';
 import express from 'express';
-import {
-  addUserToDB,
-  getUserByUsername,
-  getTotalOfUsers,
-} from '../database/DatabaseQueries';
 
 module.exports = (passport) => {
   const router = express.Router();
@@ -17,25 +11,30 @@ module.exports = (passport) => {
       else {
         req.logIn(user, (err1) => {
           if (err1) throw err1;
-          res.send('AUTH_SUCCESSFUL');
+          res.send('SUCCESS');
         });
       }
     })(req, res, next);
   });
 
-  router.post('/register', (req, res) => {
-    getTotalOfUsers().then((res1) => {
-      if (res1 === 0) {
-        getUserByUsername(req.body.username).then(async (user) => {
-          if (user) res.send('USER_ALREADY_EXISTS');
-          if (!user) {
-            const hashedPassword = await bcrypt.hash(req.body.password, 10);
-            await addUserToDB(req.body.username, hashedPassword);
-            res.send('SUCCESS');
-          }
-        });
-      } else res.send('MAX_USERS_COUNT');
-    });
+  // router.post('/register', (req, res) => {
+  //   getTotalOfUsers().then((res1) => {
+  //     if (res1 === 0) {
+  //       getUserByUsername(req.body.username).then(async (user) => {
+  //         if (user) res.send('USER_ALREADY_EXISTS');
+  //         if (!user) {
+  //           const hashedPassword = await bcrypt.hash(req.body.password, 10);
+  //           await addUserToDB(req.body.username, hashedPassword);
+  //           res.send('SUCCESS');
+  //         }
+  //       });
+  //     } else res.send('MAX_USERS_COUNT');
+  //   });
+  // });
+
+  router.get('/logout', (req: any, res) => {
+    req.logout();
+    res.send('SUCCESS');
   });
 
   router.get('/user', (req: any, res) => {

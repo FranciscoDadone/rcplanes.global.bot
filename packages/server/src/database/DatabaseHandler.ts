@@ -1,4 +1,5 @@
 import sqlite3 from 'sqlite3';
+import bcrypt from 'bcryptjs';
 
 sqlite3.verbose();
 let database: sqlite3.Database;
@@ -8,7 +9,7 @@ export function close() {
   console.log('Database closed.');
 }
 
-function initDB() {
+async function initDB() {
   const sql = 'INSERT INTO hashtags_to_fetch (hashtag) VALUES (?)';
   database.run(sql, ['aeromodelismo']);
   database.run(sql, ['rcplanes']);
@@ -24,6 +25,12 @@ function initDB() {
   database.run(
     'INSERT INTO general_config (upload_rate, description_boilerplate, hashtag_fetching_enabled) VALUES (3, "%description%", true);'
   );
+
+  const hashedPassword = await bcrypt.hash('admin', 10);
+  database.run('INSERT INTO user (username, hashed_password) VALUES (?,?)', [
+    'admin',
+    hashedPassword,
+  ]);
 }
 
 function createTables() {
@@ -88,7 +95,7 @@ function createTables() {
     date TEXT NOT NULL);`);
 
   database.exec(
-    'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, hashed_password BLOB, salt BLOB)'
+    'CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, hashed_password BLOB, salt BLOB)'
   );
 }
 
@@ -101,16 +108,14 @@ export function connect(): sqlite3.Database {
         database = new sqlite3.Database(
           `${__dirname}/database.sqlite`,
           (err1) => {
+            createTables();
             if (err1) {
               console.log(`Database error ${err1}`);
             }
             initDB();
           }
         );
-      } else if (err) {
-        console.log(`Database error ${err}`);
       }
-      createTables();
       console.log('Database connected!');
     }
   );
