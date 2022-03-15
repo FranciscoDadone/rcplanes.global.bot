@@ -23,3 +23,8 @@
 .paginationBottom {
   margin-top: 5em;
 }
+
+.empty-text {
+  text-align: center;
+  margin-top: 20%;
+}

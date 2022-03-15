@@ -5,6 +5,7 @@ import session from 'express-session';
 import passport from 'passport';
 import path from 'path';
 import { connect } from './database/DatabaseHandler';
+import { authMiddleware } from './middlewares/authMiddleware';
 
 const bodyParser = require('body-parser');
 
@@ -22,6 +23,8 @@ connect();
 
 // Serve static resources from the "public" folder
 app.use(express.static(path.join(__dirname, clientPath)));
+
+app.use('/storage', express.static(path.join(__dirname, '../storage')));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

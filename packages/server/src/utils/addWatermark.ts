@@ -9,10 +9,10 @@ export async function addWatermark(image_url: string, username: string) {
       image.resize(1280, Jimp.AUTO);
 
       const watermark = await Jimp.read(
-        `${__dirname}/../../../assets/images/watermark.png`
+        `${__dirname}/../../assets/images/watermark.png`
       );
       const watermarkBackground = await Jimp.read(
-        `${__dirname}/../../../assets/images/watermark_background.png`
+        `${__dirname}/../../assets/images/watermark_background.png`
       );
 
       const watermarkWidth = 500;

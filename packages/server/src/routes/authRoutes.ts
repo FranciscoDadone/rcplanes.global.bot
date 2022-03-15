@@ -17,21 +17,6 @@ module.exports = (passport) => {
     })(req, res, next);
   });
 
-  // router.post('/register', (req, res) => {
-  //   getTotalOfUsers().then((res1) => {
-  //     if (res1 === 0) {
-  //       getUserByUsername(req.body.username).then(async (user) => {
-  //         if (user) res.send('USER_ALREADY_EXISTS');
-  //         if (!user) {
-  //           const hashedPassword = await bcrypt.hash(req.body.password, 10);
-  //           await addUserToDB(req.body.username, hashedPassword);
-  //           res.send('SUCCESS');
-  //         }
-  //       });
-  //     } else res.send('MAX_USERS_COUNT');
-  //   });
-  // });
-
   router.get('/logout', (req: any, res) => {
     req.logout();
     res.send('SUCCESS');

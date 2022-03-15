@@ -1,5 +1,6 @@
 import { Row, Container, Pagination } from 'react-bootstrap';
 import { useState } from 'react';
+import axios from 'axios';
 import PostCard from './PostCard';
 import '../assets/css/PostsPanel.css';
 
@@ -30,6 +31,7 @@ function splitUp(arr: any, n: number) {
 function PostsPanel(props: { posts: any }) {
   const { posts } = props;
   const [activeTab, setActiveTab] = useState(1);
+  const [auxPosts, setAuxPosts] = useState(splitUp(posts, posts.length / 55));
 
   if (posts === undefined) return <div />;
 
@@ -37,37 +39,60 @@ function PostsPanel(props: { posts: any }) {
     setActiveTab(number);
   };
 
-  const auxPosts = splitUp(posts, posts.length / 55);
+  if (posts !== undefined && posts.length !== 0) {
+    // console.log(posts)
+    // if (posts.lenght > 60) {
+    //   console.log("dsaf")
+    //   setAuxPosts(splitUp(posts, posts.length / 55));
+    // }
 
-  const items = [];
-  for (let number = 1; number <= auxPosts.length; number++) {
-    items.push(
-      // <Pagination.Item
-      //   key={number}
-      //   active={number === activeTab}
-      //   onClick={() => handleClick(number)}
-      // >
-      //   {number}
-      // </Pagination.Item>
+    const items: any = [];
+    for (let number = 1; number <= auxPosts.length; number++) {
+      items.push(
+        <Pagination.Item
+          key={number}
+          active={number === activeTab}
+          onClick={() => handleClick(number)}
+        >
+          {number}
+        </Pagination.Item>
+      );
+    }
+
+    const removeFromArr = () => {
+      axios.get('/api/fetchedPosts').then((data) => {
+        setAuxPosts(splitUp(data.data, data.data.length / 55));
+      });
+    };
+
+    return (
+      <div className="black-bg">
+        <Container>
+          <div className="paginationDiv">
+            <Pagination className="pagination">{items}</Pagination>
+          </div>
+
+          <Row className="fluid" xs="auto">
+            {auxPosts[activeTab - 1].map((post: any) => (
+              <PostCard
+                post={post}
+                key={post.post_id}
+                removeFromPostsHandler={removeFromArr}
+              />
+            ))}
+          </Row>
+
+          <div className="paginationDiv paginationBottom">
+            <Pagination className="pagination">{items}</Pagination>
+          </div>
+        </Container>
+      </div>
     );
   }
-
   return (
     <div className="black-bg">
       <Container>
-        <div className="paginationDiv">
-          <Pagination className="pagination">{items}</Pagination>
-        </div>
-
-        <Row className="fluid" xs="auto">
-          {auxPosts[activeTab - 1].map((post: any) => (
-            <PostCard post={post} key={post.post_id} />
-          ))}
-        </Row>
-
-        <div className="paginationDiv paginationBottom">
-          <Pagination className="pagination">{items}</Pagination>
-        </div>
+        <h1 className="empty-text">Empty</h1>
       </Container>
     </div>
   );

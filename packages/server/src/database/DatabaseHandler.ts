@@ -104,11 +104,11 @@ export function connect(): sqlite3.Database {
     `${__dirname}/database.sqlite`,
     sqlite3.OPEN_READWRITE,
     (err: Error | null) => {
+      createTables();
       if (err) {
         database = new sqlite3.Database(
           `${__dirname}/database.sqlite`,
           (err1) => {
-            createTables();
             if (err1) {
               console.log(`Database error ${err1}`);
             }

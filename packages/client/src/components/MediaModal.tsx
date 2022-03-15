@@ -1,51 +1,40 @@
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import path from 'path';
+import axios from 'axios';
 import Media from './Media';
-
-const STORAGE_PATH = process.env.NODE_ENV
-  ? path.join(__dirname, '../../../../../../storage')
-  : '';
+import '../assets/css/MediaModal.css';
 
 function MediaModal(props: {
   show: boolean;
   post: any;
   media: any;
   mediaType: string;
+  handleClose: any;
+  handleDelete: any;
 }) {
-  const { show, post, media, mediaType } = props;
+  const { show, post, media, mediaType, handleClose, handleDelete } = props;
   const [caption, setCaption] = useState<string>();
   const [mediaModal, setMediaModal] = useState(media);
 
   useEffect(() => {
     let isMounted = true;
-    // ipcRenderer.invoke('getGeneralConfig').then((data) => {
-    //   if (isMounted && caption === undefined) {
-    //     const captionFormatted = data.description_boilerplate
-    //       .replace('%description%', post.caption)
-    //       .replace('%username%', post.username)
-    //       .replace('%post_link%', post.permalink);
-    //     setCaption(captionFormatted);
-    //   }
-    // });
+    axios.get('api/generalConfig').then((data) => {
+      if (isMounted && caption === undefined) {
+        const captionFormatted = data.data.description_boilerplate
+          .replace('%description%', post.caption)
+          .replace('%username%', post.username)
+          .replace('%post_link%', post.permalink);
+        setCaption(captionFormatted);
+      }
+    });
     return () => {
       isMounted = false;
     };
   });
 
-  const handleClose = () => {
-    // ipcRenderer.invoke('hideModal');
-  };
-
-  const handleDelete = () => {
-    // ipcRenderer
-    //   .invoke('deletePost', {
-    //     id: post.post_id,
-    //     mediaType,
-    //   })
-    //   .then(() => {
-    //     handleClose();
-    //   });
+  const sendDelete = () => {
+    handleDelete();
+    handleClose();
   };
 
   const handleQueue = () => {
@@ -65,14 +54,16 @@ function MediaModal(props: {
 
   const postProcessUsernameInImg = (username: string) => {
     if (show && post.media_type === 'IMAGE') {
-    //   ipcRenderer
-    //     .invoke('postProcessImage', {
-    //       path: `${STORAGE_PATH}/${post.storage_path}`,
-    //       username,
-    //     })
-    //     .then((res) => {
-    //       setMediaModal(res);
-    //     });
+      axios
+        .get('/api/postProcessImage', {
+          params: {
+            image: post.storage_path,
+            username,
+          },
+        })
+        .then((data) => {
+          setMediaModal(data.data);
+        });
     }
   };
   if (mediaModal === media) postProcessUsernameInImg(post.username);
@@ -88,7 +79,12 @@ function MediaModal(props: {
         <Modal.Body style={{ background: '#282c34' }}>
           <div className="modal-container">
             <div className="modal-image">
-              <Media mediaType={mediaType} media={mediaModal} autoplay />
+              <Media
+                mediaType={mediaType}
+                media={mediaModal}
+                autoplay
+                imageMinWidth="60vh"
+              />
               <div style={{ display: 'flex' }}>
                 <div>
                   <ul>
@@ -141,7 +137,7 @@ function MediaModal(props: {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="danger" onClick={handleDelete}>
+          <Button variant="danger" onClick={sendDelete}>
             Delete
           </Button>
           <Button variant="success" onClick={handleQueue}>

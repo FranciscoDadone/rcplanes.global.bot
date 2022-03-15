@@ -1,40 +1,33 @@
 import { Card, Button } from 'react-bootstrap';
 import { useState } from 'react';
-import path from 'path';
+import axios from 'axios';
 import '../assets/css/PostCard.css';
 import MediaModal from './MediaModal';
+import videoImg from '../assets/images/video.png';
 
-const STORAGE_PATH = process.env.NODE_ENV
-  ? path.join(__dirname, '../../../../../../storage')
-  : '';
+function PostCard(props: { post: any, removeFromPostsHandler: any }) {
+  const { post, removeFromPostsHandler } = props;
 
-function PostCard(props: any) {
-  const { post } = props;
-
-  let previewSrc = `file://${STORAGE_PATH}/${post.storage_path}`;
+  let previewSrc = `/storage/${post.storage_path}`;
 
   const [show, setShow] = useState(false);
   const handleShow = () => {
     setShow(true);
   };
-  // ipcRenderer.on('hideModalToRenderer', (_ev, s) => {
-  //   setShow(s);
-  // });
 
   const handleDelete = () => {
-    // ipcRenderer.invoke('deletePost', {
-    //   id: post.post_id,
-    //   mediaType: post.media_type,
-    // });
+    axios.delete('/api/deletePost', {
+      params: {
+        post_id: post.post_id,
+      },
+    });
+    removeFromPostsHandler();
   };
 
   if (post === undefined) return <div />;
 
   if (post.media_type === 'VIDEO') {
-    previewSrc = `file://${path.join(
-      STORAGE_PATH,
-      '../assets/images/video.png'
-    )}`;
+    previewSrc = videoImg;
   }
 
   return (
@@ -77,8 +70,10 @@ function PostCard(props: any) {
       <MediaModal
         show={show}
         post={post}
-        media={`file://${STORAGE_PATH}/${post.storage_path}`}
+        media={`/storage/${post.storage_path}`}
         mediaType={post.media_type}
+        handleClose={() => setShow(false)}
+        handleDelete={handleDelete}
       />
     </>
   );
