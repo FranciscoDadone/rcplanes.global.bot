@@ -1,5 +1,6 @@
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useState } from 'react';
+import axios from 'axios';
 import Media from './Media';
 
 function EditModal(props: {
@@ -12,36 +13,42 @@ function EditModal(props: {
     mediaType: string;
     owner: string;
   };
+  handleClose: any;
+  refreshQueue: any;
 }) {
-  const { show, post, showId } = props;
+  const { show, post, showId, handleClose, refreshQueue } = props;
   const [caption, setCaption] = useState<string>(post.caption);
 
   if (showId !== post.id.toString()) return <div />;
 
-  const handleClose = (deleted?: boolean) => {
-    // ipcRenderer.invoke('hideEdit', {
-    //   id: post.id,
-    //   caption,
-    //   deleted,
-    // });
-  };
-
   const handleDelete = () => {
-    // ipcRenderer.invoke('deleteFromQueue', post.id).then(() => {
-    //   handleClose(true);
-    // });
+    axios
+      .delete('/api/queue/delete', {
+        params: {
+          id: post.id,
+        },
+      })
+      .then((code) => {
+        if (code.status === 200) {
+          handleClose();
+          refreshQueue(post, 'DELETE');
+        }
+      });
   };
 
   const handleSave = () => {
     handleClose(false);
-    // ipcRenderer
-    //   .invoke('updatePostFromQueue', {
-    //     id: post.id,
-    //     caption,
-    //   })
-    //   .catch((err) => {
-    //     throw new Error(`Error updating media: ${err}`);
-    //   });
+    axios
+      .patch('/api/queue/updatePost', {
+        data: {
+          id: post.id,
+          caption,
+        },
+      })
+      .then(() => {
+        handleClose();
+        refreshQueue({ id: post.id, caption }, 'UPDATE');
+      });
   };
 
   return (
@@ -87,7 +94,7 @@ function EditModal(props: {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => handleClose()}>
+          <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
           <Button variant="success" onClick={handleSave}>

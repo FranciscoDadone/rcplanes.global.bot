@@ -5,8 +5,8 @@ import '../assets/css/PostCard.css';
 import MediaModal from './MediaModal';
 import videoImg from '../assets/images/video.png';
 
-function PostCard(props: { post: any, removeFromPostsHandler: any }) {
-  const { post, removeFromPostsHandler } = props;
+function PostCard(props: { post: any; updateList: any }) {
+  const { post, updateList } = props;
 
   let previewSrc = `/storage/${post.storage_path}`;
 
@@ -21,7 +21,12 @@ function PostCard(props: { post: any, removeFromPostsHandler: any }) {
         post_id: post.post_id,
       },
     });
-    removeFromPostsHandler();
+    updateList();
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    updateList();
   };
 
   if (post === undefined) return <div />;
@@ -72,7 +77,7 @@ function PostCard(props: { post: any, removeFromPostsHandler: any }) {
         post={post}
         media={`/storage/${post.storage_path}`}
         mediaType={post.media_type}
-        handleClose={() => setShow(false)}
+        handleClose={handleClose}
         handleDelete={handleDelete}
       />
     </>

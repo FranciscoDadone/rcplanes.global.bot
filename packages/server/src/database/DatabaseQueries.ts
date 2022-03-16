@@ -248,25 +248,23 @@ export async function addPostToHistory(
   db.run(sql, [ig_link, imgur_link, media_type, owner, caption, date]);
 }
 
-export async function swapInQueue(
-  row1: {
-    id: number;
-    media: string;
-    mediaType: string;
-    caption: string;
-    owner: string;
-  },
-  row2: {
-    id: number;
-    media: string;
-    mediaType: string;
-    caption: string;
-    owner: string;
-  }
-) {
+export async function getQueuePost(id: number) {
   const db = DatabaseHandler.getDatabase();
-  const sql1 = `UPDATE media_queue SET (media, mediaType, caption, owner)=(?,?,?,?) WHERE id=${row1.id}`;
-  const sql2 = `UPDATE media_queue SET (media, mediaType, caption, owner)=(?,?,?,?) WHERE id=${row2.id}`;
+  const sql = `SELECT * FROM media_queue WHERE id=${id}`;
+  return new Promise((resolve) => {
+    db.all(sql, (_err: any, rows: any) => {
+      resolve(rows[0]);
+    });
+  });
+}
+
+export async function swapInQueue(id1, id2) {
+  const db = DatabaseHandler.getDatabase();
+  const row1: any = await getQueuePost(id1);
+  const row2: any = await getQueuePost(id2);
+
+  const sql1 = `UPDATE media_queue SET (media, mediaType, caption, owner)=(?,?,?,?) WHERE id=${id1}`;
+  const sql2 = `UPDATE media_queue SET (media, mediaType, caption, owner)=(?,?,?,?) WHERE id=${id2}`;
   db.run(sql1, [row2.media, row2.mediaType, row2.caption, row2.owner]);
   db.run(sql2, [row1.media, row1.mediaType, row1.caption, row1.owner]);
 }
@@ -309,4 +307,5 @@ module.exports = {
   swapInQueue,
   updateQueuePostCaption,
   getUser,
+  getQueuePost,
 };

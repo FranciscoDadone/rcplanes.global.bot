@@ -6,7 +6,12 @@ import { authMiddleware } from '../middlewares/authMiddleware';
 import {
   getAllNonDeletedPosts,
   getGeneralConfig,
-  updatePostStatus
+  updatePostStatus,
+  getQueue,
+  addPostToQueue,
+  swapInQueue,
+  removePostFromQueue,
+  updateQueuePostCaption,
 } from '../database/DatabaseQueries';
 import { addWatermark } from '../utils/addWatermark';
 
@@ -58,8 +63,69 @@ router.get('/postProcessImage', authMiddleware, (req: any, res) => {
   });
 });
 
-router.delete('/deletePost', authMiddleware, (req: any) => {
-  updatePostStatus(req.query.post_id, 'deleted');
+router.delete('/deletePost', authMiddleware, (req: any, res) => {
+  updatePostStatus(req.query.post_id, 'deleted').then(() => {
+    res.sendStatus(200);
+  });
+});
+
+router.post('/queuePost', authMiddleware, async (req: any, res) => {
+  const media = await addWatermark(
+    path.join(__dirname, `../../storage/${req.body.data.mediaPath}`),
+    req.body.data.usernameInImg
+  );
+  const promise = addPostToQueue(
+    media,
+    req.body.data.mediaType,
+    req.body.data.caption,
+    req.body.data.owner
+  );
+  promise.then(() => {
+    updatePostStatus(req.body.data.id, 'posted');
+    res.sendStatus(200);
+  });
+  promise.catch((err) => {
+    if (err) res.sendStatus(500);
+  });
+});
+
+router.get('/queue', authMiddleware, (req: any, res) => {
+  getQueue().then((data) => {
+    res.send(data);
+  });
+});
+
+router.post('/queue/swap', authMiddleware, (req: any, res) => {
+  const promise = swapInQueue(req.body.data.id1, req.body.data.id2);
+  promise.catch((err) => {
+    if (err) res.sendStatus(500);
+  });
+  promise.then(() => {
+    res.sendStatus(200);
+  });
+});
+
+router.delete('/queue/delete', authMiddleware, (req: any, res) => {
+  const promise = removePostFromQueue(req.query.id);
+  promise.catch((err) => {
+    if (err) res.sendStatus(500);
+  });
+  promise.then(() => {
+    res.sendStatus(200);
+  });
+});
+
+router.patch('/queue/updatePost', authMiddleware, (req: any, res) => {
+  const promise = updateQueuePostCaption(
+    req.body.data.id,
+    req.body.data.caption
+  );
+  promise.catch((err) => {
+    if (err) res.sendStatus(500);
+  });
+  promise.then(() => {
+    res.sendStatus(200);
+  });
 });
 
 module.exports = router;

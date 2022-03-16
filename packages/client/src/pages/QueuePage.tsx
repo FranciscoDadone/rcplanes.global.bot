@@ -4,6 +4,7 @@ import {
   faArrowDownLong,
   faArrowUpLong,
 } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Media from '../components/Media';
 import '../assets/css/QueuePage.css';
@@ -30,17 +31,16 @@ function QueuePage() {
       owner: '',
     },
   ]);
+
   const [showModal, setShowModal] = useState(false);
   const [showId, setShowId] = useState('');
 
   useEffect(() => {
     let isMounted = true;
     if (queuedPosts === undefined || queuedPosts[0].mediaType === '') {
-      // ipcRenderer.invoke('getQueue').then((data) => {
-      //   if (isMounted) {
-      //     setQueuedPosts(data);
-      //   }
-      // });
+      axios.get('/api/queue').then((data) => {
+        if (isMounted) setQueuedPosts(data.data);
+      });
     }
     return () => {
       isMounted = false;
@@ -84,10 +84,12 @@ function QueuePage() {
     };
 
     setQueuedPosts(arr);
-    // ipcRenderer.send('updateQueue', {
-    //   r1: queuedPosts[index],
-    //   r2: queuedPosts[index - 1],
-    // });
+    axios.post('/api/queue/swap', {
+      data: {
+        id1: queuedPosts[index].id,
+        id2: queuedPosts[index - 1].id,
+      },
+    });
   };
 
   const handleDown = (post: {
@@ -121,27 +123,38 @@ function QueuePage() {
       mediaType: aux.mediaType,
       owner: aux.owner,
     };
-
     setQueuedPosts(arr);
-    // ipcRenderer.send('updateQueue', {
-    //   r1: queuedPosts[index],
-    //   r2: queuedPosts[index + 1],
-    // });
   };
 
-  // ipcRenderer.on('hideEditModalToRenderer', (_ev, args) => {
-  //   const aux = queuedPosts;
-  //   const postIndex = queuedPosts.indexOf(
-  //     queuedPosts.filter((p) => p.id === args.id)[0]
-  //   );
-  //   if (!args.deleted) {
-  //     aux[postIndex].caption = args.caption;
-  //   } else {
-  //     aux.splice(postIndex, 1);
-  //   }
-  //   setQueuedPosts(aux);
-  //   setShowModal(false);
-  // });
+  const refreshQueue = (post: any, type: string) => {
+    const aux = queuedPosts;
+
+    const ret: any = [];
+    if (type === 'DELETE') {
+      const postIndex = queuedPosts.indexOf(
+        queuedPosts.filter((p) => p.id === post.id)[0]
+      );
+      const aux2 = aux.splice(postIndex, 1);
+      for (let i = 0; i < aux.length; i++) {
+        if (aux[i] !== aux2[0]) ret.push(aux[i]);
+      }
+    } else if (type === 'UPDATE') {
+      for (let i = 0; i < aux.length; i++) {
+        if (aux[i].id === post.id) {
+          ret.push({
+            id: post.id,
+            caption: post.caption,
+            owner: aux[i].owner,
+            media: aux[i].media,
+            mediaType: aux[i].mediaType,
+          });
+        } else {
+          ret.push(aux[i]);
+        }
+      }
+    }
+    setQueuedPosts(ret);
+  };
 
   const handleEdit = (post: {
     id: number;
@@ -207,6 +220,8 @@ function QueuePage() {
                   post={post}
                   showId={showId}
                   key={`${post.id}${post.owner}`}
+                  handleClose={() => setShowModal(false)}
+                  refreshQueue={refreshQueue}
                 />
               </th>
               <th>&nbsp;</th>

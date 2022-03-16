@@ -40,12 +40,6 @@ function PostsPanel(props: { posts: any }) {
   };
 
   if (posts !== undefined && posts.length !== 0) {
-    // console.log(posts)
-    // if (posts.lenght > 60) {
-    //   console.log("dsaf")
-    //   setAuxPosts(splitUp(posts, posts.length / 55));
-    // }
-
     const items: any = [];
     for (let number = 1; number <= auxPosts.length; number++) {
       items.push(
@@ -59,7 +53,7 @@ function PostsPanel(props: { posts: any }) {
       );
     }
 
-    const removeFromArr = () => {
+    const updateArray = () => {
       axios.get('/api/fetchedPosts').then((data) => {
         setAuxPosts(splitUp(data.data, data.data.length / 55));
       });
@@ -77,7 +71,7 @@ function PostsPanel(props: { posts: any }) {
               <PostCard
                 post={post}
                 key={post.post_id}
-                removeFromPostsHandler={removeFromArr}
+                updateList={updateArray}
               />
             ))}
           </Row>

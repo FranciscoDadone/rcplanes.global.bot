@@ -15,6 +15,7 @@ function MediaModal(props: {
   const { show, post, media, mediaType, handleClose, handleDelete } = props;
   const [caption, setCaption] = useState<string>();
   const [mediaModal, setMediaModal] = useState(media);
+  const [usernameInImg, setUsernameInImg] = useState(post.username);
 
   useEffect(() => {
     let isMounted = true;
@@ -38,24 +39,26 @@ function MediaModal(props: {
   };
 
   const handleQueue = () => {
-    handleClose();
-    // ipcRenderer
-    //   .invoke('addToQueue', {
-    //     id: post.post_id,
-    //     media: mediaModal,
-    //     mediaType,
-    //     caption,
-    //     owner: post.username,
-    //   })
-    //   .catch((err) => {
-    //     throw new Error(`Error queueing media: ${err}`);
-    //   });
+    axios
+      .post('api/queuePost', {
+        data: {
+          id: post.post_id,
+          mediaPath: post.storage_path,
+          usernameInImg,
+          mediaType,
+          caption,
+          owner: post.username,
+        },
+      })
+      .then((code) => {
+        if (code.status === 200) handleClose();
+      });
   };
 
   const postProcessUsernameInImg = (username: string) => {
     if (show && post.media_type === 'IMAGE') {
       axios
-        .get('/api/postProcessImage', {
+        .get('api/postProcessImage', {
           params: {
             image: post.storage_path,
             username,
@@ -63,6 +66,7 @@ function MediaModal(props: {
         })
         .then((data) => {
           setMediaModal(data.data);
+          setUsernameInImg(username);
         });
     }
   };
