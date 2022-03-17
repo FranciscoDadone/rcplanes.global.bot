@@ -10,7 +10,7 @@ export default function Context(props: PropsWithChildren<any>) {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8080/auth/user', {
+      .get('/auth/user', {
         withCredentials: true,
       })
       .then((res) => {

@@ -29,12 +29,6 @@ router.use(
     credentials: true,
   })
 );
-router.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  })
-);
 
 // ----------------------- END OF MIDDLEWARES -----------------------
 
