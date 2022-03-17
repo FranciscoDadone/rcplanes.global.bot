@@ -112,6 +112,7 @@ export function connect(): sqlite3.Database {
             if (err1) {
               console.log(`Database error ${err1}`);
             }
+            createTables();
             initDB();
           }
         );
