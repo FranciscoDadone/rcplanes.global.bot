@@ -16,7 +16,7 @@ function LoginPage() {
         password,
       },
       withCredentials: true,
-      url: 'http://localhost:8080/auth/login',
+      url: '/auth/login',
     }).then((res) => {
       console.log(res);
       if (res.data === 'SUCCESS') {

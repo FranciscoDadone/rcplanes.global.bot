@@ -10,7 +10,10 @@ function ExplorePage() {
     let isMounted = true;
     if (posts === undefined || posts.length === 0) {
       axios.get('api/fetchedPosts').then((data) => {
-        if (isMounted) setPosts(data.data);
+        if (isMounted) {
+          if (data.data.length === 0) setPosts({ username: 'undefined' });
+          else setPosts(data.data);
+        }
       });
     }
     return () => {
@@ -18,9 +21,11 @@ function ExplorePage() {
     };
   });
 
-  // console.log(posts);/
-
-  if (posts !== undefined) {
+  if (
+    posts !== undefined &&
+    posts[0] !== undefined &&
+    posts[0].username !== 'undefined'
+  ) {
     return <PostsPanel posts={posts} />;
   }
   return <PageLoading />;

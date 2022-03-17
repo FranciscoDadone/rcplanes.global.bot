@@ -23,12 +23,12 @@ require('../authentication/passportConfig')(passport);
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
-router.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  })
-);
+// router.use(
+//   cors({
+//     origin: 'http://localhost:3000',
+//     credentials: true,
+//   })
+// );
 
 // ----------------------- END OF MIDDLEWARES -----------------------
 

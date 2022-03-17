@@ -28,12 +28,12 @@ app.use('/storage', express.static(path.join(__dirname, '../storage')));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: 'http://localhost:3000',
+//     credentials: true,
+//   })
+// );
 app.use(cookieParser('secretcode'));
 app.use(
   session({
