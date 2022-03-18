@@ -1,3 +1,5 @@
+// /api/auth/<endpoint>
+
 import express from 'express';
 
 module.exports = (passport) => {

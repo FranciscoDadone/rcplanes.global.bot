@@ -32,7 +32,7 @@ function ConfigurationPage() {
   useEffect(() => {
     let isMounted = true;
     if (configState === undefined) {
-      axios.get('/api/general_config').then((res) => {
+      axios.get('/api/general/general_config').then((res) => {
         if (isMounted) setConfigState(res.data);
       });
     }
@@ -40,12 +40,12 @@ function ConfigurationPage() {
       hashtagsToFetch === undefined ||
       hashtagsToFetch[0].hashtag === 'null'
     ) {
-      axios.get('/api/hashtags').then((res) => {
+      axios.get('/api/hashtags/hashtags').then((res) => {
         if (isMounted) setHashtagsToFetch(res.data);
       });
     }
     if (credentialsState === undefined) {
-      axios.get('/api/credentials').then((res) => {
+      axios.get('/api/general/credentials').then((res) => {
         if (isMounted) setCredentialsState(res.data);
       });
     }
@@ -64,7 +64,7 @@ function ConfigurationPage() {
     if (form.checkValidity()) {
       const formData = new FormData(form);
       const formDataObj = Object.fromEntries(formData.entries());
-      axios.post('/api/set_credentials', {
+      axios.post('/api/general/set_credentials', {
         data: {
           accessToken: formDataObj.authToken,
           clientSecret: formDataObj.clientSecret,
@@ -72,7 +72,7 @@ function ConfigurationPage() {
           igAccountId: formDataObj.igAccountId,
         },
       });
-      axios.post('/api/set_general_config', {
+      axios.post('/api/general/set_general_config', {
         data: {
           uploadRate: formDataObj.uploadRate,
           descriptionBoilerplate: formDataObj.descriptionBoilerplate,
@@ -90,7 +90,7 @@ function ConfigurationPage() {
 
   const handleDeleteHashtag = (index: number) => {
     const hashtags: any = [];
-    axios.post('/api/delete_hashtag', {
+    axios.post('/api/hashtags/delete', {
       data: {
         hashtag: hashtagsToFetch[index].hashtag,
       },
@@ -113,7 +113,7 @@ function ConfigurationPage() {
         hashtag: addHashtagState,
       });
 
-      axios.post('/api/add_hashtag_to_fetch', {
+      axios.post('/api/hashtags/add', {
         data: {
           hashtag: addHashtagState,
         },

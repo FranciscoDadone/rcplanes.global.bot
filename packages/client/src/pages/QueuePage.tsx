@@ -38,7 +38,7 @@ function QueuePage() {
   useEffect(() => {
     let isMounted = true;
     if (queuedPosts === undefined || queuedPosts[0].mediaType === '') {
-      axios.get('/api/queue').then((data) => {
+      axios.get('/api/queue/queue').then((data) => {
         if (isMounted) setQueuedPosts(data.data);
       });
     }

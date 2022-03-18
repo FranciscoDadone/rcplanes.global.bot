@@ -23,7 +23,7 @@ function InfoPage() {
           lastUploadDate: string;
           totalPostedMedias: number;
           queuedMedias: number;
-        }>('/api/get_util')
+        }>('/api/general/get_util')
         .then((util) => {
           axios
             .get<{
@@ -31,7 +31,7 @@ function InfoPage() {
               uploadRate: number;
               descriptionBoilerplate: string;
               hashtagFetchingEnabled: boolean;
-            }>('/api/general_config')
+            }>('/api/general/general_config')
             .then((generalConfig) => {
               const nextPostDate = new Date(util.data.lastUploadDate);
               nextPostDate.setHours(

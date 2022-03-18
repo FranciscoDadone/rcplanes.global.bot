@@ -27,12 +27,6 @@ app.use('/storage', express.static(path.join(__dirname, '../storage')));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(
-//   cors({
-//     origin: 'http://localhost:3000',
-//     credentials: true,
-//   })
-// );
 app.use(cookieParser('secretcode'));
 app.use(
   session({
@@ -45,11 +39,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 // ----------------------- END OF MIDDLEWARES -----------------------
 
-const authRouter = require('./routes/authRoutes');
+const authRouter = require('./routes/api_endpoints/authEndpoint');
 const apiRouter = require('./routes/apiRoutes');
+const postsRouter = require('./routes/api_endpoints/postsEndpoint');
+const generalRouter = require('./routes/api_endpoints/generalEndpoint');
+const queueRouter = require('./routes/api_endpoints/queueEndpoint');
+const hashtagsRouter = require('./routes/api_endpoints/hashtagsEndpoint');
 
 app.use('/auth', authRouter(passport));
 app.use('/api', apiRouter);
+app.use('/api/posts', postsRouter);
+app.use('/api/general', generalRouter);
+app.use('/api/queue', queueRouter);
+app.use('/api/hashtags', hashtagsRouter);
 // ----------------------- END OF ROUTES -----------------------
 
 // start the Express server

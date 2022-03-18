@@ -20,7 +20,7 @@ function DatabasePage() {
   useEffect(() => {
     let isMounted = true;
     if (posts1 === undefined) {
-      axios.get('/api/all_fetched_posts').then((res) => {
+      axios.get('/api/posts/all_fetched_posts').then((res) => {
         if (isMounted) setPosts1(res.data);
       });
     }

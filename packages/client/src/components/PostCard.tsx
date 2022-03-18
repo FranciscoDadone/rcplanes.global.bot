@@ -16,7 +16,7 @@ function PostCard(props: { post: any; updateList: any }) {
   };
 
   const handleDelete = () => {
-    axios.delete('/api/delete_post', {
+    axios.delete('/api/posts/delete_post', {
       params: {
         postId: post.postId,
       },

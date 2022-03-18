@@ -19,7 +19,7 @@ function MediaModal(props: {
 
   useEffect(() => {
     let isMounted = true;
-    axios.get('api/general_config').then((data) => {
+    axios.get('api/general/general_config').then((data) => {
       if (isMounted && caption === undefined) {
         const captionFormatted = data.data.descriptionBoilerplate
           .replace('%description%', post.caption)
@@ -40,7 +40,7 @@ function MediaModal(props: {
 
   const handleQueue = () => {
     axios
-      .post('api/queue_post', {
+      .post('api/posts/queue_post', {
         data: {
           id: post.postId,
           mediaPath: post.storagePath,
