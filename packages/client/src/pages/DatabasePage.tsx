@@ -1,6 +1,6 @@
 import { Table } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import PageLoading from './PageLoading';
+import Loading from '../components/Loading';
 
 interface DataType {
   post_id: string;
@@ -42,7 +42,7 @@ function DatabasePage() {
   ];
   if (posts1 !== undefined) arr = posts1;
 
-  if (arr[0].post_id === '') return <PageLoading />;
+  if (arr[0].post_id === '') return <Loading text="Loading database..." spinner />;
 
   return (
     <>

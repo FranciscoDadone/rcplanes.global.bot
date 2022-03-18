@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Media from '../components/Media';
 import '../assets/css/QueuePage.css';
 import EditModal from '../components/EditModal';
-import PageLoading from './PageLoading';
+import Loading from '../components/Loading';
 
 function QueuePage() {
   const [queuedPosts, setQueuedPosts] = useState<
@@ -48,7 +48,7 @@ function QueuePage() {
   }, [queuedPosts]);
 
   if (queuedPosts[0].owner === '') {
-    return <PageLoading />;
+    return <Loading text="Loading queue..." spinner />;
   }
 
   const handleUp = (post: {
