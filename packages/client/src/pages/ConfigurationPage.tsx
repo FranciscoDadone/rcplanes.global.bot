@@ -8,6 +8,7 @@ import {
   FormControl,
 } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import '../assets/css/ConfigurationPage.css';
 
 function ConfigurationPage() {
@@ -16,32 +17,110 @@ function ConfigurationPage() {
     [{ id: number; hashtag: string }]
   >([{ id: 0, hashtag: 'null' }]);
   const [addHashtagState, setAddHashtagState] = useState<string>('');
-  const [credentialsState, setCredentialsState] = useState({
-    access_token: '',
-    client_secret: '',
-    client_id: '',
-    ig_account_id: '',
-  });
+  const [credentialsState, setCredentialsState] = useState<{
+    access_token: string;
+    client_id: string;
+    ig_account_id: string;
+    client_secret: string;
+  }>();
   const [configState, setConfigState] = useState<{
     upload_rate: number;
     description_boilerplate: string;
     hashtag_fetching_enabled: boolean;
   }>();
 
-  const handleSubmit = () => {
+  useEffect(() => {
+    let isMounted = true;
+    if (configState === undefined) {
+      axios.get('/api/generalConfig').then((res) => {
+        if (isMounted) setConfigState(res.data);
+      });
+    }
+    if (
+      hashtagsToFetch === undefined ||
+      hashtagsToFetch[0].hashtag === 'null'
+    ) {
+      axios.get('/api/hashtags').then((res) => {
+        if (isMounted) setHashtagsToFetch(res.data);
+      });
+    }
+    if (credentialsState === undefined) {
+      axios.get('/api/credentials').then((res) => {
+        if (isMounted) setCredentialsState(res.data);
+      });
+    }
+    return () => {
+      isMounted = false;
+    };
+  });
 
+  const handleSubmit = (event: any) => {
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    setValidated(true);
+    if (form.checkValidity()) {
+      const formData = new FormData(form);
+      const formDataObj = Object.fromEntries(formData.entries());
+      axios.post('/api/setCredentials', {
+        data: {
+          accessToken: formDataObj.authToken,
+          clientSecret: formDataObj.clientSecret,
+          clientId: formDataObj.clientId,
+          igAccountId: formDataObj.igAccountId,
+        },
+      });
+      axios.post('/api/setGeneralConfig', {
+        data: {
+          uploadRate: formDataObj.uploadRate,
+          descriptionBoilerplate: formDataObj.descriptionBoilerplate,
+          hashtagFetchingEnabled: formDataObj.hashtagFetchingSwitch === 'on',
+        },
+      });
+      // eslint-disable-next-line no-alert
+      alert(
+        'Configuration saved! If you edited authentication data you may want to restart the app.'
+      );
+      event.preventDefault();
+      event.stopPropagation();
+    }
   };
 
-  const handleDeleteHashtag = () => {
-
-  };
-
-  const addHashtagChange = () => {
-
+  const handleDeleteHashtag = (index: number) => {
+    const hashtags: any = [];
+    axios.post('/api/deleteHashtag', {
+      data: {
+        hashtag: hashtagsToFetch[index].hashtag,
+      },
+    });
+    hashtagsToFetch.forEach((h, i) => {
+      if (i !== index) hashtags.push(h);
+    });
+    setHashtagsToFetch(hashtags);
   };
 
   const handleAddHashtag = () => {
+    const aux = hashtagsToFetch;
+    if (addHashtagState !== '') {
+      let lastElem: any = { id: 0, hashtag: '' };
+      if (hashtagsToFetch.length > 0) {
+        lastElem = hashtagsToFetch[hashtagsToFetch.length - 1];
+      }
+      aux.push({
+        id: lastElem.id + 1,
+        hashtag: addHashtagState,
+      });
 
+      axios.post('/api/addHashtagToFetch', {
+        data: {
+          hashtag: addHashtagState,
+        },
+      });
+    }
+    setHashtagsToFetch(aux);
+    setAddHashtagState('');
   };
 
   return (
@@ -103,7 +182,7 @@ function ConfigurationPage() {
               <Button
                 variant="outline-danger"
                 id="button-addon2"
-                onClick={() => handleDeleteHashtag()}
+                onClick={() => handleDeleteHashtag(index)}
               >
                 Delete
               </Button>
@@ -114,7 +193,7 @@ function ConfigurationPage() {
               aria-describedby="basic-addon2"
               name="addHashtag"
               value={addHashtagState}
-              onChange={addHashtagChange}
+              onChange={(e) => setAddHashtagState(e.target.value)}
             />
             <Button
               variant="outline-primary"
@@ -133,7 +212,7 @@ function ConfigurationPage() {
             <Form.Control
               required
               type="text"
-              defaultValue={credentialsState.access_token}
+              defaultValue={credentialsState?.access_token}
               name="authToken"
             />
             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -146,7 +225,7 @@ function ConfigurationPage() {
               <Form.Control
                 required
                 type="text"
-                defaultValue={credentialsState.client_id}
+                defaultValue={credentialsState?.client_id}
                 name="clientId"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -158,7 +237,7 @@ function ConfigurationPage() {
               <Form.Control
                 required
                 type="text"
-                defaultValue={credentialsState.client_secret}
+                defaultValue={credentialsState?.client_secret}
                 name="clientSecret"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -170,7 +249,7 @@ function ConfigurationPage() {
               <Form.Control
                 required
                 type="text"
-                defaultValue={credentialsState.ig_account_id}
+                defaultValue={credentialsState?.ig_account_id}
                 name="igAccountId"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>

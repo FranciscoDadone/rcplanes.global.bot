@@ -42,7 +42,8 @@ function DatabasePage() {
   ];
   if (posts1 !== undefined) arr = posts1;
 
-  if (arr[0].post_id === '') return <Loading text="Loading database..." spinner />;
+  if (arr[0].post_id === '')
+    return <Loading text="Loading database..." spinner />;
 
   return (
     <>

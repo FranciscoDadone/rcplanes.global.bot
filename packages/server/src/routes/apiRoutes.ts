@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import passport from 'passport';
 import path from 'path';
 import { authMiddleware } from '../middlewares/authMiddleware';
@@ -12,6 +11,12 @@ import {
   swapInQueue,
   removePostFromQueue,
   updateQueuePostCaption,
+  getCredentials,
+  getAllHashtagsToFetch,
+  addHashtagToFetch,
+  deleteHashtag,
+  setCredentials,
+  setGeneralConfig,
 } from '../database/DatabaseQueries';
 import { addWatermark } from '../utils/addWatermark';
 
@@ -23,12 +28,6 @@ require('../authentication/passportConfig')(passport);
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
-// router.use(
-//   cors({
-//     origin: 'http://localhost:3000',
-//     credentials: true,
-//   })
-// );
 
 // ----------------------- END OF MIDDLEWARES -----------------------
 
@@ -44,6 +43,18 @@ router.get('/fetchedPosts', authMiddleware, (req: any, res) => {
 
 router.get('/generalConfig', authMiddleware, (req: any, res) => {
   getGeneralConfig().then((data) => {
+    res.send(data);
+  });
+});
+
+router.get('/credentials', authMiddleware, (req: any, res) => {
+  getCredentials().then((data) => {
+    res.send(data);
+  });
+});
+
+router.get('/hashtags', authMiddleware, async (req: any, res) => {
+  await getAllHashtagsToFetch().then((data) => {
     res.send(data);
   });
 });
@@ -120,6 +131,40 @@ router.patch('/queue/updatePost', authMiddleware, (req: any, res) => {
   promise.then(() => {
     res.sendStatus(200);
   });
+});
+
+router.post('/addHashtagToFetch', authMiddleware, async (req: any, res) => {
+  await addHashtagToFetch(req.body.data.hashtag).catch((err) => {
+    if (err) res.sendStatus(500);
+  });
+  res.sendStatus(200);
+});
+
+router.post('/deleteHashtag', authMiddleware, async (req: any, res) => {
+  await deleteHashtag(req.body.data.hashtag).catch((err) => {
+    if (err) res.sendStatus(500);
+  });
+  res.sendStatus(200);
+});
+
+router.post('/setCredentials', authMiddleware, async (req: any, res) => {
+  await setCredentials(
+    req.body.data.accessToken,
+    req.body.data.clientSecret,
+    req.body.data.clientId,
+    req.body.data.igAccountId
+  ).catch((err) => {
+    if (err) res.sendStatus(500);
+  });
+  res.sendStatus(200);
+});
+
+router.post('/setGeneralConfig', authMiddleware, async (req: any, res) => {
+  await setGeneralConfig(
+    req.body.data.uploadRate,
+    req.body.data.descriptionBoilerplate,
+    req.body.data.hashtagFetchingEnabled
+  );
 });
 
 module.exports = router;
