@@ -32,7 +32,7 @@ function ConfigurationPage() {
   useEffect(() => {
     let isMounted = true;
     if (configState === undefined) {
-      axios.get('/api/generalConfig').then((res) => {
+      axios.get('/api/general_config').then((res) => {
         if (isMounted) setConfigState(res.data);
       });
     }
@@ -64,7 +64,7 @@ function ConfigurationPage() {
     if (form.checkValidity()) {
       const formData = new FormData(form);
       const formDataObj = Object.fromEntries(formData.entries());
-      axios.post('/api/setCredentials', {
+      axios.post('/api/set_credentials', {
         data: {
           accessToken: formDataObj.authToken,
           clientSecret: formDataObj.clientSecret,
@@ -72,7 +72,7 @@ function ConfigurationPage() {
           igAccountId: formDataObj.igAccountId,
         },
       });
-      axios.post('/api/setGeneralConfig', {
+      axios.post('/api/set_general_config', {
         data: {
           uploadRate: formDataObj.uploadRate,
           descriptionBoilerplate: formDataObj.descriptionBoilerplate,
@@ -90,7 +90,7 @@ function ConfigurationPage() {
 
   const handleDeleteHashtag = (index: number) => {
     const hashtags: any = [];
-    axios.post('/api/deleteHashtag', {
+    axios.post('/api/delete_hashtag', {
       data: {
         hashtag: hashtagsToFetch[index].hashtag,
       },
@@ -113,7 +113,7 @@ function ConfigurationPage() {
         hashtag: addHashtagState,
       });
 
-      axios.post('/api/addHashtagToFetch', {
+      axios.post('/api/add_hashtag_to_fetch', {
         data: {
           hashtag: addHashtagState,
         },

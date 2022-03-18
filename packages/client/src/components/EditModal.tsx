@@ -39,7 +39,7 @@ function EditModal(props: {
   const handleSave = () => {
     handleClose(false);
     axios
-      .patch('/api/queue/updatePost', {
+      .patch('/api/queue/update_post', {
         data: {
           id: post.id,
           caption,

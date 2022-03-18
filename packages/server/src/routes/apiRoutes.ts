@@ -35,13 +35,13 @@ router.get('/user', authMiddleware, (req: any, res) => {
   res.send(req.user);
 });
 
-router.get('/fetchedPosts', authMiddleware, (req: any, res) => {
+router.get('/fetched_posts', authMiddleware, (req: any, res) => {
   getAllNonDeletedPosts().then((data) => {
     res.send(data);
   });
 });
 
-router.get('/generalConfig', authMiddleware, (req: any, res) => {
+router.get('/general_config', authMiddleware, (req: any, res) => {
   getGeneralConfig().then((data) => {
     res.send(data);
   });
@@ -59,7 +59,7 @@ router.get('/hashtags', authMiddleware, async (req: any, res) => {
   });
 });
 
-router.get('/postProcessImage', authMiddleware, (req: any, res) => {
+router.get('/post_process_image', authMiddleware, (req: any, res) => {
   addWatermark(
     path.join(__dirname, `../../storage/${req.query.image}`),
     req.query.username
@@ -68,13 +68,13 @@ router.get('/postProcessImage', authMiddleware, (req: any, res) => {
   });
 });
 
-router.delete('/deletePost', authMiddleware, (req: any, res) => {
+router.delete('/delete_post', authMiddleware, (req: any, res) => {
   updatePostStatus(req.query.postId, 'deleted').then(() => {
     res.sendStatus(200);
   });
 });
 
-router.post('/queuePost', authMiddleware, async (req: any, res) => {
+router.post('/queue_post', authMiddleware, async (req: any, res) => {
   const media = await addWatermark(
     path.join(__dirname, `../../storage/${req.body.data.mediaPath}`),
     req.body.data.usernameInImg
@@ -120,7 +120,7 @@ router.delete('/queue/delete', authMiddleware, (req: any, res) => {
   });
 });
 
-router.patch('/queue/updatePost', authMiddleware, (req: any, res) => {
+router.patch('/queue/update_post', authMiddleware, (req: any, res) => {
   const promise = updateQueuePostCaption(
     req.body.data.id,
     req.body.data.caption
@@ -133,21 +133,21 @@ router.patch('/queue/updatePost', authMiddleware, (req: any, res) => {
   });
 });
 
-router.post('/addHashtagToFetch', authMiddleware, async (req: any, res) => {
+router.post('/add_hashtag_to_fetch', authMiddleware, async (req: any, res) => {
   await addHashtagToFetch(req.body.data.hashtag).catch((err) => {
     if (err) res.sendStatus(500);
   });
   res.sendStatus(200);
 });
 
-router.post('/deleteHashtag', authMiddleware, async (req: any, res) => {
+router.post('/delete_hashtag', authMiddleware, async (req: any, res) => {
   await deleteHashtag(req.body.data.hashtag).catch((err) => {
     if (err) res.sendStatus(500);
   });
   res.sendStatus(200);
 });
 
-router.post('/setCredentials', authMiddleware, async (req: any, res) => {
+router.post('/set_credentials', authMiddleware, async (req: any, res) => {
   await setCredentials(
     req.body.data.accessToken,
     req.body.data.clientSecret,
@@ -159,7 +159,7 @@ router.post('/setCredentials', authMiddleware, async (req: any, res) => {
   res.sendStatus(200);
 });
 
-router.post('/setGeneralConfig', authMiddleware, async (req: any, res) => {
+router.post('/set_general_config', authMiddleware, async (req: any, res) => {
   await setGeneralConfig(
     req.body.data.uploadRate,
     req.body.data.descriptionBoilerplate,

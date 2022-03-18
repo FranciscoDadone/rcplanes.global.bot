@@ -54,7 +54,7 @@ function PostsPanel(props: { posts: any }) {
     }
 
     const updateArray = () => {
-      axios.get('/api/fetchedPosts').then((data) => {
+      axios.get('/api/fetched_posts').then((data) => {
         setAuxPosts(splitUp(data.data, data.data.length / 55));
       });
     };

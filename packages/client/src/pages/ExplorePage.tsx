@@ -9,7 +9,7 @@ function ExplorePage() {
   useEffect(() => {
     let isMounted = true;
     if (posts === undefined || posts.length === 0) {
-      axios.get('api/fetchedPosts').then((data) => {
+      axios.get('api/fetched_posts').then((data) => {
         if (isMounted) {
           if (data.data.length === 0) setPosts([{ username: 'undefined' }]);
           else setPosts(data.data);
