@@ -9,26 +9,26 @@ import {
 import { Post } from './models/Post';
 
 async function saveMediaToStorage(
-  original_url: string,
-  media_type: string,
-  media_id: string
+  originalUrl: string,
+  mediaType: string,
+  mediaId: string
 ) {
   if (
-    original_url === '' ||
-    media_id === '' ||
-    original_url === undefined ||
-    media_id === undefined
+    originalUrl === '' ||
+    mediaId === '' ||
+    originalUrl === undefined ||
+    mediaId === undefined
   )
     return null;
-  if (media_type === 'IMAGE') {
-    return download(original_url, `./storage`, {
-      filename: `${media_id}.png`,
-    }).then(() => `${media_id}.png`);
+  if (mediaType === 'IMAGE') {
+    return download(originalUrl, `./storage`, {
+      filename: `${mediaId}.png`,
+    }).then(() => `${mediaId}.png`);
   }
-  if (media_type === 'VIDEO') {
-    return download(original_url, `./storage`, {
-      filename: `${media_id}.mp4`,
-    }).then(() => `${media_id}.mp4`);
+  if (mediaType === 'VIDEO') {
+    return download(originalUrl, `./storage`, {
+      filename: `${mediaId}.mp4`,
+    }).then(() => `${mediaId}.mp4`);
   }
   return null;
 }
@@ -69,7 +69,7 @@ async function startHashtagFetching(wait: boolean) {
     await new Promise((resolve) => setTimeout(resolve, 3600000));
   }
   const config = await getGeneralConfig();
-  if (config.hashtag_fetching_enabled) {
+  if (config.hashtagFetchingEnabled) {
     const hashtags: any = await getAllHashtagsToFetch();
     let allPosts: Post[] = [];
     for (const hashtag of hashtags) {

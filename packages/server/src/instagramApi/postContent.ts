@@ -6,7 +6,7 @@ const fetch = require('node-fetch');
 async function checkStatus(id: string) {
   const credentials: any = await getCredentials();
   return fetch(
-    `https://graph.facebook.com/v13.0/${id}?fields=status_code&access_token=${credentials.access_token}`,
+    `https://graph.facebook.com/v13.0/${id}?fields=status_code&access_token=${credentials.accessToken}`,
     {
       method: 'GET',
       headers: {
@@ -14,17 +14,17 @@ async function checkStatus(id: string) {
         'Content-Type': 'application/json',
       },
     }
-  ).then((res: any) => res.json().then((data: any) => data.status_code));
+  ).then((res: any) => res.json().then((data: any) => data.statusCode));
 }
 
 async function publishMedia(id: string) {
   const credentials: any = await getCredentials();
   const res = await fetch(
     `https://graph.facebook.com/v13.0/${
-      credentials.ig_account_id
+      credentials.igAccountId
     }/media_publish?${new URLSearchParams({
       creation_id: id,
-      access_token: credentials.access_token,
+      access_token: credentials.accessToken,
     })}`,
     {
       method: 'POST',
@@ -39,19 +39,19 @@ async function publishMedia(id: string) {
   });
 }
 async function createMediaObject(
-  media_type: string,
+  mediaType: string,
   caption: string,
   url: string
 ) {
   const credentials: any = await getCredentials();
-  if (media_type === 'IMAGE') {
+  if (mediaType === 'IMAGE') {
     console.log('Creating media object... (IMAGE)');
     const res = await fetch(
       `https://graph.facebook.com/v12.0/${
-        credentials.ig_account_id
+        credentials.igAccountId
       }/media?${new URLSearchParams({
         caption,
-        access_token: credentials.access_token,
+        access_token: credentials.accessToken,
         image_url: url,
       })}`,
       {
@@ -75,7 +75,7 @@ async function createMediaObject(
     }/media?${new URLSearchParams({
       caption,
       media_type: 'VIDEO',
-      access_token: credentials.access_token,
+      access_token: credentials.accessToken,
       video_url: url,
     })}`,
     {
@@ -108,8 +108,8 @@ async function createMediaObject(
  * Publish a post passed by param.
  * Make sure to edit the caption and url(image)
  */
-export function publish(url: string, media_type: string, caption: string) {
-  return createMediaObject(media_type, caption, url);
+export function publish(url: string, mediaType: string, caption: string) {
+  return createMediaObject(mediaType, caption, url);
 }
 
 module.exports = { publish };

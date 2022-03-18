@@ -70,7 +70,7 @@ function PostsPanel(props: { posts: any }) {
             {auxPosts[activeTab - 1].map((post: any) => (
               <PostCard
                 post={post}
-                key={post.post_id}
+                key={post.postId}
                 updateList={updateArray}
               />
             ))}

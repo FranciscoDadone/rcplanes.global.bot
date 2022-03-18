@@ -1,8 +1,8 @@
 const Jimp = require('jimp');
 
-export async function addWatermark(image_url: string, username: string) {
+export async function addWatermark(imageUrl: string, username: string) {
   if (username === undefined) return;
-  const image = await Jimp.read(image_url);
+  const image = await Jimp.read(imageUrl);
 
   return Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then((font: any) =>
     (async () => {

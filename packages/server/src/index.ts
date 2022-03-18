@@ -5,7 +5,6 @@ import session from 'express-session';
 import passport from 'passport';
 import path from 'path';
 import { connect } from './database/DatabaseHandler';
-import { authMiddleware } from './middlewares/authMiddleware';
 
 const bodyParser = require('body-parser');
 

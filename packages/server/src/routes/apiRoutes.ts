@@ -69,7 +69,7 @@ router.get('/postProcessImage', authMiddleware, (req: any, res) => {
 });
 
 router.delete('/deletePost', authMiddleware, (req: any, res) => {
-  updatePostStatus(req.query.post_id, 'deleted').then(() => {
+  updatePostStatus(req.query.postId, 'deleted').then(() => {
     res.sendStatus(200);
   });
 });

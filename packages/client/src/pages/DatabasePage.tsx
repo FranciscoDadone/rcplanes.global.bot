@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import Loading from '../components/Loading';
 
 interface DataType {
-  post_id: string;
+  postId: string;
   date: string;
   hashtag: string;
-  media_type: string;
+  mediaType: string;
   permalink: string;
-  children_of: string;
+  childrenOf: string;
   status: string;
   username: string;
 }
@@ -30,19 +30,19 @@ function DatabasePage() {
 
   let arr: [DataType] = [
     {
-      post_id: '',
+      postId: '',
       date: '',
       hashtag: '',
-      media_type: '',
+      mediaType: '',
       permalink: '',
-      children_of: '',
+      childrenOf: '',
       status: '',
       username: '',
     },
   ];
   if (posts1 !== undefined) arr = posts1;
 
-  if (arr[0].post_id === '')
+  if (arr[0].postId === '')
     return <Loading text="Loading database..." spinner />;
 
   return (
@@ -63,14 +63,14 @@ function DatabasePage() {
         </thead>
         <tbody>
           {arr.map((post, index) => (
-            <tr key={post.post_id}>
+            <tr key={post.postId}>
               <td>{index}</td>
               <td>{post.date}</td>
-              <td>{post.post_id}</td>
+              <td>{post.postId}</td>
               <td>{post.hashtag}</td>
-              <th>{post.media_type}</th>
+              <th>{post.mediaType}</th>
               <th>{post.permalink}</th>
-              <th>{post.children_of}</th>
+              <th>{post.childrenOf}</th>
               <th>{post.status}</th>
               <th>{post.username}</th>
             </tr>

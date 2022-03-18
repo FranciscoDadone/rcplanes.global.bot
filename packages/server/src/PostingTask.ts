@@ -1,4 +1,3 @@
-import path from 'path';
 import {
   getGeneralConfig,
   getQueue,
@@ -9,10 +8,6 @@ import {
 } from './database/DatabaseQueries';
 import { uploadToImgur } from './utils/uploadToImgur';
 import { publish } from './instagramApi/postContent';
-
-const RESOURCES_PATH = process.env.NODE_ENV
-  ? path.join(__dirname, '../../assets')
-  : '';
 
 async function uploadNewPost() {
   const mediaQueue = await getQueue();
@@ -46,16 +41,16 @@ async function uploadNewPost() {
   const utils = await getUtil();
   await setUtil(
     new Date().toString(),
-    utils.total_posted_medias + 1,
-    utils.queued_medias - 1
+    utils.totalPostedMedias + 1,
+    utils.queuedMedias - 1
   );
 }
 
 export async function startPostingTask() {
-  const postingDelay = (await getGeneralConfig()).upload_rate;
+  const postingDelay = (await getGeneralConfig()).uploadRate;
   const utils = await getUtil();
 
-  const lastUploadDate = new Date(utils.last_upload_date);
+  const lastUploadDate = new Date(utils.lastUploadDate);
   const nextPostDate = lastUploadDate;
   nextPostDate.setHours(nextPostDate.getHours() + postingDelay);
   const shouldPost = nextPostDate < new Date();

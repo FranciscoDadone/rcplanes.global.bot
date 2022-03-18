@@ -10,8 +10,8 @@ async function getHashtagId(hashtag: string): Promise<any> {
     const res = fetch(
       `https://graph.facebook.com/v12.0/ig_hashtag_search?${new URLSearchParams.URLSearchParams(
         {
-          user_id: credentials.ig_account_id,
-          access_token: credentials.access_token,
+          user_id: credentials.igAccountId,
+          access_token: credentials.accessToken,
           q: hashtag,
           fields: 'id,name',
         }
@@ -72,8 +72,8 @@ export async function getPosts(hashtag: string, type: string): Promise<Post> {
     return fetch(
       `https://graph.facebook.com/v12.0/${id}/${type}?${new URLSearchParams.URLSearchParams(
         {
-          user_id: credentials.ig_account_id,
-          access_token: credentials.access_token,
+          user_id: credentials.igAccountId,
+          access_token: credentials.accessToken,
           fields:
             'id,children{media_url,media_type},caption,media_type,media_url,permalink',
         }

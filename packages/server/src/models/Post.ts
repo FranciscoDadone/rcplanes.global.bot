@@ -1,50 +1,50 @@
 export class Post {
-  post_id;
-  media_type;
+  postId;
+  mediaType;
   caption;
   permalink;
   hashtag = '';
   status;
   date;
   username;
-  storage_path;
-  children_of;
-  media_url;
+  storagePath;
+  childrenOf;
+  mediaUrl;
 
   constructor(
-    post_id?: string,
-    media_type?: string,
-    storage_path?: string,
+    postId?: string,
+    mediaType?: string,
+    storagePath?: string,
     caption?: string,
     permalink?: string,
     hashtag?: string,
     status?: string,
     date?: string,
     username?: string,
-    children_of?: string,
-    media_url?: string
+    childrenOf?: string,
+    mediaUrl?: string
   ) {
-    this.post_id = post_id ?? '';
-    this.media_type = media_type ?? '';
-    this.storage_path = storage_path ?? '';
+    this.postId = postId ?? '';
+    this.mediaType = mediaType ?? '';
+    this.storagePath = storagePath ?? '';
     this.caption = caption ?? '';
     this.permalink = permalink ?? '';
     this.hashtag = hashtag ?? '';
     this.status = status ?? '';
     this.date = date ?? '';
     this.username = username ?? '';
-    this.children_of = children_of ?? '';
-    this.media_url = media_url ?? '';
+    this.childrenOf = childrenOf ?? '';
+    this.mediaUrl = mediaUrl ?? '';
   }
 
   getPostId() {
-    return this.post_id;
+    return this.postId;
   }
   getMediaType() {
-    return this.media_type;
+    return this.mediaType;
   }
   getStoragePath() {
-    return this.storage_path;
+    return this.storagePath;
   }
   getCaption() {
     return this.caption;
@@ -65,14 +65,14 @@ export class Post {
     return this.username;
   }
   getChildrenOf() {
-    return this.children_of;
+    return this.childrenOf;
   }
   getMediaURL() {
-    return this.media_url;
+    return this.mediaUrl;
   }
 
   setStoragePath(path: string) {
-    this.storage_path = path;
+    this.storagePath = path;
   }
 }
 

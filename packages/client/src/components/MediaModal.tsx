@@ -21,7 +21,7 @@ function MediaModal(props: {
     let isMounted = true;
     axios.get('api/generalConfig').then((data) => {
       if (isMounted && caption === undefined) {
-        const captionFormatted = data.data.description_boilerplate
+        const captionFormatted = data.data.descriptionBoilerplate
           .replace('%description%', post.caption)
           .replace('%username%', post.username)
           .replace('%post_link%', post.permalink);
@@ -42,8 +42,8 @@ function MediaModal(props: {
     axios
       .post('api/queuePost', {
         data: {
-          id: post.post_id,
-          mediaPath: post.storage_path,
+          id: post.postId,
+          mediaPath: post.storagePath,
           usernameInImg,
           mediaType,
           caption,
@@ -56,11 +56,11 @@ function MediaModal(props: {
   };
 
   const postProcessUsernameInImg = (username: string) => {
-    if (show && post.media_type === 'IMAGE') {
+    if (show && post.mediaType === 'IMAGE') {
       axios
         .get('api/postProcessImage', {
           params: {
-            image: post.storage_path,
+            image: post.storagePath,
             username,
           },
         })
@@ -93,14 +93,14 @@ function MediaModal(props: {
                 <div>
                   <ul>
                     <li>Owner: {post.username}</li>
-                    <li>ID: {post.post_id}</li>
+                    <li>ID: {post.postId}</li>
                     <li>Hashtag: {post.hashtag}</li>
                   </ul>
                 </div>
                 <div>
                   <ul>
                     <li>Fetched: {post.date}</li>
-                    <li>Type: {post.media_type}</li>
+                    <li>Type: {post.mediaType}</li>
                     <li>Link: {post.permalink}</li>
                   </ul>
                 </div>

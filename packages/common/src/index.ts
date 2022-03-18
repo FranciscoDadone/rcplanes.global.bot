@@ -1,1 +1,1 @@
-export const APP_NAME = "My Cool Webapp";
+export const APP_NAME = "RcPlanesGlobal";

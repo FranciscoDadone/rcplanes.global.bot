@@ -8,7 +8,7 @@ import videoImg from '../assets/images/video.png';
 function PostCard(props: { post: any; updateList: any }) {
   const { post, updateList } = props;
 
-  let previewSrc = `/storage/${post.storage_path}`;
+  let previewSrc = `/storage/${post.storagePath}`;
 
   const [show, setShow] = useState(false);
   const handleShow = () => {
@@ -18,7 +18,7 @@ function PostCard(props: { post: any; updateList: any }) {
   const handleDelete = () => {
     axios.delete('/api/deletePost', {
       params: {
-        post_id: post.post_id,
+        postId: post.postId,
       },
     });
     updateList();
@@ -31,7 +31,7 @@ function PostCard(props: { post: any; updateList: any }) {
 
   if (post === undefined) return <div />;
 
-  if (post.media_type === 'VIDEO') {
+  if (post.mediaType === 'VIDEO') {
     previewSrc = videoImg;
   }
 
@@ -75,8 +75,8 @@ function PostCard(props: { post: any; updateList: any }) {
       <MediaModal
         show={show}
         post={post}
-        media={`/storage/${post.storage_path}`}
-        mediaType={post.media_type}
+        media={`/storage/${post.storagePath}`}
+        mediaType={post.mediaType}
         handleClose={handleClose}
         handleDelete={handleDelete}
       />

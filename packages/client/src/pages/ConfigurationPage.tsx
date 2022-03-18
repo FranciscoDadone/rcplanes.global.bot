@@ -18,15 +18,15 @@ function ConfigurationPage() {
   >([{ id: 0, hashtag: 'null' }]);
   const [addHashtagState, setAddHashtagState] = useState<string>('');
   const [credentialsState, setCredentialsState] = useState<{
-    access_token: string;
-    client_id: string;
-    ig_account_id: string;
-    client_secret: string;
+    accessToken: string;
+    clientId: string;
+    igAccountId: string;
+    clientSecret: string;
   }>();
   const [configState, setConfigState] = useState<{
-    upload_rate: number;
-    description_boilerplate: string;
-    hashtag_fetching_enabled: boolean;
+    uploadRate: number;
+    descriptionBoilerplate: string;
+    hashtagFetchingEnabled: boolean;
   }>();
 
   useEffect(() => {
@@ -134,7 +134,7 @@ function ConfigurationPage() {
             <Form.Control
               required
               type="number"
-              defaultValue={configState?.upload_rate}
+              defaultValue={configState?.uploadRate}
               name="uploadRate"
             />
             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -145,7 +145,7 @@ function ConfigurationPage() {
               type="switch"
               name="hashtagFetchingSwitch"
               label="Fetching"
-              defaultChecked={configState?.hashtag_fetching_enabled}
+              defaultChecked={configState?.hashtagFetchingEnabled}
               className="hashtagFetchingSwitch"
             />
           </Form.Group>
@@ -161,7 +161,7 @@ function ConfigurationPage() {
             </Form.Label>
             <Form.Control
               required
-              defaultValue={configState?.description_boilerplate}
+              defaultValue={configState?.descriptionBoilerplate}
               name="descriptionBoilerplate"
               as="textarea"
               rows={10}
@@ -212,7 +212,7 @@ function ConfigurationPage() {
             <Form.Control
               required
               type="text"
-              defaultValue={credentialsState?.access_token}
+              defaultValue={credentialsState?.accessToken}
               name="authToken"
             />
             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -225,7 +225,7 @@ function ConfigurationPage() {
               <Form.Control
                 required
                 type="text"
-                defaultValue={credentialsState?.client_id}
+                defaultValue={credentialsState?.clientId}
                 name="clientId"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -237,7 +237,7 @@ function ConfigurationPage() {
               <Form.Control
                 required
                 type="text"
-                defaultValue={credentialsState?.client_secret}
+                defaultValue={credentialsState?.clientSecret}
                 name="clientSecret"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -249,7 +249,7 @@ function ConfigurationPage() {
               <Form.Control
                 required
                 type="text"
-                defaultValue={credentialsState?.ig_account_id}
+                defaultValue={credentialsState?.igAccountId}
                 name="igAccountId"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
