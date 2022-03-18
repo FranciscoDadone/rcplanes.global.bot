@@ -4,6 +4,7 @@
 import { Card } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
+import axios from 'axios';
 import '../assets/css/InfoPage.css';
 
 function InfoPage() {
@@ -16,26 +17,32 @@ function InfoPage() {
     let isMounted = true;
 
     if (nextUpload.nextUpload === '') {
-      // ipcRenderer
-      //   .invoke('getUtilAndPostingRate')
-      //   .then(
-      //     (data: {
-      //       id: number;
-      //       last_upload_date: string;
-      //       total_posted_medias: number;
-      //       queued_medias: number;
-      //       upload_rate: string;
-      //     }) => {
-      //       const nextPostDate = new Date(data.last_upload_date);
-      //       nextPostDate.setHours(
-      //         nextPostDate.getHours() + parseInt(data.upload_rate, 10)
-      //       );
-      //       setNextUpload({
-      //         nextUpload: nextPostDate.toString(),
-      //         eta: '',
-      //       });
-      //     }
-      //   );
+      axios
+        .get<{
+          id: number;
+          lastUploadDate: string;
+          totalPostedMedias: number;
+          queuedMedias: number;
+        }>('/api/get_util')
+        .then((util) => {
+          axios
+            .get<{
+              id: number;
+              uploadRate: number;
+              descriptionBoilerplate: string;
+              hashtagFetchingEnabled: boolean;
+            }>('/api/general_config')
+            .then((generalConfig) => {
+              const nextPostDate = new Date(util.data.lastUploadDate);
+              nextPostDate.setHours(
+                nextPostDate.getHours() + generalConfig.data.uploadRate
+              );
+              setNextUpload({
+                nextUpload: nextPostDate.toString(),
+                eta: '',
+              });
+            });
+        });
     }
 
     setTimeout(() => {

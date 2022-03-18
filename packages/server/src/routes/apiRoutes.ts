@@ -18,6 +18,7 @@ import {
   setCredentials,
   setGeneralConfig,
   getAllPostsJSON,
+  getUtil,
 } from '../database/DatabaseQueries';
 import { addWatermark } from '../utils/addWatermark';
 
@@ -184,6 +185,16 @@ router.post('/set_general_config', authMiddleware, async (req: any) => {
     req.body.data.descriptionBoilerplate,
     req.body.data.hashtagFetchingEnabled
   );
+});
+
+router.get('/get_util', authMiddleware, async (req: any, res) => {
+  const promise = getUtil();
+  promise.then((data) => {
+    res.send(data);
+  });
+  promise.catch((err) => {
+    if (err) res.sendStatus(500);
+  });
 });
 
 module.exports = router;
