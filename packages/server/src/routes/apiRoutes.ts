@@ -17,6 +17,7 @@ import {
   deleteHashtag,
   setCredentials,
   setGeneralConfig,
+  getAllPostsJSON,
 } from '../database/DatabaseQueries';
 import { addWatermark } from '../utils/addWatermark';
 
@@ -35,9 +36,27 @@ router.get('/user', authMiddleware, (req: any, res) => {
   res.send(req.user);
 });
 
-router.get('/fetched_posts', authMiddleware, (req: any, res) => {
-  getAllNonDeletedPosts().then((data) => {
+router.get(
+  '/non_deleted_fetched_posts',
+  authMiddleware,
+  async (req: any, res) => {
+    const promise = getAllNonDeletedPosts();
+    promise.then((data) => {
+      res.send(data);
+    });
+    promise.catch((err) => {
+      if (err) res.sendStatus(500);
+    });
+  }
+);
+
+router.get('/all_fetched_posts', authMiddleware, (req: any, res) => {
+  const promise = getAllPostsJSON();
+  promise.then((data) => {
     res.send(data);
+  });
+  promise.catch((err) => {
+    if (err) res.sendStatus(500);
   });
 });
 
@@ -159,7 +178,7 @@ router.post('/set_credentials', authMiddleware, async (req: any, res) => {
   res.sendStatus(200);
 });
 
-router.post('/set_general_config', authMiddleware, async (req: any, res) => {
+router.post('/set_general_config', authMiddleware, async (req: any) => {
   await setGeneralConfig(
     req.body.data.uploadRate,
     req.body.data.descriptionBoilerplate,

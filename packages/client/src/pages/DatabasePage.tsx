@@ -1,5 +1,6 @@
 import { Table } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import Loading from '../components/Loading';
 
 interface DataType {
@@ -18,11 +19,11 @@ function DatabasePage() {
 
   useEffect(() => {
     let isMounted = true;
-    // if (posts1 === undefined) {
-    //   ipcRenderer.invoke('getAllPosts').then((data) => {
-    //     if (isMounted) setPosts1(data);
-    //   });
-    // }
+    if (posts1 === undefined) {
+      axios.get('/api/all_fetched_posts').then((res) => {
+        if (isMounted) setPosts1(res.data);
+      });
+    }
     return () => {
       isMounted = false;
     };
