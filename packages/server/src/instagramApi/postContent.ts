@@ -71,7 +71,7 @@ async function createMediaObject(
   console.log('Creating media object... (VIDEO)');
   const res = await fetch(
     `https://graph.facebook.com/v12.0/${
-      credentials.ig_account_id
+      credentials.igAccountId
     }/media?${new URLSearchParams({
       caption,
       media_type: 'VIDEO',
@@ -87,6 +87,7 @@ async function createMediaObject(
     }
   );
   return res.json().then((data: any) => {
+    console.log(data);
     console.log(`Media object ID: ${data.id}`);
     function loopback() {
       return checkStatus(data.id).then((status) => {
