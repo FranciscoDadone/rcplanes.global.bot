@@ -253,7 +253,7 @@ function ConfigurationPage() {
       <h1>General configuration</h1>
       <Row className="mb-2">
         <Form>
-          <Form.Group as={Col} md="2" controlId="validationCustom01">
+          <Form.Group as={Col} md="2">
             <Form.Label>Upload rate in hours</Form.Label>
             <Form.Control
               required
@@ -264,7 +264,7 @@ function ConfigurationPage() {
             />
           </Form.Group>
 
-          <Form.Group as={Col} md="2" controlId="validationCustom01">
+          <Form.Group as={Col} md="2">
             <Form.Check
               type="switch"
               name="hashtagFetchingSwitch"
@@ -275,7 +275,7 @@ function ConfigurationPage() {
               disabled={appStatus !== 'Idling...'}
             />
           </Form.Group>
-          <Form.Group as={Col} md="2" controlId="validationCustom01">
+          <Form.Group as={Col} md="2">
             <Form.Check
               type="switch"
               name="autoPostingSwitch"
@@ -290,7 +290,7 @@ function ConfigurationPage() {
       </Row>
       <Row className="mb-3">
         <Form noValidate onSubmit={saveDescriptionBoilerplate}>
-          <Form.Group as={Col} controlId="validationCustom01">
+          <Form.Group as={Col}>
             <Form.Label>
               <br />
               <h1>Description boilerplate</h1>
@@ -325,7 +325,6 @@ function ConfigurationPage() {
               />
               <Button
                 variant="outline-danger"
-                id="button-addon2"
                 onClick={() => handleDeleteHashtag(index)}
               >
                 Delete
@@ -357,7 +356,7 @@ function ConfigurationPage() {
         validated={validated}
       >
         <Row className="mb-3">
-          <Form.Group as={Col} controlId="validationCustom01">
+          <Form.Group as={Col}>
             <Form.Label>Auth token</Form.Label>
             <Form.Control
               required
@@ -370,7 +369,7 @@ function ConfigurationPage() {
         </Row>
         <Row className="mb-3">
           <Col>
-            <Form.Group as={Col} controlId="validationCustom01">
+            <Form.Group as={Col}>
               <Form.Label>Client Id</Form.Label>
               <Form.Control
                 required
@@ -382,7 +381,7 @@ function ConfigurationPage() {
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group as={Col} controlId="validationCustom01">
+            <Form.Group as={Col}>
               <Form.Label>Client Secret</Form.Label>
               <Form.Control
                 required
@@ -394,7 +393,7 @@ function ConfigurationPage() {
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group as={Col} controlId="validationCustom01">
+            <Form.Group as={Col}>
               <Form.Label>Instagram account id</Form.Label>
               <Form.Control
                 required
@@ -425,7 +424,7 @@ function ConfigurationPage() {
         validated={validated}
       >
         <Row className="mb-3">
-          <Form.Group as={Col} controlId="validationCustom01">
+          <Form.Group as={Col}>
             <Form.Label>Old password</Form.Label>
             <Form.Control required type="password" name="oldPassword" />
             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -433,7 +432,7 @@ function ConfigurationPage() {
         </Row>
         <Row className="mb-3">
           <Col>
-            <Form.Group as={Col} controlId="validationCustom01">
+            <Form.Group as={Col}>
               <Form.Label>New username</Form.Label>
               <Form.Control
                 required
@@ -445,14 +444,14 @@ function ConfigurationPage() {
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group as={Col} controlId="validationCustom01">
+            <Form.Group as={Col}>
               <Form.Label>New password</Form.Label>
               <Form.Control required type="password" name="newPassword1" />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group as={Col} controlId="validationCustom01">
+            <Form.Group as={Col}>
               <Form.Label>Confirm new password</Form.Label>
               <Form.Control required type="password" name="newPassword2" />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
