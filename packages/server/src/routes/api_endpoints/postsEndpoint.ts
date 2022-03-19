@@ -54,7 +54,7 @@ router.delete('/delete_post', authMiddleware, (req: any, res) => {
 
 router.post('/queue_post', authMiddleware, async (req: any, res) => {
   const media = await addWatermark(
-    path.join(__dirname, `../../storage/${req.body.data.mediaPath}`),
+    path.join(__dirname, `../../../storage/${req.body.data.mediaPath}`),
     req.body.data.usernameInImg
   );
   const promise = addPostToQueue(
