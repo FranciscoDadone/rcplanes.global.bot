@@ -4,14 +4,8 @@
 }
 
 .paginationDiv {
-  width: 50%;
-  margin: 0 auto;
-  margin-left: 16rem;
-}
-
-.paginationDiv ul {
-  width: 50%;
-  margin: auto;
+  margin-top: 4.5em;
+  margin-right: 2rem;
 }
 
 .paginationDiv .page-link {
@@ -22,6 +16,7 @@
 
 .paginationBottom {
   margin-top: 5em;
+  margin-top: 1em;
 }
 
 .empty-text {

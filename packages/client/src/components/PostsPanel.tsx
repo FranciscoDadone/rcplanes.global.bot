@@ -30,7 +30,7 @@ function splitUp(arr: any, n: number) {
 
 function PostsPanel(props: { posts: any }) {
   const { posts } = props;
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState<number>(1);
   const [auxPosts, setAuxPosts] = useState(splitUp(posts, posts.length / 55));
 
   if (posts === undefined) return <div />;
@@ -40,19 +40,6 @@ function PostsPanel(props: { posts: any }) {
   };
 
   if (posts !== undefined && posts.length !== 0) {
-    const items: any = [];
-    for (let number = 1; number <= auxPosts.length; number++) {
-      items.push(
-        <Pagination.Item
-          key={number}
-          active={number === activeTab}
-          onClick={() => handleClick(number)}
-        >
-          {number}
-        </Pagination.Item>
-      );
-    }
-
     const updateArray = () => {
       axios.get('/api/posts/non_deleted_fetched_posts').then((data) => {
         setAuxPosts(splitUp(data.data, data.data.length / 55));
@@ -63,7 +50,47 @@ function PostsPanel(props: { posts: any }) {
       <div className="black-bg">
         <Container>
           <div className="paginationDiv">
-            <Pagination className="pagination">{items}</Pagination>
+            <Pagination className="justify-content-center">
+              <Pagination.Item onClick={() => handleClick(1)}>
+                {1}
+              </Pagination.Item>
+              <Pagination.Ellipsis />
+
+              {activeTab - 2 > 0 ? (
+                <Pagination.Item onClick={() => handleClick(activeTab - 2)}>
+                  {activeTab - 2}
+                </Pagination.Item>
+              ) : (
+                <Pagination.Item>&nbsp;</Pagination.Item>
+              )}
+              {activeTab - 1 > 0 ? (
+                <Pagination.Item onClick={() => handleClick(activeTab - 1)}>
+                  {activeTab - 1}
+                </Pagination.Item>
+              ) : (
+                <Pagination.Item>&nbsp;</Pagination.Item>
+              )}
+              <Pagination.Item active>{activeTab}</Pagination.Item>
+              {activeTab < auxPosts.length ? (
+                <Pagination.Item onClick={() => handleClick(activeTab + 1)}>
+                  {activeTab + 1}
+                </Pagination.Item>
+              ) : (
+                <Pagination.Item>&nbsp;</Pagination.Item>
+              )}
+              {activeTab + 1 < auxPosts.length ? (
+                <Pagination.Item onClick={() => handleClick(activeTab + 2)}>
+                  {activeTab + 2}
+                </Pagination.Item>
+              ) : (
+                <Pagination.Item>&nbsp;</Pagination.Item>
+              )}
+
+              <Pagination.Ellipsis />
+              <Pagination.Item onClick={() => handleClick(auxPosts.length)}>
+                {auxPosts.length}
+              </Pagination.Item>
+            </Pagination>
           </div>
 
           <Row className="fluid" xs="auto">
@@ -77,7 +104,47 @@ function PostsPanel(props: { posts: any }) {
           </Row>
 
           <div className="paginationDiv paginationBottom">
-            <Pagination className="pagination">{items}</Pagination>
+            <Pagination className="justify-content-center">
+              <Pagination.Item onClick={() => handleClick(1)}>
+                {1}
+              </Pagination.Item>
+              <Pagination.Ellipsis />
+
+              {activeTab - 2 > 0 ? (
+                <Pagination.Item onClick={() => handleClick(activeTab - 2)}>
+                  {activeTab - 2}
+                </Pagination.Item>
+              ) : (
+                <Pagination.Item>&nbsp;</Pagination.Item>
+              )}
+              {activeTab - 1 > 0 ? (
+                <Pagination.Item onClick={() => handleClick(activeTab - 1)}>
+                  {activeTab - 1}
+                </Pagination.Item>
+              ) : (
+                <Pagination.Item>&nbsp;</Pagination.Item>
+              )}
+              <Pagination.Item active>{activeTab}</Pagination.Item>
+              {activeTab < auxPosts.length ? (
+                <Pagination.Item onClick={() => handleClick(activeTab + 1)}>
+                  {activeTab + 1}
+                </Pagination.Item>
+              ) : (
+                <Pagination.Item>&nbsp;</Pagination.Item>
+              )}
+              {activeTab + 1 < auxPosts.length ? (
+                <Pagination.Item onClick={() => handleClick(activeTab + 2)}>
+                  {activeTab + 2}
+                </Pagination.Item>
+              ) : (
+                <Pagination.Item>&nbsp;</Pagination.Item>
+              )}
+
+              <Pagination.Ellipsis />
+              <Pagination.Item onClick={() => handleClick(auxPosts.length)}>
+                {auxPosts.length}
+              </Pagination.Item>
+            </Pagination>
           </div>
         </Container>
       </div>

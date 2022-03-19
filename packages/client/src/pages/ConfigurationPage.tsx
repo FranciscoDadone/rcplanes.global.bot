@@ -288,11 +288,12 @@ function ConfigurationPage() {
           </Form.Group>
         </Form>
       </Row>
+      <br />
+      <hr />
       <Row className="mb-3">
         <Form noValidate onSubmit={saveDescriptionBoilerplate}>
           <Form.Group as={Col}>
             <Form.Label>
-              <br />
               <h1>Description boilerplate</h1>
               <small>
                 Avaible placeholders: (%description%, %username%, %post_link%)
@@ -312,9 +313,10 @@ function ConfigurationPage() {
           </Button>
         </Form>
       </Row>
+      <hr />
       <Row>
         <Form>
-          <h4>Hashtags to fetch</h4>
+          <h1>Hashtags to fetch</h1>
           {hashtagsToFetch.map((hashtag: any, index) => (
             <InputGroup className="mb-3" key={hashtag.id}>
               <FormControl
