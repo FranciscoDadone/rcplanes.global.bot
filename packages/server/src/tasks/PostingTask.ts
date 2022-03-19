@@ -47,6 +47,8 @@ async function uploadNewPost() {
 }
 
 export async function startPostingTask() {
+  if (!(await getGeneralConfig()).autoPosting) return;
+
   const postingDelay = (await getGeneralConfig()).uploadRate;
   const utils = await getUtil();
 

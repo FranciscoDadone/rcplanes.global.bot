@@ -7,6 +7,7 @@ import {
   savePostFromHashtag,
   getPostFromIdJSON,
   getAllHashtagsToFetch,
+  getGeneralConfig,
 } from '../database/DatabaseQueries';
 import { Post } from '../models/Post';
 
@@ -48,6 +49,12 @@ async function savePost(post: Post) {
 }
 
 async function saveAllPosts(posts: Post[]) {
+  for (const post of posts) {
+    if (post === undefined) {
+      console.log('Skipping... there is an undefined post!');
+      return;
+    }
+  }
   console.log('Now saving images or videos...');
   let total = 0;
   for (const post of posts) {
@@ -64,6 +71,8 @@ async function saveAllPosts(posts: Post[]) {
 }
 
 export async function startHashtagFetching(wait: boolean) {
+  if (!(await getGeneralConfig()).hashtagFetchingEnabled) return;
+
   if (wait) {
     console.log('Waiting 1 hour to fetch again.');
     await new Promise((resolve) => setTimeout(resolve, 3600000));

@@ -6,6 +6,7 @@ import {
   InputGroup,
   Container,
   FormControl,
+  Alert,
 } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -17,24 +18,48 @@ function ConfigurationPage() {
     [{ id: number; hashtag: string }]
   >([{ id: 0, hashtag: 'null' }]);
   const [addHashtagState, setAddHashtagState] = useState<string>('');
-  const [credentialsState, setCredentialsState] = useState<{
+  const [authenticationState, setauthenticationState] = useState<{
     accessToken: string;
     clientId: string;
     igAccountId: string;
     clientSecret: string;
   }>();
   const [configState, setConfigState] = useState<{
-    uploadRate: number;
-    descriptionBoilerplate: string;
-    hashtagFetchingEnabled: boolean;
-    autoPosting: boolean;
+    uploadRate: number | undefined;
+    descriptionBoilerplate: string | undefined;
+    hashtagFetchingEnabled: boolean | undefined;
+    autoPosting: boolean | undefined;
   }>();
+  const [appStatus, setAppStatus] = useState('Idling...');
+  const [credentialsState, setCredentialsState] = useState<{
+    username: string;
+  }>();
+  const [credentialsError, setCredentialsError] = useState<string>('');
+  const [credentialsSuccess, setCredentialsSuccess] = useState<string>('');
 
   useEffect(() => {
     let isMounted = true;
-    if (configState === undefined) {
+    (async () => {
+      while (isMounted) {
+        setAppStatus(global.appStatus);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (configState === undefined || configState.uploadRate === -1) {
       axios.get('/api/general/general_config').then((res) => {
         if (isMounted) setConfigState(res.data);
+      });
+    }
+    if (credentialsState === undefined) {
+      axios.get('/api/user').then((res) => {
+        setCredentialsState(res.data);
       });
     }
     if (
@@ -45,9 +70,9 @@ function ConfigurationPage() {
         if (isMounted) setHashtagsToFetch(res.data);
       });
     }
-    if (credentialsState === undefined) {
+    if (authenticationState === undefined) {
       axios.get('/api/general/credentials').then((res) => {
-        if (isMounted) setCredentialsState(res.data);
+        if (isMounted) setauthenticationState(res.data);
       });
     }
     return () => {
@@ -55,7 +80,7 @@ function ConfigurationPage() {
     };
   });
 
-  const handleSubmit = (event: any) => {
+  const handleSubmitAuthentication = (event: any) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -73,17 +98,81 @@ function ConfigurationPage() {
           igAccountId: formDataObj.igAccountId,
         },
       });
-      axios.post('/api/general/set_general_config', {
-        data: {
-          uploadRate: formDataObj.uploadRate,
-          descriptionBoilerplate: formDataObj.descriptionBoilerplate,
-          hashtagFetchingEnabled: formDataObj.hashtagFetchingSwitch === 'on',
-          autoPosting: formDataObj.autoPostingSwitch === 'on',
-        },
-      });
       event.preventDefault();
       event.stopPropagation();
     }
+  };
+
+  const changeUploadRate = async (value: number) => {
+    axios.post('/api/general/set_general_config', {
+      data: {
+        uploadRate: value,
+        descriptionBoilerplate: configState?.descriptionBoilerplate,
+        hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+        autoPosting: configState?.autoPosting,
+      },
+    });
+    setConfigState({
+      uploadRate: value,
+      descriptionBoilerplate: configState?.descriptionBoilerplate,
+      hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+      autoPosting: configState?.autoPosting,
+    });
+  };
+
+  const changeFetchingEnabled = async () => {
+    axios.post('/api/general/set_general_config', {
+      data: {
+        uploadRate: configState?.uploadRate,
+        descriptionBoilerplate: configState?.descriptionBoilerplate,
+        hashtagFetchingEnabled: !configState?.hashtagFetchingEnabled,
+        autoPosting: configState?.autoPosting,
+      },
+    });
+    setConfigState({
+      uploadRate: configState?.uploadRate,
+      descriptionBoilerplate: configState?.descriptionBoilerplate,
+      hashtagFetchingEnabled: !configState?.hashtagFetchingEnabled,
+      autoPosting: configState?.autoPosting,
+    });
+  };
+
+  const changeAutoPosting = async () => {
+    axios.post('/api/general/set_general_config', {
+      data: {
+        uploadRate: configState?.uploadRate,
+        descriptionBoilerplate: configState?.descriptionBoilerplate,
+        hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+        autoPosting: !configState?.autoPosting,
+      },
+    });
+    setConfigState({
+      uploadRate: configState?.uploadRate,
+      descriptionBoilerplate: configState?.descriptionBoilerplate,
+      hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+      autoPosting: !configState?.autoPosting,
+    });
+  };
+
+  const saveDescriptionBoilerplate = async (event: any) => {
+    const formData = new FormData(event?.currentTarget);
+    const formDataObj = Object.fromEntries(formData.entries());
+    axios.post('/api/general/set_general_config', {
+      data: {
+        uploadRate: configState?.uploadRate,
+        descriptionBoilerplate: formDataObj.descriptionBoilerplate.toString(),
+        hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+        autoPosting: configState?.autoPosting,
+      },
+    });
+    setConfigState({
+      uploadRate: configState?.uploadRate,
+      descriptionBoilerplate: formDataObj.descriptionBoilerplate.toString(),
+      hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+      autoPosting: configState?.autoPosting,
+    });
+    event.preventDefault();
+    event.stopPropagation();
   };
 
   const handleDeleteHashtag = (index: number) => {
@@ -121,12 +210,49 @@ function ConfigurationPage() {
     setAddHashtagState('');
   };
 
+  const handleSubmitCredentialsChange = (event: any) => {
+    const formData = new FormData(event?.currentTarget);
+    const formDataObj = Object.fromEntries(formData.entries());
+    if (formDataObj.newPassword1 === formDataObj.newPassword2) {
+      if (formDataObj.newPassword1 === '')
+        setCredentialsError('New passwords are blank!');
+      else {
+        const promise = axios.post(
+          '/api/general/change_dashboard_credentials',
+          {
+            data: {
+              oldPassword: formDataObj.oldPassword,
+              newUsername: formDataObj.newUsername,
+              newPassword: formDataObj.newPassword1,
+            },
+          }
+        );
+        promise.then((res) => {
+          if (res.data === 'SUCCESS') {
+            setCredentialsSuccess(
+              'Successfully changed dashboard login information!'
+            );
+          } else {
+            setCredentialsError('Incorrect password!');
+          }
+        });
+        promise.catch((err) => {
+          console.log(err);
+        });
+      }
+    } else {
+      setCredentialsError('Passwords missmatch!');
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   return (
     <Container className="container">
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
-        <hr />
-        <h1>General configuration</h1>
-        <Row className="mb-2">
+      <hr />
+      <h1>General configuration</h1>
+      <Row className="mb-2">
+        <Form>
           <Form.Group as={Col} md="2" controlId="validationCustom01">
             <Form.Label>Upload rate in hours</Form.Label>
             <Form.Control
@@ -134,8 +260,8 @@ function ConfigurationPage() {
               type="number"
               defaultValue={configState?.uploadRate}
               name="uploadRate"
+              onChange={(e) => changeUploadRate(parseInt(e.target.value, 10))}
             />
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </Form.Group>
 
           <Form.Group as={Col} md="2" controlId="validationCustom01">
@@ -145,6 +271,8 @@ function ConfigurationPage() {
               label="Fetching"
               defaultChecked={configState?.hashtagFetchingEnabled}
               className="hashtagFetchingSwitch"
+              onClick={changeFetchingEnabled}
+              disabled={appStatus !== 'Idling...'}
             />
           </Form.Group>
           <Form.Group as={Col} md="2" controlId="validationCustom01">
@@ -154,14 +282,18 @@ function ConfigurationPage() {
               label="Auto-posting"
               defaultChecked={configState?.autoPosting}
               className="hashtagFetchingSwitch"
+              onClick={changeAutoPosting}
+              disabled={appStatus !== 'Idling...'}
             />
           </Form.Group>
-        </Row>
-        <Row className="mb-3">
+        </Form>
+      </Row>
+      <Row className="mb-3">
+        <Form noValidate onSubmit={saveDescriptionBoilerplate}>
           <Form.Group as={Col} controlId="validationCustom01">
             <Form.Label>
-              Description boilerplate
               <br />
+              <h1>Description boilerplate</h1>
               <small>
                 Avaible placeholders: (%description%, %username%, %post_link%)
               </small>
@@ -175,8 +307,13 @@ function ConfigurationPage() {
             />
             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </Form.Group>
-        </Row>
-        <Row>
+          <Button type="submit" className="saveButton">
+            Save description
+          </Button>
+        </Form>
+      </Row>
+      <Row>
+        <Form>
           <h4>Hashtags to fetch</h4>
           {hashtagsToFetch.map((hashtag: any, index) => (
             <InputGroup className="mb-3" key={hashtag.id}>
@@ -210,16 +347,22 @@ function ConfigurationPage() {
               Add hashtag
             </Button>
           </InputGroup>
-        </Row>
-        <hr />
-        <h1>Authentication</h1>
+        </Form>
+      </Row>
+      <hr />
+      <h1>Instagram/Facebook Authentication</h1>
+      <Form
+        noValidate
+        onSubmit={handleSubmitAuthentication}
+        validated={validated}
+      >
         <Row className="mb-3">
           <Form.Group as={Col} controlId="validationCustom01">
             <Form.Label>Auth token</Form.Label>
             <Form.Control
               required
               type="text"
-              defaultValue={credentialsState?.accessToken}
+              defaultValue={authenticationState?.accessToken}
               name="authToken"
             />
             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -232,7 +375,7 @@ function ConfigurationPage() {
               <Form.Control
                 required
                 type="text"
-                defaultValue={credentialsState?.clientId}
+                defaultValue={authenticationState?.clientId}
                 name="clientId"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -244,7 +387,7 @@ function ConfigurationPage() {
               <Form.Control
                 required
                 type="text"
-                defaultValue={credentialsState?.clientSecret}
+                defaultValue={authenticationState?.clientSecret}
                 name="clientSecret"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -256,7 +399,7 @@ function ConfigurationPage() {
               <Form.Control
                 required
                 type="text"
-                defaultValue={credentialsState?.igAccountId}
+                defaultValue={authenticationState?.igAccountId}
                 name="igAccountId"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
@@ -265,7 +408,60 @@ function ConfigurationPage() {
         </Row>
         <br />
         <Button type="submit" className="saveButton">
-          Save configuration
+          Save IG/FB authentication
+        </Button>
+      </Form>
+      <hr />
+      <h1>Dashboard login credentials</h1>
+      <Alert variant="danger" show={credentialsError !== ''}>
+        <Alert.Heading>{credentialsError}</Alert.Heading>
+      </Alert>
+      <Alert variant="success" show={credentialsSuccess !== ''}>
+        <Alert.Heading>{credentialsSuccess}</Alert.Heading>
+      </Alert>
+      <Form
+        noValidate
+        onSubmit={handleSubmitCredentialsChange}
+        validated={validated}
+      >
+        <Row className="mb-3">
+          <Form.Group as={Col} controlId="validationCustom01">
+            <Form.Label>Old password</Form.Label>
+            <Form.Control required type="password" name="oldPassword" />
+            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+          </Form.Group>
+        </Row>
+        <Row className="mb-3">
+          <Col>
+            <Form.Group as={Col} controlId="validationCustom01">
+              <Form.Label>New username</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                defaultValue={credentialsState?.username}
+                name="newUsername"
+              />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group as={Col} controlId="validationCustom01">
+              <Form.Label>New password</Form.Label>
+              <Form.Control required type="password" name="newPassword1" />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group as={Col} controlId="validationCustom01">
+              <Form.Label>Confirm new password</Form.Label>
+              <Form.Control required type="password" name="newPassword2" />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+        </Row>
+        <br />
+        <Button type="submit" className="saveButton">
+          Save dashboard login credentials
         </Button>
       </Form>
     </Container>

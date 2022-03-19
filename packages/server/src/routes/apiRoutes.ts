@@ -29,7 +29,8 @@ router.get('/post_process_image', authMiddleware, (req: any, res) => {
 });
 
 router.get('/status', authMiddleware, (req: any, res) => {
-  res.send(global.appStatus);
+  if (global.appStatus) res.send(global.appStatus);
+  else res.send('Idling...');
 });
 
 module.exports = router;

@@ -1,10 +1,16 @@
 import URLSearchParams from 'url';
 import { Post } from '../models/Post';
-import { getCredentials } from '../database/DatabaseQueries';
+import {
+  getCredentials,
+  getGeneralConfig,
+  setGeneralConfig,
+} from '../database/DatabaseQueries';
 
 const fetch = require('node-fetch');
 
 async function getHashtagId(hashtag: string): Promise<any> {
+  const generalConfig = await getGeneralConfig();
+  if (!generalConfig.hashtagFetchingEnabled) return;
   const credentials: any = await getCredentials();
   return new Promise((resolve) => {
     const res = fetch(
@@ -34,6 +40,7 @@ async function getHashtagId(hashtag: string): Promise<any> {
           console.log('================ ERROR ================');
           console.log(data1.error.message);
           console.log('=======================================');
+          return resolve(undefined);
         }
         return resolve(data1.data[0].id);
       })
@@ -69,6 +76,7 @@ async function getUsername(post: { permalink: any }): Promise<string> {
 export async function getPosts(hashtag: string, type: string): Promise<Post> {
   const credentials: any = await getCredentials();
   return getHashtagId(hashtag).then((id) => {
+    if (id === undefined) return;
     return fetch(
       `https://graph.facebook.com/v12.0/${id}/${type}?${new URLSearchParams.URLSearchParams(
         {

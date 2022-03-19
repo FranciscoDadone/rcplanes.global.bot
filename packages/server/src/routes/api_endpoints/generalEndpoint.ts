@@ -1,5 +1,5 @@
 // /api/general/<endpoint>
-
+import bcrypt from 'bcryptjs';
 import express from 'express';
 import passport from 'passport';
 import { authMiddleware } from '../../middlewares/authMiddleware';
@@ -9,6 +9,8 @@ import {
   setCredentials,
   setGeneralConfig,
   getUtil,
+  getUserFromId,
+  updateUserFromId,
 } from '../../database/DatabaseQueries';
 import TasksManager from '../../tasks/TasksManager';
 
@@ -79,5 +81,26 @@ router.get('/get_util', authMiddleware, async (req: any, res) => {
     if (err) res.sendStatus(500);
   });
 });
+
+router.post(
+  '/change_dashboard_credentials',
+  authMiddleware,
+  async (req: any, res) => {
+    const currentUser = await getUserFromId(1);
+    bcrypt
+      .compare(req.body.data.oldPassword, currentUser.hashedPassword)
+      .then((match) => {
+        if (match) {
+          updateUserFromId(
+            currentUser.id,
+            req.body.data.newUsername,
+            req.body.data.newPassword
+          ).then(() => {
+            res.send('SUCCESS');
+          });
+        } else res.send('PASSWORD_MISSMACH');
+      });
+  }
+);
 
 module.exports = router;

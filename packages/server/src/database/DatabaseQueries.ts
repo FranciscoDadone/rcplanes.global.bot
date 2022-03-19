@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { Post } from '../models/Post';
 
 const DatabaseHandler = require('./DatabaseHandler');
@@ -298,7 +299,12 @@ export async function getUserFromUsername(username: string) {
   });
 }
 
-export async function getUserFromId(id: number) {
+export async function getUserFromId(id: number): Promise<{
+  id: number;
+  username: string;
+  hashedPassword: string;
+  salt: string;
+}> {
   const db = DatabaseHandler.getDatabase();
   const sql = 'SELECT * FROM user WHERE (id)=(?)';
   return new Promise((resolve) => {
@@ -306,6 +312,18 @@ export async function getUserFromId(id: number) {
       resolve(rows[0]);
     });
   });
+}
+
+export async function updateUserFromId(
+  id: number,
+  newUsername: string,
+  newPassword: string
+) {
+  const db = DatabaseHandler.getDatabase();
+
+  const sql = `UPDATE user SET (username, hashedPassword)=(?,?) WHERE id=${id}`;
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  db.run(sql, [newUsername, hashedPassword]);
 }
 
 module.exports = {
@@ -332,4 +350,5 @@ module.exports = {
   getUserFromUsername,
   getUserFromId,
   getQueuePost,
+  updateUserFromId,
 };

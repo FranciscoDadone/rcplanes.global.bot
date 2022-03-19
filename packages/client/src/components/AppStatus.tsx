@@ -2,6 +2,7 @@ import { Spinner } from 'react-bootstrap';
 
 export default function AppStatus(props: { status: string }) {
   const { status } = props;
+  global.appStatus = status;
   if (status !== 'Idling...') {
     return (
       <div>
