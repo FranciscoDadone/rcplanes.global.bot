@@ -426,7 +426,7 @@ function ConfigurationPage() {
         <Row className="mb-3">
           <Form.Group as={Col}>
             <Form.Label>Old password</Form.Label>
-            <Form.Control required type="password" name="oldPassword" />
+            <Form.Control required type="text" name="oldPassword" />
             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </Form.Group>
         </Row>

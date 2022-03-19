@@ -5,7 +5,6 @@ import Loading from '../components/Loading';
 
 function ExplorePage() {
   const [posts, setPosts] = useState<any>();
-
   useEffect(() => {
     let isMounted = true;
     if (posts === undefined || posts.length === 0) {

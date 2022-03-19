@@ -103,4 +103,8 @@ router.post(
   }
 );
 
+router.get('/stdout', authMiddleware, (req: any, res) => {
+  res.send(global.appSTDOUT);
+});
+
 module.exports = router;

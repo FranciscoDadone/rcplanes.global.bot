@@ -8,6 +8,7 @@ import {
   faList,
   faCircleInfo,
   faArrowRightFromBracket,
+  faBook,
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import AppStatus from './AppStatus';
@@ -16,6 +17,7 @@ import ConfigurationPage from '../pages/ConfigurationPage';
 import DatabasePage from '../pages/DatabasePage';
 import QueuePage from '../pages/QueuePage';
 import InfoPage from '../pages/InfoPage';
+import LogsPage from '../pages/LogsPage';
 import appIcon from '../assets/images/icon.png';
 import '../assets/css/AppNavbar.css';
 
@@ -85,6 +87,10 @@ export default function AppNavbar() {
               <Nav.Link onClick={() => setComponent(<InfoPage />)}>
                 <FontAwesomeIcon icon={faCircleInfo} />
                 &nbsp;Info
+              </Nav.Link>
+              <Nav.Link onClick={() => setComponent(<LogsPage />)}>
+                <FontAwesomeIcon icon={faBook} />
+                &nbsp;Logs
               </Nav.Link>
               <Nav.Link onClick={logout}>
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />

@@ -1,10 +1,6 @@
 import URLSearchParams from 'url';
 import { Post } from '../models/Post';
-import {
-  getCredentials,
-  getGeneralConfig,
-  setGeneralConfig,
-} from '../database/DatabaseQueries';
+import { getCredentials, getGeneralConfig } from '../database/DatabaseQueries';
 
 const fetch = require('node-fetch');
 
@@ -76,7 +72,7 @@ async function getUsername(post: { permalink: any }): Promise<string> {
 export async function getPosts(hashtag: string, type: string): Promise<Post> {
   const credentials: any = await getCredentials();
   return getHashtagId(hashtag).then((id) => {
-    if (id === undefined) return;
+    if (id === undefined) return [];
     return fetch(
       `https://graph.facebook.com/v12.0/${id}/${type}?${new URLSearchParams.URLSearchParams(
         {
@@ -96,9 +92,7 @@ export async function getPosts(hashtag: string, type: string): Promise<Post> {
     ).then((data: { json: () => Promise<any> }) =>
       data.json().then((data1: { data: any; error: any }) => {
         if (data1.error && data1.error.code === 190) {
-          throw new Error(
-            'Invalid authentication credentials. (Check Configuration section)'
-          );
+          return;
         }
         const postsCount =
           data1.data === undefined ? 0 : Object.keys(data1.data).length;

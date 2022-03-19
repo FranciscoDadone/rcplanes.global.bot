@@ -9,6 +9,7 @@ import TasksManager from './tasks/TasksManager';
 const bodyParser = require('body-parser');
 
 require('./authentication/passportConfig')(passport);
+const captureConsole = require('capture-console');
 
 // ----------------------- END OF IMPORTS -----------------------
 
@@ -55,9 +56,14 @@ app.use('/api/hashtags', hashtagsRouter);
 // ----------------------- END OF ROUTES -----------------------
 
 global.appStatus = 'Idling...';
+global.appSTDOUT = '';
 // ----------------------- END OF GLOBAL VARS -----------------------
 
+captureConsole.startCapture(process.stdout, (stdout) => {
+  global.appSTDOUT += stdout;
+});
 TasksManager();
+// ----------------------- END OF TASKS -----------------------
 
 app.listen(port, () => {
   console.log(`App started at http://localhost:${port}`);

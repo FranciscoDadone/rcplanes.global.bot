@@ -1,0 +1,11 @@
+.main-container {
+  color: white;
+}
+
+.console {
+  background: #1b1c1d;
+  white-space: pre-wrap;
+  margin-top: 1em;
+  margin-bottom: 2em;
+  padding: 2em;
+}
