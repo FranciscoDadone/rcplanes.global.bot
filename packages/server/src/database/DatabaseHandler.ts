@@ -23,7 +23,7 @@ async function initDB() {
   );
 
   database.run(
-    'INSERT INTO generalConfig (uploadRate, descriptionBoilerplate, hashtagFetchingEnabled) VALUES (3, "%description%", true);'
+    'INSERT INTO generalConfig (uploadRate, descriptionBoilerplate, hashtagFetchingEnabled, autoPosting) VALUES (3, "%description%", true, true);'
   );
 
   const hashedPassword = await bcrypt.hash('admin', 10);
@@ -75,7 +75,8 @@ function createTables() {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uploadRate NUMBER NOT NULL,
     descriptionBoilerplate TEXT NOT NULL,
-    hashtagFetchingEnabled INTEGER NOT NULL);`);
+    hashtagFetchingEnabled INTEGER NOT NULL,
+    autoPosting INTEGER NOT NULL);`);
 
   // util
   database.exec(`CREATE TABLE IF NOT EXISTS util (

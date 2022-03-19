@@ -46,20 +46,28 @@ router.post('/set_credentials', authMiddleware, async (req: any, res) => {
   res.sendStatus(200);
 });
 
-router.post('/set_general_config', authMiddleware, async (req: any) => {
+router.post('/set_general_config', authMiddleware, async (req: any, res) => {
   const hashtagFetchingEnabled = await (
     await getGeneralConfig()
   ).hashtagFetchingEnabled;
-  let sendTask = false;
+  const autoPosting = await (await getGeneralConfig()).autoPosting;
+  let sendTaskFetching = false;
+  let sendTaskPosting = false;
   if (hashtagFetchingEnabled !== req.body.data.hashtagFetchingEnabled) {
-    sendTask = true;
+    sendTaskFetching = true;
+  }
+  if (autoPosting !== req.body.data.autoPosting) {
+    sendTaskPosting = true;
   }
   await setGeneralConfig(
     req.body.data.uploadRate,
     req.body.data.descriptionBoilerplate,
-    req.body.data.hashtagFetchingEnabled
+    req.body.data.hashtagFetchingEnabled,
+    req.body.data.autoPosting
   );
-  if (sendTask) TasksManager('fetching');
+  if (sendTaskFetching) TasksManager('fetching');
+  if (sendTaskPosting) TasksManager('posting');
+  res.sendStatus(200);
 });
 
 router.get('/get_util', authMiddleware, async (req: any, res) => {

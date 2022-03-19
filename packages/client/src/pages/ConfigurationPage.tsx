@@ -27,6 +27,7 @@ function ConfigurationPage() {
     uploadRate: number;
     descriptionBoilerplate: string;
     hashtagFetchingEnabled: boolean;
+    autoPosting: boolean;
   }>();
 
   useEffect(() => {
@@ -77,6 +78,7 @@ function ConfigurationPage() {
           uploadRate: formDataObj.uploadRate,
           descriptionBoilerplate: formDataObj.descriptionBoilerplate,
           hashtagFetchingEnabled: formDataObj.hashtagFetchingSwitch === 'on',
+          autoPosting: formDataObj.autoPostingSwitch === 'on',
         },
       });
       event.preventDefault();
@@ -142,6 +144,15 @@ function ConfigurationPage() {
               name="hashtagFetchingSwitch"
               label="Fetching"
               defaultChecked={configState?.hashtagFetchingEnabled}
+              className="hashtagFetchingSwitch"
+            />
+          </Form.Group>
+          <Form.Group as={Col} md="2" controlId="validationCustom01">
+            <Form.Check
+              type="switch"
+              name="autoPostingSwitch"
+              label="Auto-posting"
+              defaultChecked={configState?.autoPosting}
               className="hashtagFetchingSwitch"
             />
           </Form.Group>

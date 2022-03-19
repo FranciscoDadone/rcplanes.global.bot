@@ -63,9 +63,9 @@ export async function startPostingTask() {
     ')'
   );
   if (shouldPost) {
-    // Status.setStatus('Uploading new post!');
+    global.appStatus = 'Uploading new post!';
     await uploadNewPost();
-    // Status.setStatus('Idling...');
+    global.appStatus = 'Idling...';
     console.log('Uploaded new post to Instagram!');
   }
 

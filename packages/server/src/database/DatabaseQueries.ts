@@ -189,6 +189,7 @@ export async function getGeneralConfig(): Promise<{
   uploadRate: number;
   descriptionBoilerplate: string;
   hashtagFetchingEnabled: boolean;
+  autoPosting: boolean;
 }> {
   const db = DatabaseHandler.getDatabase();
   const sql = 'SELECT * FROM generalConfig;';
@@ -199,6 +200,7 @@ export async function getGeneralConfig(): Promise<{
         uploadRate: rows[0].uploadRate,
         descriptionBoilerplate: rows[0].descriptionBoilerplate,
         hashtagFetchingEnabled: rows[0].hashtagFetchingEnabled === 1,
+        autoPosting: rows[0].autoPosting === 1,
       });
     });
   });
@@ -207,11 +209,17 @@ export async function getGeneralConfig(): Promise<{
 export async function setGeneralConfig(
   uploadRate: number,
   descriptionBoilerplate: string,
-  hashtagFetchingEnabled: boolean
+  hashtagFetchingEnabled: boolean,
+  autoPosting: boolean
 ) {
   const db = DatabaseHandler.getDatabase();
-  const sql = `UPDATE generalConfig SET (uploadRate, descriptionBoilerplate, hashtagFetchingEnabled)=(?,?,?) WHERE id=1`;
-  db.run(sql, [uploadRate, descriptionBoilerplate, hashtagFetchingEnabled]);
+  const sql = `UPDATE generalConfig SET (uploadRate, descriptionBoilerplate, hashtagFetchingEnabled, autoPosting)=(?,?,?,?) WHERE id=1`;
+  db.run(sql, [
+    uploadRate,
+    descriptionBoilerplate,
+    hashtagFetchingEnabled,
+    autoPosting,
+  ]);
 }
 
 export async function getUtil(): Promise<{
