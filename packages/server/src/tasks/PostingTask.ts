@@ -5,9 +5,9 @@ import {
   getUtil,
   setUtil,
   addPostToHistory,
-} from './database/DatabaseQueries';
-import { uploadToImgur } from './utils/uploadToImgur';
-import { publish } from './instagramApi/postContent';
+} from '../database/DatabaseQueries';
+import { uploadToImgur } from '../utils/uploadToImgur';
+import { publish } from '../instagramApi/postContent';
 
 async function uploadNewPost() {
   const mediaQueue = await getQueue();

@@ -194,7 +194,12 @@ export async function getGeneralConfig(): Promise<{
   const sql = 'SELECT * FROM generalConfig;';
   return new Promise((resolve) => {
     db.all(sql, (_err: any, rows: any) => {
-      resolve(rows[0]);
+      resolve({
+        id: rows[0].id,
+        uploadRate: rows[0].uploadRate,
+        descriptionBoilerplate: rows[0].descriptionBoilerplate,
+        hashtagFetchingEnabled: rows[0].hashtagFetchingEnabled === 1,
+      });
     });
   });
 }

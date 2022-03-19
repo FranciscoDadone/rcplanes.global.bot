@@ -28,4 +28,8 @@ router.get('/post_process_image', authMiddleware, (req: any, res) => {
   });
 });
 
+router.get('/status', authMiddleware, (req: any, res) => {
+  res.send(global.appStatus);
+});
+
 module.exports = router;

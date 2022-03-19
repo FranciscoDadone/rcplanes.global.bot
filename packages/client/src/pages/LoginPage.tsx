@@ -52,6 +52,7 @@ function LoginPage() {
             type="password"
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="on"
           />
         </Form.Group>
         <Button variant="primary" type="submit" onClick={login}>

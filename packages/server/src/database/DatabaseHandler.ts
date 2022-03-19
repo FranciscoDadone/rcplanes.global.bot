@@ -101,21 +101,18 @@ function createTables() {
 
 export function connect(): sqlite3.Database {
   database = new sqlite3.Database(
-    `${__dirname}/database.sqlite`,
+    `./database.sqlite`,
     sqlite3.OPEN_READWRITE,
     (err: Error | null) => {
       createTables();
       if (err) {
-        database = new sqlite3.Database(
-          `${__dirname}/database.sqlite`,
-          (err1) => {
-            if (err1) {
-              console.log(`Database error ${err1}`);
-            }
-            createTables();
-            initDB();
+        database = new sqlite3.Database(`./database.sqlite`, (err1) => {
+          if (err1) {
+            console.log(`Database error ${err1}`);
           }
-        );
+          createTables();
+          initDB();
+        });
       }
       console.log('Database connected!');
     }

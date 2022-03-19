@@ -1,10 +1,10 @@
 import express from 'express';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
 import path from 'path';
 import { connect } from './database/DatabaseHandler';
+import TasksManager from './tasks/TasksManager';
 
 const bodyParser = require('body-parser');
 
@@ -54,7 +54,12 @@ app.use('/api/queue', queueRouter);
 app.use('/api/hashtags', hashtagsRouter);
 // ----------------------- END OF ROUTES -----------------------
 
-// start the Express server
+global.appStatus = 'Idling...';
+// ----------------------- END OF GLOBAL VARS -----------------------
+
+TasksManager();
+
 app.listen(port, () => {
   console.log(`App started at http://localhost:${port}`);
 });
+// ----------------------- END OF SERVER -----------------------

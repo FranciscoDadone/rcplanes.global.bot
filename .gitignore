@@ -1,4 +1,4 @@
-packages/server/src/database/database.sqlite
+packages/server/database.sqlite
 packages/server/storage
 
 build/**/*

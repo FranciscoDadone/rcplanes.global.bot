@@ -10,6 +10,7 @@ import {
   setGeneralConfig,
   getUtil,
 } from '../../database/DatabaseQueries';
+import TasksManager from '../../tasks/TasksManager';
 
 const bodyParser = require('body-parser');
 
@@ -46,11 +47,19 @@ router.post('/set_credentials', authMiddleware, async (req: any, res) => {
 });
 
 router.post('/set_general_config', authMiddleware, async (req: any) => {
+  const hashtagFetchingEnabled = await (
+    await getGeneralConfig()
+  ).hashtagFetchingEnabled;
+  let sendTask = false;
+  if (hashtagFetchingEnabled !== req.body.data.hashtagFetchingEnabled) {
+    sendTask = true;
+  }
   await setGeneralConfig(
     req.body.data.uploadRate,
     req.body.data.descriptionBoilerplate,
     req.body.data.hashtagFetchingEnabled
   );
+  if (sendTask) TasksManager('fetching');
 });
 
 router.get('/get_util', authMiddleware, async (req: any, res) => {

@@ -79,10 +79,6 @@ function ConfigurationPage() {
           hashtagFetchingEnabled: formDataObj.hashtagFetchingSwitch === 'on',
         },
       });
-      // eslint-disable-next-line no-alert
-      alert(
-        'Configuration saved! If you edited authentication data you may want to restart the app.'
-      );
       event.preventDefault();
       event.stopPropagation();
     }

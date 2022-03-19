@@ -1,12 +1,14 @@
 import download from 'download';
-import { getRecentPosts, getTopPosts } from './instagramApi/getPostsFromInstagram';
+import {
+  getRecentPosts,
+  getTopPosts,
+} from '../instagramApi/getPostsFromInstagram';
 import {
   savePostFromHashtag,
   getPostFromIdJSON,
   getAllHashtagsToFetch,
-  getGeneralConfig,
-} from './database/DatabaseQueries';
-import { Post } from './models/Post';
+} from '../database/DatabaseQueries';
+import { Post } from '../models/Post';
 
 async function saveMediaToStorage(
   originalUrl: string,
@@ -34,8 +36,6 @@ async function saveMediaToStorage(
 }
 
 async function savePost(post: Post) {
-  // Status.setStatus(`Saving #${post.getPostId()}`);
-  // eslint-disable-next-line max-len
   const path = await saveMediaToStorage(
     post.getMediaURL(),
     post.getMediaType(),
@@ -63,39 +63,33 @@ async function saveAllPosts(posts: Post[]) {
   console.log(`Finished saving images and videos. (Total ${total})`);
 }
 
-async function startHashtagFetching(wait: boolean) {
+export async function startHashtagFetching(wait: boolean) {
   if (wait) {
     console.log('Waiting 1 hour to fetch again.');
     await new Promise((resolve) => setTimeout(resolve, 3600000));
   }
-  const config = await getGeneralConfig();
-  if (config.hashtagFetchingEnabled) {
-    const hashtags: any = await getAllHashtagsToFetch();
-    let allPosts: Post[] = [];
-    for (const hashtag of hashtags) {
-      // Status.setStatus(`Fetching #${hashtag.hashtag}`);
-      const recentPostsOfHashtag = await getRecentPosts(
-        hashtag.hashtag
-      ).finally(() => {
+
+  const hashtags: any = await getAllHashtagsToFetch();
+  let allPosts: Post[] = [];
+  for (const hashtag of hashtags) {
+    global.appStatus = `Fetching #${hashtag.hashtag}`;
+    const recentPostsOfHashtag = await getRecentPosts(hashtag.hashtag).finally(
+      () => {
         console.log(
           `Finished fetching the recent posts of #${hashtag.hashtag}`
         );
-      });
-      const topPostsOfHashtag = await getTopPosts(hashtag.hashtag).finally(
-        () => {
-          console.log(`Finished fetching the top posts of #${hashtag.hashtag}`);
-        }
-      );
-      allPosts = allPosts.concat(recentPostsOfHashtag);
-      allPosts = allPosts.concat(topPostsOfHashtag);
-    }
-    // Status.setStatus("Saving posts");
-    await saveAllPosts(allPosts);
-  } else {
-    console.log('Fetching disabled :(');
-    // Status.setStatus("Idling...");
+      }
+    );
+    const topPostsOfHashtag = await getTopPosts(hashtag.hashtag).finally(() => {
+      console.log(`Finished fetching the top posts of #${hashtag.hashtag}`);
+    });
+    allPosts = allPosts.concat(recentPostsOfHashtag);
+    allPosts = allPosts.concat(topPostsOfHashtag);
   }
-  // Status.setStatus("Idling...");
+  global.appStatus = 'Saving posts';
+  await saveAllPosts(allPosts);
+
+  global.appStatus = 'Idling...';
   startHashtagFetching(true);
 }
 

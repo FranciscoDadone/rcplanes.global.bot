@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -22,6 +22,21 @@ import '../assets/css/AppNavbar.css';
 export default function AppNavbar() {
   const [Status, setStatus] = useState('Booting up...');
   const [Component, setComponent] = useState(<ExplorePage />);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      while (isMounted) {
+        axios.get('/api/status').then((res) => {
+          setStatus(res.data);
+        });
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  });
 
   const logout = () => {
     axios.get('/auth/logout').then((res) => {
