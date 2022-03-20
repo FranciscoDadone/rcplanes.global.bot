@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
+import moment from 'moment';
 import path from 'path';
 import { connect } from './database/DatabaseHandler';
 import TasksManager from './tasks/TasksManager';
@@ -60,7 +61,9 @@ global.appSTDOUT = '';
 // ----------------------- END OF GLOBAL VARS -----------------------
 
 captureConsole.startCapture(process.stdout, (stdout) => {
-  global.appSTDOUT += stdout;
+  global.appSTDOUT += `[${moment(new Date(), 'DD/MM/YYYY HH:mm:ss').format(
+    'DD/MM/YYYY HH:mm:ss'
+  )}] ${stdout}`;
 });
 TasksManager();
 // ----------------------- END OF TASKS -----------------------

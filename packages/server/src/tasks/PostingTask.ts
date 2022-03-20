@@ -56,21 +56,15 @@ export async function startPostingTask() {
     nextPostDate.setHours(nextPostDate.getHours() + postingDelay);
     const shouldPost = nextPostDate < new Date();
 
-    console.log(
-      'Next post date: ',
-      nextPostDate.toString(),
-      ' (Should post?:',
-      shouldPost,
-      ')'
-    );
     if (shouldPost) {
+      console.log('Uploading new post to instagram...');
       global.appStatus = 'Uploading new post!';
       await uploadNewPost();
       global.appStatus = 'Idling...';
     }
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 300000));
+  await new Promise((resolve) => setTimeout(resolve, 60000));
   startPostingTask();
 }
 
