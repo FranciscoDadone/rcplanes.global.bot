@@ -8,4 +8,8 @@
   margin-top: 1em;
   margin-bottom: 2em;
   padding: 2em;
+  position: absolute;
+  top: 13%;
+  bottom: 10%;
+  overflow-y: scroll;
 }
