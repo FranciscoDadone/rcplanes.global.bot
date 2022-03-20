@@ -2,6 +2,7 @@ import { Modal, Form, Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Media from './Media';
+import Loading from './Loading';
 import '../assets/css/MediaModal.css';
 
 function MediaModal(props: {
@@ -16,6 +17,7 @@ function MediaModal(props: {
   const [caption, setCaption] = useState<string>();
   const [mediaModal, setMediaModal] = useState(media);
   const [usernameInImg, setUsernameInImg] = useState(post.username);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -39,6 +41,7 @@ function MediaModal(props: {
   };
 
   const handleQueue = () => {
+    setLoading(true);
     axios
       .post('api/posts/queue_post', {
         data: {
@@ -51,7 +54,11 @@ function MediaModal(props: {
         },
       })
       .then((code) => {
-        if (code.status === 200) handleClose();
+        if (code.status !== 200) console.log('Error while queueing media.');
+        else {
+          setLoading(false);
+          handleClose();
+        }
       });
   };
 
@@ -72,6 +79,31 @@ function MediaModal(props: {
   };
   if (mediaModal === media) postProcessUsernameInImg(post.username);
 
+  if (loading) {
+    return (
+      <Modal show={show} onHide={handleClose} fullscreen className="modal">
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Post from: @{post.username} (#{post.hashtag})
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ background: '#282c34' }}>
+          <Loading text="Queueing media..." spinner />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" disabled>
+            Close
+          </Button>
+          <Button variant="danger" disabled>
+            Delete
+          </Button>
+          <Button variant="success" disabled>
+            ✉️ Queue media
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
   return (
     <>
       <Modal show={show} onHide={handleClose} fullscreen className="modal">

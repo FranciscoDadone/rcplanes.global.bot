@@ -19,6 +19,7 @@ function PostCard(props: { post: any; updateList: any }) {
     axios.delete('/api/posts/delete_post', {
       params: {
         postId: post.postId,
+        mediaType: post.mediaType,
       },
     });
     updateList();

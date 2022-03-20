@@ -55,6 +55,7 @@ export default function AppNavbar() {
           <Navbar.Brand
             className="navBrand"
             href="https://www.instagram.com/rcplanes.global/"
+            target="_blank"
           >
             <img src={appIcon} alt="App icon" className="navbarBrand" />
             &nbsp;&nbsp;RcPlanesBot
