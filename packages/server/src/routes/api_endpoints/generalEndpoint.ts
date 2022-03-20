@@ -68,7 +68,10 @@ router.post('/set_general_config', authMiddleware, async (req: any, res) => {
     req.body.data.autoPosting
   );
   if (sendTaskFetching) TasksManager('fetching');
-  if (sendTaskPosting) TasksManager('posting');
+  if (sendTaskPosting) {
+    if (req.body.data.autoPosting) console.log('Auto-posting enabled! :)');
+    else console.log('Auto-posting disabled! :(');
+  }
   res.sendStatus(200);
 });
 

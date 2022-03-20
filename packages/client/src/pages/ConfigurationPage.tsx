@@ -283,7 +283,6 @@ function ConfigurationPage() {
               defaultChecked={configState?.autoPosting}
               className="hashtagFetchingSwitch"
               onClick={changeAutoPosting}
-              disabled={appStatus !== 'Idling...'}
             />
           </Form.Group>
         </Form>

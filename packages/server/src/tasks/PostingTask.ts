@@ -47,27 +47,27 @@ async function uploadNewPost() {
 }
 
 export async function startPostingTask() {
-  if (!(await getGeneralConfig()).autoPosting) return;
+  if ((await getGeneralConfig()).autoPosting) {
+    const postingDelay = (await getGeneralConfig()).uploadRate;
+    const utils = await getUtil();
 
-  const postingDelay = (await getGeneralConfig()).uploadRate;
-  const utils = await getUtil();
+    const lastUploadDate = new Date(utils.lastUploadDate);
+    const nextPostDate = lastUploadDate;
+    nextPostDate.setHours(nextPostDate.getHours() + postingDelay);
+    const shouldPost = nextPostDate < new Date();
 
-  const lastUploadDate = new Date(utils.lastUploadDate);
-  const nextPostDate = lastUploadDate;
-  nextPostDate.setHours(nextPostDate.getHours() + postingDelay);
-  const shouldPost = nextPostDate < new Date();
-
-  console.log(
-    'Next post date: ',
-    nextPostDate.toString(),
-    ' (Should post?:',
-    shouldPost,
-    ')'
-  );
-  if (shouldPost) {
-    global.appStatus = 'Uploading new post!';
-    await uploadNewPost();
-    global.appStatus = 'Idling...';
+    console.log(
+      'Next post date: ',
+      nextPostDate.toString(),
+      ' (Should post?:',
+      shouldPost,
+      ')'
+    );
+    if (shouldPost) {
+      global.appStatus = 'Uploading new post!';
+      await uploadNewPost();
+      global.appStatus = 'Idling...';
+    }
   }
 
   await new Promise((resolve) => setTimeout(resolve, 300000));
