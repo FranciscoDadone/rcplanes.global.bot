@@ -62,7 +62,7 @@ This project is based on my other project that is the same app but built using E
    ```
 2. Install dependencies
    ```sh
-   yarn install
+   $ yarn install
    $ ( cd packages/client && yarn )
    $ ( cd packages/server && yarn )
    $ ( cd packages/common && yarn )

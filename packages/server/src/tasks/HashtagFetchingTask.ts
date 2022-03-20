@@ -70,36 +70,39 @@ async function saveAllPosts(posts: Post[]) {
   console.log(`Finished saving images and videos. (Total ${total})`);
 }
 
-export async function startHashtagFetching(wait: boolean) {
-  if (!(await getGeneralConfig()).hashtagFetchingEnabled) return;
-
-  if (wait) {
-    console.log('Waiting 1 hour to fetch again.');
-    await new Promise((resolve) => setTimeout(resolve, 3600000));
-  }
-
-  const hashtags: any = await getAllHashtagsToFetch();
-  let allPosts: Post[] = [];
-  for (const hashtag of hashtags) {
-    global.appStatus = `Fetching #${hashtag.hashtag}`;
-    const recentPostsOfHashtag = await getRecentPosts(hashtag.hashtag).finally(
-      () => {
+export async function startHashtagFetching(repeat: boolean) {
+  const fetchingEnabled: boolean = (await getGeneralConfig())
+    .hashtagFetchingEnabled;
+  if (fetchingEnabled) {
+    const hashtags: any = await getAllHashtagsToFetch();
+    let allPosts: Post[] = [];
+    for (const hashtag of hashtags) {
+      global.appStatus = `Fetching #${hashtag.hashtag}`;
+      const recentPostsOfHashtag = await getRecentPosts(
+        hashtag.hashtag
+      ).finally(() => {
         console.log(
           `Finished fetching the recent posts of #${hashtag.hashtag}`
         );
-      }
-    );
-    const topPostsOfHashtag = await getTopPosts(hashtag.hashtag).finally(() => {
-      console.log(`Finished fetching the top posts of #${hashtag.hashtag}`);
-    });
-    allPosts = allPosts.concat(recentPostsOfHashtag);
-    allPosts = allPosts.concat(topPostsOfHashtag);
+      });
+      const topPostsOfHashtag = await getTopPosts(hashtag.hashtag).finally(
+        () => {
+          console.log(`Finished fetching the top posts of #${hashtag.hashtag}`);
+        }
+      );
+      allPosts = allPosts.concat(recentPostsOfHashtag);
+      allPosts = allPosts.concat(topPostsOfHashtag);
+    }
+    global.appStatus = 'Saving posts';
+    await saveAllPosts(allPosts);
+    global.appStatus = 'Idling...';
   }
-  global.appStatus = 'Saving posts';
-  await saveAllPosts(allPosts);
 
-  global.appStatus = 'Idling...';
-  startHashtagFetching(true);
+  if (repeat) {
+    if (fetchingEnabled) console.log('Waiting 1 hour to fetch again.');
+    await new Promise((resolve) => setTimeout(resolve, 3600000));
+    startHashtagFetching(true);
+  }
 }
 
 module.exports = { startHashtagFetching };
