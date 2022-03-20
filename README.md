@@ -29,6 +29,31 @@ This project is based on my other project that is the same app but built using E
 * [ReactJS](https://reactjs.org/)
 * [TypeScript](https://www.typescriptlang.org/)
 
+# Images
+- Login page: Dashboard login (default creds: admin:admin)
+<img src=".github/images/login.png" />
+
+- Explore page: Main page where fetched content will show.
+<img src=".github/images/explore.png" />
+
+- Media popup: this shows when you click an image in the explore page and let you decide to delete that post or send it to the queue.
+<img src=".github/images/mediaModal.png" />
+
+- Configuration page
+<img src=".github/images/configuration1.png" />
+<img src=".github/images/configuration2.png" />
+<img src=".github/images/configuration3.png" />
+<img src=".github/images/configuration4.png" />
+
+- Database page: page that shows database contents.
+<img src=".github/images/database.png" />
+
+- Queue: media queue of selected content.
+<img src=".github/images/queue.png" />
+
+- Logs: application logs
+<img src=".github/images/logs.png" />
+
 ### Installation
 #### Regular install
 1. Clone the repo.
@@ -90,10 +115,20 @@ This project is based on my other project that is the same app but built using E
 <img src=".github/images/clientSecret.png" />
 - Instagram account ID ( search for 'fbid' in https://www.instagram.com/rcplanes.global/?__a=1 )
 
+# API Endpoints
+  To be documented
 
 <!-- CONTACT -->
-## Contact
+# Contact
 
-Francisco Dadone - [@FranDadone](https://twitter.com/FranDadone) - dadonefran@gmail.com
+- Francisco Dadone - [@FranDadone](https://twitter.com/FranDadone) - dadonefran@gmail.com
 
-Project Link: [https://github.com/FranciscoDadone/01computacion-landing](https://github.com/FranciscoDadone/01computacion-landing)
+- Project Link: [https://github.com/FranciscoDadone/rcplanes.global.bot-webversion](https://github.com/FranciscoDadone/rcplanes.global.bot-webversion)
+
+
+# TO-DO
+- Access Token auto-refresh
+- Profiles fetching
+- Posting schedule
+- Manually add post to queue
+- 2FA Authentication to the panel
