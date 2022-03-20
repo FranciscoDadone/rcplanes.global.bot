@@ -8,9 +8,14 @@ function LogsPage() {
 
   useEffect(() => {
     let isMounted = true;
-    axios.get('/api/general/stdout').then((res) => {
-      if (isMounted) setLogs(res.data);
-    });
+    (async () => {
+      while (isMounted) {
+        axios.get('/api/general/stdout').then((res) => {
+          setLogs(res.data);
+        });
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+      }
+    })();
     return () => {
       isMounted = false;
     };
