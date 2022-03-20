@@ -164,7 +164,13 @@ export async function deleteHashtag(hashtag: string) {
   db.run(sql);
 }
 
-export async function getCredentials() {
+export async function getCredentials(): Promise<{
+  id: number;
+  accessToken: string;
+  clientSecret: string;
+  clientId: string;
+  igAccountId: string;
+}> {
   const db = DatabaseHandler.getDatabase();
   const sql = 'SELECT * FROM credentials;';
   return new Promise((resolve) => {

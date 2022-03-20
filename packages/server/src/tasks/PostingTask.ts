@@ -68,7 +68,6 @@ export async function startPostingTask() {
     global.appStatus = 'Uploading new post!';
     await uploadNewPost();
     global.appStatus = 'Idling...';
-    console.log('Uploaded new post to Instagram!');
   }
 
   await new Promise((resolve) => setTimeout(resolve, 300000));

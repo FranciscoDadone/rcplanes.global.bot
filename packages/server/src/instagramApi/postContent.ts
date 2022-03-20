@@ -4,7 +4,7 @@ const { URLSearchParams } = require('url');
 const fetch = require('node-fetch');
 
 async function checkStatus(id: string) {
-  const credentials: any = await getCredentials();
+  const credentials = await getCredentials();
   return fetch(
     `https://graph.facebook.com/v13.0/${id}?fields=status_code&access_token=${credentials.accessToken}`,
     {
@@ -14,11 +14,16 @@ async function checkStatus(id: string) {
         'Content-Type': 'application/json',
       },
     }
-  ).then((res: any) => res.json().then((data: any) => data.statusCode));
+  ).then((res: any) =>
+    res.json().then((data: any) => {
+      console.log(data);
+      return data.statusCode;
+    })
+  );
 }
 
 async function publishMedia(id: string) {
-  const credentials: any = await getCredentials();
+  const credentials = await getCredentials();
   const res = await fetch(
     `https://graph.facebook.com/v13.0/${
       credentials.igAccountId
@@ -34,6 +39,7 @@ async function publishMedia(id: string) {
     }
   );
   return res.json().then((data: { id: string }) => {
+    console.log(data);
     console.log(`Media published! ${data.id}`);
     return data.id;
   });
@@ -89,19 +95,25 @@ async function createMediaObject(
   return res.json().then((data: any) => {
     console.log(data);
     console.log(`Media object ID: ${data.id}`);
-    function loopback() {
+    function cb() {
       return checkStatus(data.id).then((status) => {
         return (async () => {
-          if (status !== 'FINISHED') {
-            await new Promise((resolve) => setTimeout(resolve, 5000));
-            loopback();
-          } else {
+          // API limit reached
+          if (status === undefined) {
+            console.log('API Limit reached! Waiting 60s to post.');
+            await new Promise((resolve) => setTimeout(resolve, 60000));
             return publishMedia(data.id);
           }
+          // API normal operation
+          if (status && status !== 'FINISHED') {
+            await new Promise((resolve) => setTimeout(resolve, 10000));
+            cb();
+          }
+          return publishMedia(data.id);
         })();
       });
     }
-    return loopback();
+    return cb();
   });
 }
 
