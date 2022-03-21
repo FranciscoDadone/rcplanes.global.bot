@@ -118,57 +118,66 @@ This project is based on my other project that is the same app but built using E
 # API Endpoints
   ## /auth/
   ### POST ```/auth/login```
-  Receives a username and password and returns: ```SUCCESS``` when authenticated AND ```INCORRECT_CREDENTIALS``` when no user found with that credentials. 
+  Receives a username and password.
   * data: { username, password }
+  * Return: ```SUCCESS``` when authenticated or ```INCORRECT_CREDENTIALS``` when no user found with that credentials. 
 
   ### POST ```/auth/logout```
-  Logs the user out. Returns ```SUCCESS``` when logged out.
+  Logs the user out. 
+  * Return: ```SUCCESS``` when logged out.
 
   ### GET ```/auth/user```
   Gets the current logged user. Same as ```/api/user```
 
   ## /api/
   ### GET ```/api/user```
-  Returns current authenticated user.
+  Returns current authenticated user. Same as ```/auth/user```
   
   ### GET ```/api/status```
-  Returns the current app status.
+  Current app status.
+  * Return: ```Idling...``` or ```Saving posts``` or ```Uploading new post!``` or ```NOT_AUTHENTICATED``` or ...
 
   ### GET ```/api/post_process_image```
   Receives a instagram post id (stored image name) and username and returns a postprocessed image with the watermark.
- * params: { image, username }
+  * params: { image, username }
     * image: instagram post id (stored image path).
     * username: username to add to the watermark.
+  * Return: Base64 image with the watermark added.
   
   ## /api/general/
   ### GET ```/api/general/general_config```
-  Returns the general config: { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
+  Returns the general config: 
+  * Return: { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
 
   ### POST ```/api/general/set_general_config```
   Receives general config fields and stores them in the database.
   * data: { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
 
   ### GET ```/api/general/credentials```
-  Returns the stored Instagram/Facebook credentials: { accessToken, clientSecret clientId, igAccountId }
+  Returns the stored Instagram/Facebook credentials.
+  * Return: { accessToken, clientSecret clientId, igAccountId }
 
   ### POST ```/api/general/set_credentials```
   Receives Instagram/Facebook credentials and stores them in the database.
   * data: { accessToken, clientSecret, clientId, igAccountId }
 
   ### GET ```/api/general/util```
-  Returns { lastUploadDate, totalPostedMedias, queuedMedias }
+  Returns utils table.
+  * Return: { lastUploadDate, totalPostedMedias, queuedMedias }
 
   ### POST ```/api/general/change_dashboard_credentials```
   Receives the old password to compare the proceed with the change and the new username and password.
-  Returns ```SUCCESS``` if the change succeded and ```PASSWORD_MISSMACH``` if the old password doesn't match with the one on the database.
   * data: { oldPassword, newPassword, newUsername }
+  * Return: ```SUCCESS``` if the change succeded or ```PASSWORD_MISSMACH``` if the old password doesn't match with the one on the database.
 
   ### GET ```/api/general/logs```
-  Returns the server logs at runtime.
+  Server logs at runtime.
+  * Return: logs as string
 
   ## /api/hashtags/
   ### GET ```/api/hashtags/hashtags```
-  Returns all the hashtags to fetch.
+  Returns an array of all hashtags to fetch.
+  * Return: [{ hashtag }]
 
   ### POST ```/api/hashtags/add```
   Receives a new hashtag and adds it to the database of hashtags to fetch.
@@ -180,12 +189,12 @@ This project is based on my other project that is the same app but built using E
 
   ## /api/posts/
   ### GET ```/api/posts/non_deleted_fetched_posts```
-  Returns all the posts that have not been deleted, queued or posted.
-  * Return: { postId, mediaType, storagePath, caption, permalink, hashtag, status, date, username, childrenOf }
+  Returns an array of all the posts that have not been deleted, queued or posted.
+  * Return: [{ postId, mediaType, storagePath, caption, permalink, hashtag, status, date, username, childrenOf }]
 
   ### GET ```/api/posts/all_fetched_posts```
-  Returns all fetched posts.
-  * Return: { postId, mediaType, storagePath, caption, permalink, hashtag, status, date, username, childrenOf }
+  Returns an array of all fetched posts.
+  * Return: [{ postId, mediaType, storagePath, caption, permalink, hashtag, status, date, username, childrenOf }]
 
   ### DELETE ```/api/posts/delete```
   Receives a post id and deletes that post from the fetched posts.
