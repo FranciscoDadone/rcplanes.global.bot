@@ -73,7 +73,7 @@ async function saveAllPosts(posts: Post[]) {
 export async function startHashtagFetching(repeat: boolean) {
   const { hashtagFetchingEnabled } = await getGeneralConfig();
   if (hashtagFetchingEnabled) {
-    console.log('Fetching...');
+    console.log('============= START OF HASHTAG FETCH =============');
     const hashtags: any = await getAllHashtagsToFetch();
     let allPosts: Post[] = [];
     for (const hashtag of hashtags) {
@@ -96,10 +96,12 @@ export async function startHashtagFetching(repeat: boolean) {
     global.appStatus = 'Saving posts';
     await saveAllPosts(allPosts);
     global.appStatus = 'Idling...';
+    console.log('============= END OF HASHTAG FETCH =============');
   }
 
   if (repeat) {
     if (hashtagFetchingEnabled) console.log('Waiting 1 hour to fetch again.');
+    else console.log('Fetching try failed (fetching not enabled)');
     await new Promise((resolve) => setTimeout(resolve, 3600000));
     startHashtagFetching(true);
   }

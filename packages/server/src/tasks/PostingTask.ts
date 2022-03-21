@@ -58,10 +58,12 @@ export async function startPostingTask() {
     const shouldPost = nextPostDate < new Date();
 
     if (shouldPost) {
+      console.log('============= START OF CONTENT POST =============');
       console.log('Uploading new post to instagram...');
       global.appStatus = 'Uploading new post!';
       await uploadNewPost();
       global.appStatus = 'Idling...';
+      console.log('============= END OF CONTENT POST =============');
     }
   }
 

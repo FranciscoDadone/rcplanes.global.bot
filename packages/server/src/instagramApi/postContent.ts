@@ -98,16 +98,14 @@ async function createMediaObject(
     function cb() {
       return checkStatus(data.id).then((status) => {
         return (async () => {
-          // API limit reached
-          if (status === undefined) {
-            console.log('API Limit reached! Waiting 60s to post.');
-            await new Promise((resolve) => setTimeout(resolve, 60000));
-            return publishMedia(data.id);
-          }
           // API normal operation
           if (status && status !== 'FINISHED') {
             await new Promise((resolve) => setTimeout(resolve, 10000));
             cb();
+          } else if (status === undefined) {
+            console.log('API Limit reached! Waiting 60s to post.');
+            await new Promise((resolve) => setTimeout(resolve, 60000));
+            return publishMedia(data.id);
           }
           return publishMedia(data.id);
         })();
