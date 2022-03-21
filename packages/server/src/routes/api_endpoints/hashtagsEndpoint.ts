@@ -19,6 +19,10 @@ require('../../authentication/passportConfig')(passport);
 
 // -------------------------- END OF MIDDLEWARES -----------------------------
 
+/**
+ * Receives a new hashtag and adds it to the database of hashtags to fetch.
+ * data: { hashtag }
+ */
 router.post('/add', authMiddleware, async (req: any, res) => {
   await addHashtagToFetch(req.body.data.hashtag).catch((err) => {
     if (err) res.sendStatus(500);
@@ -26,13 +30,20 @@ router.post('/add', authMiddleware, async (req: any, res) => {
   res.sendStatus(200);
 });
 
-router.post('/delete', authMiddleware, async (req: any, res) => {
-  await deleteHashtag(req.body.data.hashtag).catch((err) => {
+/**
+ * Receives a hashtag and deletes it from the database of hashtags to fetch.
+ * params: { hashtag }
+ */
+router.delete('/delete', authMiddleware, async (req: any, res) => {
+  await deleteHashtag(req.query.hashtag).catch((err) => {
     if (err) res.sendStatus(500);
   });
   res.sendStatus(200);
 });
 
+/**
+ * Returns all the hashtags to fetch.
+ */
 router.get('/hashtags', authMiddleware, async (req: any, res) => {
   await getAllHashtagsToFetch().then((data) => {
     res.send(data);

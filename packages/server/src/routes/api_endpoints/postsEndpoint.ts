@@ -24,6 +24,10 @@ require('../../authentication/passportConfig')(passport);
 
 // -------------------------- END OF MIDDLEWARES -----------------------------
 
+/**
+ * Returns all the posts that have not been deleted, queued or posted.
+ * Return: { postId, mediaType, storagePath, caption, permalink, hashtag, status, date, username, childrenOf }
+ */
 router.get(
   '/non_deleted_fetched_posts',
   authMiddleware,
@@ -38,6 +42,10 @@ router.get(
   }
 );
 
+/**
+ * Returns all fetched  posts.
+ * Return: { postId, mediaType, storagePath, caption, permalink, hashtag, status, date, username, childrenOf }
+ */
 router.get('/all_fetched_posts', authMiddleware, (req: any, res) => {
   const promise = getAllPostsJSON();
   promise.then((data) => {
@@ -48,7 +56,11 @@ router.get('/all_fetched_posts', authMiddleware, (req: any, res) => {
   });
 });
 
-router.delete('/delete_post', authMiddleware, (req: any, res) => {
+/**
+ * Receives a post id and deletes that post from the fetched posts.
+ * params: { postId }
+ */
+router.delete('/delete', authMiddleware, (req: any, res) => {
   const mediaFile =
     req.query.postId + (req.query.mediaType === 'IMAGE' ? '.png' : '.mp4');
   const pathToDelete = path.join(__dirname, `../../../storage/${mediaFile}`);
@@ -62,7 +74,16 @@ router.delete('/delete_post', authMiddleware, (req: any, res) => {
   });
 });
 
-router.post('/queue_post', authMiddleware, async (req: any, res) => {
+/**
+ * Receives a post and adds it to the queue.
+ * data: { id, mediaPath, usernameInImg, mediaType, caption, owner }
+ *  * id: fetched post id
+ *  * mediaPath: where the media is stored in the filesystem.
+ *  * mediaType: IMAGE or VIDEO
+ *  * caption: post caption
+ *  * owner: post owner aka username
+ */
+router.post('/queue', authMiddleware, async (req: any, res) => {
   let media;
   if (req.body.data.mediaType === 'IMAGE') {
     media = await addWatermark(

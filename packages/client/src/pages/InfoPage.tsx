@@ -23,7 +23,7 @@ function InfoPage() {
           lastUploadDate: string;
           totalPostedMedias: number;
           queuedMedias: number;
-        }>('/api/general/get_util')
+        }>('/api/general/util')
         .then((util) => {
           axios
             .get<{

@@ -10,7 +10,7 @@ function LogsPage() {
     let isMounted = true;
     (async () => {
       while (isMounted) {
-        axios.get('/api/general/stdout').then((res) => {
+        axios.get('/api/general/logs').then((res) => {
           setLogs(res.data);
         });
         await new Promise((resolve) => setTimeout(resolve, 10000));

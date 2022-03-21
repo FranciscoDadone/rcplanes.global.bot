@@ -41,7 +41,7 @@ export default function AppNavbar() {
   });
 
   const logout = () => {
-    axios.get('/auth/logout').then((res) => {
+    axios.post('/auth/logout').then((res) => {
       if (res.data === 'SUCCESS') {
         window.location.href = '/';
       }

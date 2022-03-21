@@ -24,18 +24,30 @@ require('../../authentication/passportConfig')(passport);
 
 // -------------------------- END OF MIDDLEWARES -----------------------------
 
+/**
+ * Returns the general config
+ * { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
+ */
 router.get('/general_config', authMiddleware, (req: any, res) => {
   getGeneralConfig().then((data) => {
     res.send(data);
   });
 });
 
+/**
+ * Returns the stored Instagram/Facebook credentials
+ * { accessToken, clientSecret clientId, igAccountId }
+ */
 router.get('/credentials', authMiddleware, (req: any, res) => {
   getCredentials().then((data) => {
     res.send(data);
   });
 });
 
+/**
+ * Receives Instagram/Facebook credentials and stores them in the database.
+ * data: { accessToken, clientSecret, clientId, igAccountId }
+ */
 router.post('/set_credentials', authMiddleware, async (req: any, res) => {
   await setCredentials(
     req.body.data.accessToken,
@@ -48,6 +60,10 @@ router.post('/set_credentials', authMiddleware, async (req: any, res) => {
   res.sendStatus(200);
 });
 
+/**
+ * Receives general config fields and stores them in the database.
+ * data: { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
+ */
 router.post('/set_general_config', authMiddleware, async (req: any, res) => {
   const hashtagFetchingEnabled = await (
     await getGeneralConfig()
@@ -75,7 +91,10 @@ router.post('/set_general_config', authMiddleware, async (req: any, res) => {
   res.sendStatus(200);
 });
 
-router.get('/get_util', authMiddleware, async (req: any, res) => {
+/**
+ * Returns { lastUploadDate, totalPostedMedias, queuedMedias }
+ */
+router.get('/util', authMiddleware, async (req: any, res) => {
   const promise = getUtil();
   promise.then((data) => {
     res.send(data);
@@ -85,6 +104,11 @@ router.get('/get_util', authMiddleware, async (req: any, res) => {
   });
 });
 
+/**
+ * Receives the old password to compare the proceed with the change and the new username and password.
+ * Returns 'SUCCESS' if the change succeded and 'PASSWORD_MISSMACH' if the old password doesn't match with the one on the database.
+ * data: { oldPassword, newPassword, newUsername }
+ */
 router.post(
   '/change_dashboard_credentials',
   authMiddleware,
@@ -106,7 +130,10 @@ router.post(
   }
 );
 
-router.get('/stdout', authMiddleware, (req: any, res) => {
+/**
+ * Returns the server logs at runtime.
+ */
+router.get('/logs', authMiddleware, (req: any, res) => {
   res.send(global.appSTDOUT);
 });
 

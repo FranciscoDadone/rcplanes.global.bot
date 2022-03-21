@@ -116,7 +116,106 @@ This project is based on my other project that is the same app but built using E
 - Instagram account ID ( search for 'fbid' in https://www.instagram.com/rcplanes.global/?__a=1 )
 
 # API Endpoints
-  To be documented
+  ## /auth/
+  ### POST ```/auth/login```
+  Receives a username and password and returns: ```SUCCESS``` when authenticated AND ```INCORRECT_CREDENTIALS``` when no user found with that credentials. 
+  * data: { username, password }
+
+  ### POST ```/auth/logout```
+  Logs the user out. Returns ```SUCCESS``` when logged out.
+
+  ### GET ```/auth/user```
+  Gets the current logged user. Same as ```/api/user```
+
+  ## /api/
+  ### GET ```/api/user```
+  Returns current authenticated user.
+  
+  ### GET ```/api/status```
+  Returns the current app status.
+
+  ### GET ```/api/post_process_image```
+  Receives a instagram post id (stored image name) and username and returns a postprocessed image with the watermark.
+ * params: { image, username }
+    * image: instagram post id (stored image path).
+    * username: username to add to the watermark.
+  
+  ## /api/general/
+  ### GET ```/api/general/general_config```
+  Returns the general config: { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
+
+  ### POST ```/api/general/set_general_config```
+  Receives general config fields and stores them in the database.
+  * data: { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
+
+  ### GET ```/api/general/credentials```
+  Returns the stored Instagram/Facebook credentials: { accessToken, clientSecret clientId, igAccountId }
+
+  ### POST ```/api/general/set_credentials```
+  Receives Instagram/Facebook credentials and stores them in the database.
+  * data: { accessToken, clientSecret, clientId, igAccountId }
+
+  ### GET ```/api/general/util```
+  Returns { lastUploadDate, totalPostedMedias, queuedMedias }
+
+  ### POST ```/api/general/change_dashboard_credentials```
+  Receives the old password to compare the proceed with the change and the new username and password.
+  Returns ```SUCCESS``` if the change succeded and ```PASSWORD_MISSMACH``` if the old password doesn't match with the one on the database.
+  * data: { oldPassword, newPassword, newUsername }
+
+  ### GET ```/api/general/logs```
+  Returns the server logs at runtime.
+
+  ## /api/hashtags/
+  ### GET ```/api/hashtags/hashtags```
+  Returns all the hashtags to fetch.
+
+  ### POST ```/api/hashtags/add```
+  Receives a new hashtag and adds it to the database of hashtags to fetch.
+  * data: { hashtag }
+
+  ### DELETE ```/api/hashtags/delete```
+  Receives a hashtag and deletes it from the database of hashtags to fetch.
+  * params: { hashtag }
+
+  ## /api/posts/
+  ### GET ```/api/posts/non_deleted_fetched_posts```
+  Returns all the posts that have not been deleted, queued or posted.
+  * Return: { postId, mediaType, storagePath, caption, permalink, hashtag, status, date, username, childrenOf }
+
+  ### GET ```/api/posts/all_fetched_posts```
+  Returns all fetched posts.
+  * Return: { postId, mediaType, storagePath, caption, permalink, hashtag, status, date, username, childrenOf }
+
+  ### DELETE ```/api/posts/delete```
+  Receives a post id and deletes that post from the fetched posts.
+  * params: { postId }
+
+  ### POST ```/api/posts/queue```
+  Receives a post and adds it to the queue.
+  * data: { id, mediaPath, usernameInImg, mediaType, caption, owner }
+    * id: fetched post id
+    * mediaPath: where the media is stored in the filesystem.
+    * mediaType: IMAGE or VIDEO
+    * caption: post caption
+    * owner: post owner aka username
+
+  ## /api/queue/
+  ### GET ```/api/queue/queue```
+  Returns an array of the current posts in queue.
+  * Return: [{ id, media, mediaType, caption, owner }]
+
+  ### POST ```/api/queue/swap```
+  Receives the id's of two posts and swaps them in the queue.
+  * data: { id1, id2 }
+
+  ### DELETE ```/api/queue/delete```
+  Receives a post id and deletes that post from the queue.
+  * params: { id }
+  
+  ### PATCH ```/api/queue/update_post```
+  Receives a post id and the caption and updates it on the database.
+  * data: { id, caption }
 
 <!-- CONTACT -->
 # Contact

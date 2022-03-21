@@ -18,7 +18,6 @@ function LoginPage() {
       withCredentials: true,
       url: '/auth/login',
     }).then((res) => {
-      console.log(res);
       if (res.data === 'SUCCESS') {
         window.location.href = '/';
       }

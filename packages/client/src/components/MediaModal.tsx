@@ -43,7 +43,7 @@ function MediaModal(props: {
   const handleQueue = () => {
     setLoading(true);
     axios
-      .post('api/posts/queue_post', {
+      .post('api/posts/queue', {
         data: {
           id: post.postId,
           mediaPath: post.storagePath,

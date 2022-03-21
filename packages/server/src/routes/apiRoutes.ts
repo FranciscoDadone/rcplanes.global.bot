@@ -15,10 +15,19 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 // ----------------------- END OF MIDDLEWARES -----------------------
 
+/**
+ * Gets current authenticated user.
+ */
 router.get('/user', authMiddleware, (req: any, res) => {
   res.send(req.user);
 });
 
+/**
+ * Receives a instagram post id (stored image name) and username and returns a
+ * postprocessed image with the watermark.
+ * params: { image, username }
+ * image: instagram post id (stored image path)
+ */
 router.get('/post_process_image', authMiddleware, (req: any, res) => {
   addWatermark(
     path.join(__dirname, `../../storage/${req.query.image}`),
@@ -28,6 +37,9 @@ router.get('/post_process_image', authMiddleware, (req: any, res) => {
   });
 });
 
+/**
+ * Returns the current app status.
+ */
 router.get('/status', authMiddleware, (req: any, res) => {
   if (global.appStatus) res.send(global.appStatus);
   else res.send('Idling...');

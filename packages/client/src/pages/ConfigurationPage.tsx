@@ -177,8 +177,8 @@ function ConfigurationPage() {
 
   const handleDeleteHashtag = (index: number) => {
     const hashtags: any = [];
-    axios.post('/api/hashtags/delete', {
-      data: {
+    axios.delete('/api/hashtags/delete', {
+      params: {
         hashtag: hashtagsToFetch[index].hashtag,
       },
     });
