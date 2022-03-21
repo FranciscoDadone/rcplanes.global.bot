@@ -47,7 +47,9 @@ async function uploadNewPost() {
 }
 
 export async function startPostingTask() {
-  if ((await getGeneralConfig()).autoPosting) {
+  const { autoPosting } = await getGeneralConfig();
+  if (autoPosting) {
+    console.log('Retrying posting task');
     const postingDelay = (await getGeneralConfig()).uploadRate;
     const utils = await getUtil();
 
@@ -64,7 +66,7 @@ export async function startPostingTask() {
     }
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 60000));
+  await new Promise((resolve) => setTimeout(resolve, 120000));
   startPostingTask();
 }
 

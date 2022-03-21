@@ -65,10 +65,7 @@ router.post('/set_credentials', authMiddleware, async (req: any, res) => {
  * data: { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
  */
 router.post('/set_general_config', authMiddleware, async (req: any, res) => {
-  const hashtagFetchingEnabled = await (
-    await getGeneralConfig()
-  ).hashtagFetchingEnabled;
-  const autoPosting = await (await getGeneralConfig()).autoPosting;
+  const { hashtagFetchingEnabled, autoPosting } = await getGeneralConfig();
   let sendTaskFetching = false;
   let sendTaskPosting = false;
   if (hashtagFetchingEnabled !== req.body.data.hashtagFetchingEnabled) {
