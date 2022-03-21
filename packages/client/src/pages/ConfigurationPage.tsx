@@ -19,10 +19,9 @@ function ConfigurationPage() {
   >([{ id: 0, hashtag: 'null' }]);
   const [addHashtagState, setAddHashtagState] = useState<string>('');
   const [authenticationState, setauthenticationState] = useState<{
-    accessToken: string;
-    clientId: string;
-    igAccountId: string;
-    clientSecret: string;
+    username: string;
+    password: string;
+    authenticator: string;
   }>();
   const [configState, setConfigState] = useState<{
     uploadRate: number | undefined;
@@ -72,7 +71,12 @@ function ConfigurationPage() {
     }
     if (authenticationState === undefined) {
       axios.get('/api/general/credentials').then((res) => {
-        if (isMounted) setauthenticationState(res.data);
+        if (isMounted)
+          setauthenticationState({
+            username: res.data.username,
+            password: '',
+            authenticator: '',
+          });
       });
     }
     return () => {
@@ -92,10 +96,9 @@ function ConfigurationPage() {
       const formDataObj = Object.fromEntries(formData.entries());
       axios.post('/api/general/set_credentials', {
         data: {
-          accessToken: formDataObj.authToken,
-          clientSecret: formDataObj.clientSecret,
-          clientId: formDataObj.clientId,
-          igAccountId: formDataObj.igAccountId,
+          username: formDataObj.username,
+          password: formDataObj.password,
+          authenticator: formDataObj.authenticator,
         },
       });
       event.preventDefault();
@@ -350,57 +353,46 @@ function ConfigurationPage() {
         </Form>
       </Row>
       <hr />
-      <h1>Instagram/Facebook Authentication</h1>
+      <h1>Instagram Authentication</h1>
       <Form
         noValidate
         onSubmit={handleSubmitAuthentication}
         validated={validated}
       >
         <Row className="mb-3">
-          <Form.Group as={Col}>
-            <Form.Label>Auth token</Form.Label>
-            <Form.Control
-              required
-              type="text"
-              defaultValue={authenticationState?.accessToken}
-              name="authToken"
-            />
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
           <Col>
             <Form.Group as={Col}>
-              <Form.Label>Client Id</Form.Label>
+              <Form.Label>Username</Form.Label>
               <Form.Control
                 required
                 type="text"
-                defaultValue={authenticationState?.clientId}
-                name="clientId"
+                defaultValue={authenticationState?.username}
+                name="username"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
           </Col>
           <Col>
             <Form.Group as={Col}>
-              <Form.Label>Client Secret</Form.Label>
+              <Form.Label>Password</Form.Label>
               <Form.Control
                 required
-                type="text"
-                defaultValue={authenticationState?.clientSecret}
-                name="clientSecret"
+                type="password"
+                defaultValue={authenticationState?.password}
+                name="password"
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
           </Col>
           <Col>
             <Form.Group as={Col}>
-              <Form.Label>Instagram account id</Form.Label>
+              <Form.Label>Athenticator</Form.Label>
               <Form.Control
                 required
                 type="text"
-                defaultValue={authenticationState?.igAccountId}
-                name="igAccountId"
+                defaultValue={authenticationState?.authenticator}
+                name="authenticator"
+                disabled
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
@@ -408,7 +400,7 @@ function ConfigurationPage() {
         </Row>
         <br />
         <Button type="submit" className="saveButton">
-          Save IG/FB authentication
+          Save Instagram authentication
         </Button>
       </Form>
       <hr />

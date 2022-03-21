@@ -165,29 +165,24 @@ export async function deleteHashtag(hashtag: string) {
 }
 
 export async function getCredentials(): Promise<{
-  id: number;
-  accessToken: string;
-  clientSecret: string;
-  clientId: string;
-  igAccountId: string;
+  username: string;
+  hashedPassword: string;
 }> {
   const db = DatabaseHandler.getDatabase();
   const sql = 'SELECT * FROM credentials;';
   return new Promise((resolve) => {
     db.all(sql, (_err: any, rows: any) => {
-      resolve(rows[0]);
+      resolve({
+        username: rows[0].username,
+        hashedPassword: rows[0].hashedPassword,
+      });
     });
   });
 }
 
-export async function setCredentials(
-  accessToken: string,
-  clientSecret: string,
-  clientId: string,
-  igAccountId: string
-) {
+export async function setCredentials(username: string, hashedPassword: string) {
   const db = DatabaseHandler.getDatabase();
-  const sql = `UPDATE credentials SET (accessToken, clientSecret, clientId, igAccountId)=('${accessToken}', '${clientSecret}', '${clientId}', '${igAccountId}') WHERE id=1`;
+  const sql = `UPDATE credentials SET (username, hashedPassword)=('${username}', '${hashedPassword}') WHERE id=1`;
   db.run(sql);
 }
 

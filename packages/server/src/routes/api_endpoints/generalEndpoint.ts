@@ -49,12 +49,9 @@ router.get('/credentials', authMiddleware, (req: any, res) => {
  * data: { accessToken, clientSecret, clientId, igAccountId }
  */
 router.post('/set_credentials', authMiddleware, async (req: any, res) => {
-  await setCredentials(
-    req.body.data.accessToken,
-    req.body.data.clientSecret,
-    req.body.data.clientId,
-    req.body.data.igAccountId
-  ).catch((err) => {
+  const hashedPassword = await bcrypt.hash(req.body.data.password, 10);
+
+  await setCredentials(req.body.data.username, hashedPassword).catch((err) => {
     if (err) res.sendStatus(500);
   });
   res.sendStatus(200);

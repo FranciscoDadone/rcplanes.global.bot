@@ -15,7 +15,7 @@ async function initDB() {
   database.run(sql, ['rcplanes']);
 
   database.run(
-    'INSERT INTO credentials (accessToken, clientSecret, clientId, igAccountId) VALUES ("null","","","");'
+    'INSERT INTO credentials (username, hashedPassword) VALUES ("","");'
   );
 
   database.run(
@@ -65,10 +65,8 @@ function createTables() {
   // credentials
   database.exec(`CREATE TABLE IF NOT EXISTS credentials (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    accessToken TEXT NOT NULL,
-    clientSecret TEXT NOT NULL,
-    clientId TEXT NOT NULL,
-    igAccountId TEXT NOT NULL);`);
+    username TEXT,
+    hashedPassword BLOB);`);
 
   // generalConfig
   database.exec(`CREATE TABLE IF NOT EXISTS generalConfig (
@@ -96,7 +94,7 @@ function createTables() {
     date TEXT NOT NULL);`);
 
   database.exec(
-    'CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, hashedPassword BLOB, salt BLOB)'
+    'CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, hashedPassword BLOB)'
   );
 }
 

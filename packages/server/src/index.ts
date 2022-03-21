@@ -6,6 +6,7 @@ import moment from 'moment';
 import path from 'path';
 import { connect } from './database/DatabaseHandler';
 import TasksManager from './tasks/TasksManager';
+import { getRecentPosts } from './services/getPostsFromInstagram.service';
 
 const bodyParser = require('body-parser');
 
@@ -54,6 +55,7 @@ app.use('/api/posts', postsRouter);
 app.use('/api/general', generalRouter);
 app.use('/api/queue', queueRouter);
 app.use('/api/hashtags', hashtagsRouter);
+
 // ----------------------- END OF ROUTES -----------------------
 
 global.appStatus = 'Idling...';
@@ -66,6 +68,7 @@ captureConsole.startCapture(process.stdout, (stdout) => {
   )}] ${stdout}`;
 });
 TasksManager();
+getRecentPosts();
 // ----------------------- END OF TASKS -----------------------
 
 app.listen(port, () => {

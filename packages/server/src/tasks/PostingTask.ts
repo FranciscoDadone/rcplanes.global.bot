@@ -7,7 +7,7 @@ import {
   addPostToHistory,
 } from '../database/DatabaseQueries';
 import { uploadToImgur } from '../utils/uploadToImgur';
-import { publish } from '../instagramApi/postContent';
+import { publish } from '../services/postContent.service';
 
 async function uploadNewPost() {
   const mediaQueue = await getQueue();
