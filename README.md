@@ -78,6 +78,10 @@ This project is based on my other project that is the same app but built using E
     ```sh
     $ yarn dev
     ```
+5. Running instagrapi-rest server
+   ```sh
+   docker run -p 8081:8000 instagrapi-rest
+   ```
 
 
 ### Docker install
@@ -90,30 +94,6 @@ This project is based on my other project that is the same app but built using E
     ```Dockerfile
     $ docker run -d -p <PORT>:8080 --restart unless-stopped rcplanes.global.bot
     ```
-
-# Authentication credentials
-### Steps:
- - Create a Facebook Application at https://developers.facebook.com/. 
- - Add ```Facebook login``` and ```Instagram Graph API```.
- - Go to https://developers.facebook.com/tools/explorer/ and select this permissions:
-      - pages_show_list
-      - business_management
-      - instagram_basic
-      - instagram_manage_comments
-      - instagram_manage_insights
-      - instagram_content_publish
-      - instagram_manage_messages
-      - pages_read_engagement
-      - pages_read_user_content
-- Following the next step... Generate the Access Token.
-
-### Credentials
-- Auth Token: Read the Steps above.
-- Client ID
-<img src=".github/images/clientId.png" />
-- Client secret (https://developers.facebook.com/apps/340051487987229/settings/basic/)
-<img src=".github/images/clientSecret.png" />
-- Instagram account ID ( search for 'fbid' in https://www.instagram.com/rcplanes.global/?__a=1 )
 
 # API Endpoints
   ## /auth/

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "build/index.js",
   "license": "MIT",
-  "proxy": "http://localhost:8081",
+  "proxy": "http://localhost:8000",
   "devDependencies": {
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",

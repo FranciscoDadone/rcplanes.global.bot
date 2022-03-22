@@ -1,0 +1,15 @@
+version: "3.3"
+services:
+  backend-frontend:
+    build: .
+    ports:
+      - "3000:8080"
+    volumes:
+      - .:/app
+    depends_on:
+      - instagrapi
+  instagrapi:
+    build:
+      context: https://github.com/adw0rd/instagrapi-rest.git#main
+    expose:
+      - "8000"

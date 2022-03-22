@@ -25,16 +25,16 @@ async function uploadNewPost() {
   }
   await new Promise((resolve) => setTimeout(resolve, 20000));
 
-  let igLink = await publish(mediaLink, post.mediaType, post.caption);
-  if (igLink === undefined) igLink = 'unknown';
-  addPostToHistory(
-    igLink,
-    mediaLink,
-    post.mediaType,
-    post.owner,
-    post.caption,
-    new Date().toString()
-  );
+  // let igLink = await publish(mediaLink, post.mediaType, post.caption);
+  // if (igLink === undefined) igLink = 'unknown';
+  // addPostToHistory(
+  //   igLink,
+  //   mediaLink,
+  //   post.mediaType,
+  //   post.owner,
+  //   post.caption,
+  //   new Date().toString()
+  // );
 
   removePostFromQueue(post.id);
 
