@@ -4,12 +4,20 @@ services:
     build: .
     ports:
       - "3000:8080"
+    environment:
+      - BASE_URL=http://instagrapi:8000
+    networks:
+      - app-network
     volumes:
       - .:/app
-    depends_on:
-      - instagrapi
   instagrapi:
     build:
       context: https://github.com/adw0rd/instagrapi-rest.git#main
     expose:
       - "8000"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

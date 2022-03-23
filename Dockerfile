@@ -17,6 +17,8 @@ RUN yarn install
 # Copy code files
 COPY . .
 
+ENV BASE_URL = "http://instagrapi:8000"
+
 # Build all workspaces
 RUN ["yarn", "client", "build"]
 RUN ["yarn", "server", "build"]

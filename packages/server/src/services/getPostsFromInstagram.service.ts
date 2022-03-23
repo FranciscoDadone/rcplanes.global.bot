@@ -157,9 +157,9 @@ const request = require('request');
 
 export async function getRecentPosts(hashtag?: string) {
   // return getPosts(hashtag, 'recent_media');
-  console.log('request');
-  request.post(
-    'http://localhost:8000/user/info_by_username',
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  await request.post(
+    `${process.env.BASE_URL}/user/info_by_username`,
     {
       form: {
         sessionid: '51088662819%3AKaOfgQx5f2Iif8%3A7',
@@ -167,7 +167,8 @@ export async function getRecentPosts(hashtag?: string) {
       },
     },
     (error, response, body) => {
-      console.log(body);
+      console.log('this ', body);
+      console.log(error);
     }
   );
 }
