@@ -6,7 +6,6 @@ import moment from 'moment';
 import path from 'path';
 import { connect } from './database/DatabaseHandler';
 import TasksManager from './tasks/TasksManager';
-import { getRecentPosts } from './services/getPostsFromInstagram.service';
 
 const bodyParser = require('body-parser');
 
@@ -71,7 +70,6 @@ captureConsole.startCapture(process.stdout, (stdout) => {
   )}] ${stdout}`;
 });
 TasksManager();
-getRecentPosts();
 // ----------------------- END OF TASKS -----------------------
 
 app.listen(port, () => {

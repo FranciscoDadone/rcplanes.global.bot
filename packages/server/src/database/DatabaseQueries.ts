@@ -166,7 +166,7 @@ export async function deleteHashtag(hashtag: string) {
 
 export async function getCredentials(): Promise<{
   username: string;
-  hashedPassword: string;
+  password: string;
 }> {
   const db = DatabaseHandler.getDatabase();
   const sql = 'SELECT * FROM credentials;';
@@ -174,15 +174,15 @@ export async function getCredentials(): Promise<{
     db.all(sql, (_err: any, rows: any) => {
       resolve({
         username: rows[0].username,
-        hashedPassword: rows[0].hashedPassword,
+        password: rows[0].password,
       });
     });
   });
 }
 
-export async function setCredentials(username: string, hashedPassword: string) {
+export async function setCredentials(username: string, password: string) {
   const db = DatabaseHandler.getDatabase();
-  const sql = `UPDATE credentials SET (username, hashedPassword)=('${username}', '${hashedPassword}') WHERE id=1`;
+  const sql = `UPDATE credentials SET (username, password)=('${username}', '${password}') WHERE id=1`;
   db.run(sql);
 }
 

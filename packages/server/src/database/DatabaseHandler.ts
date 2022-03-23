@@ -14,9 +14,7 @@ async function initDB() {
   database.run(sql, ['aeromodelismo']);
   database.run(sql, ['rcplanes']);
 
-  database.run(
-    'INSERT INTO credentials (username, hashedPassword) VALUES ("","");'
-  );
+  database.run('INSERT INTO credentials (username, password) VALUES ("","");');
 
   database.run(
     `INSERT INTO util (lastUploadDate, totalPostedMedias, queuedMedias) VALUES ('${new Date().toString()}', 0, 0);`
@@ -66,7 +64,7 @@ function createTables() {
   database.exec(`CREATE TABLE IF NOT EXISTS credentials (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT,
-    hashedPassword BLOB);`);
+    password TEXT);`);
 
   // generalConfig
   database.exec(`CREATE TABLE IF NOT EXISTS generalConfig (

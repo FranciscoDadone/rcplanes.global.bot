@@ -1,20 +1,21 @@
-import request from 'request';
+import request from 'request-promise';
+import { getCredentials } from '../database/DatabaseQueries';
 
 /**
  * Returns the sessionid
  */
 export async function igLogin(): Promise<string> {
+  const credentials = await getCredentials();
   return request.post(
-    'http://localhost:8000/auth/login',
+    `${process.env.BASE_URL}/auth/login`,
     {
       form: {
-        sessionid: '51088662819%3AKaOfgQx5f2Iif8%3A7',
-        username: 'rcplanes.global',
+        username: credentials.username,
+        password: credentials.password,
       },
     },
     (error, response, body) => {
-      if (!error) return body;
-      return error;
+      return body;
     }
   );
 }

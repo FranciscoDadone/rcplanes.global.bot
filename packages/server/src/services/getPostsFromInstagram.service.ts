@@ -1,6 +1,7 @@
 import URLSearchParams from 'url';
 import { Post } from '../models/Post';
 import { getCredentials, getGeneralConfig } from '../database/DatabaseQueries';
+import { igLogin } from './login.service';
 
 const request = require('request');
 
@@ -157,12 +158,13 @@ const request = require('request');
 
 export async function getRecentPosts(hashtag?: string) {
   // return getPosts(hashtag, 'recent_media');
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+  const sessionid = await igLogin();
+  console.log(sessionid);
   await request.post(
     `${process.env.BASE_URL}/user/info_by_username`,
     {
       form: {
-        sessionid: '51088662819%3AKaOfgQx5f2Iif8%3A7',
+        sessionid,
         username: 'rcplanes.global',
       },
     },

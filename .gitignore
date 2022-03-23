@@ -1,5 +1,6 @@
 packages/server/database.sqlite
 packages/server/storage
+.env
 
 build/**/*
 node_modules
