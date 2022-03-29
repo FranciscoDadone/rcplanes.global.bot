@@ -2,7 +2,7 @@ import download from 'download';
 import {
   getRecentPosts,
   getTopPosts,
-} from '../services/getPostsFromInstagram.service';
+} from '../services/instagramAPI.service';
 import {
   savePostFromHashtag,
   getPostFromIdJSON,

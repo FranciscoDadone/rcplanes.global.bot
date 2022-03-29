@@ -2,7 +2,7 @@ version: "3.3"
 services:
   backend-frontend:
     build:
-      target: production
+      target: development
       dockerfile: Dockerfile
     ports:
       - "3000:8080"
@@ -17,6 +17,8 @@ services:
       context: https://github.com/adw0rd/instagrapi-rest.git#main
     expose:
       - "8000"
+    ports:
+      - "8000:8000"
     networks:
       - app-network
 

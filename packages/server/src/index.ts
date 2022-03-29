@@ -6,6 +6,7 @@ import moment from 'moment';
 import path from 'path';
 import { connect } from './database/DatabaseHandler';
 import TasksManager from './tasks/TasksManager';
+import { igLogin } from './services/instagramAPI.service';
 
 const bodyParser = require('body-parser');
 
@@ -63,6 +64,16 @@ app.use('/api/hashtags', hashtagsRouter);
 global.appStatus = 'Idling...';
 global.appSTDOUT = '';
 // ----------------------- END OF GLOBAL VARS -----------------------
+
+igLogin().then(async (loggedIn) => {
+  if (!loggedIn) {
+    console.log('INCORRECT INSTAGRAM CREDENTIALS!');
+    console.log('RETRYING LOGIN IN 2 MINUTES...');
+    await new Promise((resolve) => setTimeout(resolve, 120000));
+    igLogin();
+  }
+});
+// ----------------------- END OF INSTAGRAM INIT -----------------------
 
 captureConsole.startCapture(process.stdout, (stdout) => {
   global.appSTDOUT += `[${moment(new Date(), 'DD/MM/YYYY HH:mm:ss').format(
