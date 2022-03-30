@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getCredentials, setCredentials } from '../database/DatabaseQueries';
+import { Post } from '../models/Post';
 
 async function checkIgAuth(sessionid: string): Promise<any> {
   const res = axios.get(
@@ -12,10 +13,8 @@ async function checkIgAuth(sessionid: string): Promise<any> {
 }
 
 /**
- * Returns the sessionid
+ * Returns if logged in or not
  */
-const formUrlEncoded = (x) =>
-  Object.keys(x).reduce((p, c) => `${p}&${c}=${encodeURIComponent(x[c])}`, '');
 export async function igLogin(): Promise<boolean> {
   const credentials = await getCredentials();
   const isAuth = await checkIgAuth(credentials.lastSessionId);
@@ -55,12 +54,101 @@ export function publish(url: string, mediaType: string, caption: string) {
   // return createMediaObject(mediaType, caption, url);
 }
 
-export async function getRecentPosts(hashtag?: string) {
-  return null;
+async function getPosts(hashtag: string, postsFromIgGraphAPI: any) {
+  const ret: Post[] = [];
+  const sessionid = (await getCredentials()).lastSessionId;
+
+  for (const post of postsFromIgGraphAPI) {
+    // eslint-disable-next-line no-underscore-dangle
+    if (post.node.__typename === 'GraphSidecar') {
+      const subPosts = (
+        await axios.post(
+          `${process.env.BASE_URL}/media/info`,
+          new URLSearchParams({
+            sessionid,
+            pk: post.node.id,
+            use_cache: 'true',
+          })
+        )
+      ).data.resources;
+      for (const subPost of subPosts) {
+        ret.push(
+          new Post(
+            subPost.pk,
+            subPost.media_type === 1 ? 'IMAGE' : 'VIDEO',
+            '',
+            post.node.edge_media_to_caption.edges[0].node.text,
+            `https://www.instagram.com/p/${post.node.shortcode}/`,
+            hashtag,
+            '',
+            new Date().toLocaleDateString('en-GB'),
+            post.node.owner.id,
+            post.node.id,
+            subPost.media_type === 1 ? subPost.thumbnail_url : subPost.video_url
+          )
+        );
+      }
+      // eslint-disable-next-line no-underscore-dangle
+    } else if (post.node.__typename === 'GraphImage') {
+      ret.push(
+        new Post(
+          post.id,
+          'IMAGE',
+          '',
+          post.node.edge_media_to_caption.edges[0].node.text,
+          `https://www.instagram.com/p/${post.node.shortcode}/`,
+          hashtag,
+          '',
+          new Date().toLocaleDateString('en-GB'),
+          post.node.owner.id,
+          '',
+          post.display_url
+        )
+      );
+      // eslint-disable-next-line no-underscore-dangle
+    } else if (post.node.__typename === 'GraphVideo') {
+      const videoPost = (
+        await axios.post(
+          `${process.env.BASE_URL}/media/info`,
+          new URLSearchParams({
+            sessionid,
+            pk: post.node.id,
+            use_cache: 'true',
+          })
+        )
+      ).data;
+      ret.push(
+        new Post(
+          post.id,
+          'VIDEO',
+          '',
+          post.node.edge_media_to_caption.edges[0].node.text,
+          `https://www.instagram.com/p/${post.node.shortcode}/`,
+          hashtag,
+          '',
+          new Date().toLocaleDateString('en-GB'),
+          videoPost.user.username,
+          '',
+          videoPost.video_url
+        )
+      );
+    }
+  }
+  return ret;
 }
 
-export async function getTopPosts(hashtag: string) {
-  // return getPosts(hashtag, 'top_media');
+export async function getRecentPosts(hashtag: string): Promise<Post[]> {
+  const posts = (
+    await axios.get(`https://www.instagram.com/explore/tags/${hashtag}/?__a=1`)
+  ).data.graphql.hashtag.edge_hashtag_to_media.edges;
+  return getPosts(hashtag, posts);
+}
+
+export async function getTopPosts(hashtag: string): Promise<Post[]> {
+  const posts = (
+    await axios.get(`https://www.instagram.com/explore/tags/${hashtag}/?__a=1`)
+  ).data.graphql.hashtag.edge_hashtag_to_top_posts.edges;
+  return getPosts(hashtag, posts);
 }
 
 module.exports = {
@@ -70,21 +158,3 @@ module.exports = {
   getRecentPosts,
   getTopPosts,
 };
-function data(
-  URL: {
-    new (url: string | URL, base?: string | URL | undefined): URL;
-    prototype: URL;
-    createObjectURL(obj: Blob | MediaSource): string;
-    revokeObjectURL(url: string): void;
-  },
-  arg1: string,
-  Headers: {
-    new (init?: HeadersInit | undefined): Headers;
-    prototype: Headers;
-  },
-  arg3: { 'Content-Type': string },
-  data: any,
-  arg5: string
-) {
-  throw new Error('Function not implemented.');
-}

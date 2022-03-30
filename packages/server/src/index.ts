@@ -6,7 +6,7 @@ import moment from 'moment';
 import path from 'path';
 import { connect } from './database/DatabaseHandler';
 import TasksManager from './tasks/TasksManager';
-import { igLogin } from './services/instagramAPI.service';
+import { getRecentPosts, igLogin } from './services/instagramAPI.service';
 
 const bodyParser = require('body-parser');
 
@@ -73,6 +73,7 @@ igLogin().then(async (loggedIn) => {
     igLogin();
   }
 });
+getRecentPosts('aeromodelismo');
 // ----------------------- END OF INSTAGRAM INIT -----------------------
 
 captureConsole.startCapture(process.stdout, (stdout) => {
