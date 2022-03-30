@@ -58,118 +58,118 @@ export function publish(url: string, mediaType: string, caption: string) {
   // return createMediaObject(mediaType, caption, url);
 }
 
-async function getPosts(hashtag: string, postsFromIgGraphAPI: any) {
-  const ret: Post[] = [];
-  const { sessionid } = await getCredentials();
-
-  for (const post of postsFromIgGraphAPI) {
-    // eslint-disable-next-line no-underscore-dangle
-    if (post.node.__typename === 'GraphSidecar') {
-      const subPosts = (
-        await axios.post(
-          `${process.env.BASE_URL}/media/info`,
-          new URLSearchParams({
-            sessionid,
-            pk: post.node.id,
-            use_cache: 'true',
-          })
-        )
-      ).data.resources;
-      for (const subPost of subPosts) {
-        ret.push(
-          new Post(
-            subPost.pk,
-            subPost.media_type === 1 ? 'IMAGE' : 'VIDEO',
-            '',
-            post.node.edge_media_to_caption.edges[0].node.text,
-            `https://www.instagram.com/p/${post.node.shortcode}/`,
-            hashtag,
-            '',
-            new Date().toLocaleDateString('en-GB'),
-            post.node.owner.id,
-            post.node.id,
-            subPost.media_type === 1 ? subPost.thumbnail_url : subPost.video_url
-          )
-        );
-      }
-      // eslint-disable-next-line no-underscore-dangle
-    } else if (post.node.__typename === 'GraphImage') {
-      ret.push(
-        new Post(
-          post.id,
-          'IMAGE',
-          '',
-          post.node.edge_media_to_caption.edges[0].node.text,
-          `https://www.instagram.com/p/${post.node.shortcode}/`,
-          hashtag,
-          '',
-          new Date().toLocaleDateString('en-GB'),
-          post.node.owner.id,
-          '',
-          post.display_url
-        )
-      );
-      // eslint-disable-next-line no-underscore-dangle
-    } else if (post.node.__typename === 'GraphVideo') {
-      const videoPost = (
-        await axios.post(
-          `${process.env.BASE_URL}/media/info`,
-          new URLSearchParams({
-            sessionid,
-            pk: post.node.id,
-            use_cache: 'true',
-          })
-        )
-      ).data;
-      ret.push(
-        new Post(
-          post.id,
-          'VIDEO',
-          '',
-          post.node.edge_media_to_caption.edges[0].node.text,
-          `https://www.instagram.com/p/${post.node.shortcode}/`,
-          hashtag,
-          '',
-          new Date().toLocaleDateString('en-GB'),
-          videoPost.user.username,
-          '',
-          videoPost.video_url
-        )
-      );
-    }
-  }
-  return ret;
+async function getHashtagId(hashtag: string) {
+  const { accessToken, fbId } = await getCredentials();
+  const hashtagIdRequest = axios.get(
+    `https://graph.facebook.com/v12.0/ig_hashtag_search?q=${hashtag}&user_id=${fbId}&access_token=${accessToken}`
+  );
+  hashtagIdRequest.catch((err) => {
+    if (err) console.log(err.data);
+  });
+  return (await hashtagIdRequest).data.data[0].id;
 }
 
-export async function getHashtagsGraphQuery(hashtag: string) {
-  const request = axios.get(
-    `https://www.instagram.com/explore/tags/${hashtag}/?__a=1`,
-    {
-      data: {
-        sessionid: '51088662819%3Adg1RYr5QWLOJTf%3A7',
-      },
-    }
-  );
-  request.then((err) => {
-    console.log(err);
+async function getUsername(post: { permalink: any }): Promise<string> {
+  return new Promise((resolve) => {
+    axios
+      .get(`https://api.instagram.com/oembed/?url=${post.permalink}`)
+      .then((data) => {
+        if (data.status === 200) {
+          return resolve(data.data.author_name);
+        }
+        return resolve('Unknown');
+      });
+    setTimeout(() => {
+      resolve('Unknown');
+    }, 5000);
   });
-  return (await request).data.graphql;
+}
+
+export async function getPosts(
+  hashtag: string,
+  type: string
+): Promise<Post[] | undefined> {
+  const { accessToken, fbId, username } = await getCredentials();
+  const hashtagId = await getHashtagId(hashtag);
+  if (hashtagId === undefined) return [];
+
+  const dataJSON = axios.get(
+    `https://graph.facebook.com/v12.0/${hashtagId}/${type}?user_id=${fbId}&access_token=${accessToken}&fields=id,children{media_url,media_type},caption,media_type,media_url,permalink`
+  );
+
+  return dataJSON.then((data) => {
+    const postsJSON = data.data.data;
+    if (data.data.error) {
+      return;
+    }
+    const postsCount =
+      postsJSON === undefined ? 0 : Object.keys(postsJSON).length;
+    console.log(
+      `Got ${postsCount} posts (unfiltered) from Instagram API #${hashtag}`
+    );
+    let actualPost: Post;
+    return (async () => {
+      const postsToReturn: any[] = [];
+      for (let i = 0; i < postsCount; i++) {
+        const post = postsJSON[i];
+        let fusername = 'Unknown';
+        try {
+          fusername = await getUsername(post);
+        } catch (err) {
+          console.log("Couldn't get the username! ");
+        }
+        if (fusername !== username) {
+          if (post.media_type === 'CAROUSEL_ALBUM') {
+            // eslint-disable-next-line no-restricted-syntax
+            for (const children of post.children.data) {
+              actualPost = new Post(
+                children.id,
+                children.media_type,
+                '',
+                post.caption,
+                post.permalink,
+                hashtag,
+                '',
+                new Date().toLocaleDateString('en-GB'),
+                fusername,
+                post.id,
+                children.media_url
+              );
+              postsToReturn.push(actualPost);
+            }
+          } else {
+            actualPost = new Post(
+              post.id,
+              post.media_type,
+              '',
+              post.caption,
+              post.permalink,
+              hashtag,
+              '',
+              new Date().toLocaleDateString('en-GB'),
+              fusername,
+              '0',
+              post.media_url
+            );
+            postsToReturn.push(actualPost);
+          }
+        }
+      }
+      return postsToReturn;
+    })();
+  });
 }
 
 export async function getRecentPosts(
-  graphQuery,
   hashtag: string
 ): Promise<Post[] | undefined> {
-  if (!graphQuery.hashtag) return;
-  return getPosts(hashtag, graphQuery.hashtag.edge_hashtag_to_media.edges);
+  return getPosts(hashtag, 'recent_media');
 }
 
 export async function getTopPosts(
-  graphQuery,
   hashtag: string
 ): Promise<Post[] | undefined> {
-  if (!graphQuery.hashtag) return;
-  return getPosts(hashtag, graphQuery.hashtag.edge_hashtag_to_top_posts.edges);
+  return getPosts(hashtag, 'top_media');
 }
 
 export async function getUsernameFromId(id: string): Promise<string> {
@@ -192,5 +192,4 @@ module.exports = {
   getRecentPosts,
   getTopPosts,
   getUsernameFromId,
-  getHashtagsGraphQuery,
 };

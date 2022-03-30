@@ -425,7 +425,7 @@ function ConfigurationPage() {
           </Col>
         </Row>
         <Row>
-        <Col>
+          <Col>
             <Form.Group as={Col}>
               <Form.Label>Facebook Id</Form.Label>
               <Form.Control

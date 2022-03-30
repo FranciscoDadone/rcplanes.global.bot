@@ -1,9 +1,5 @@
 import download from 'download';
-import {
-  getHashtagsGraphQuery,
-  getRecentPosts,
-  getTopPosts,
-} from '../services/instagramAPI.service';
+import { getRecentPosts, getTopPosts } from '../services/instagramAPI.service';
 import {
   savePostFromHashtag,
   getPostFromIdJSON,
@@ -62,7 +58,6 @@ async function saveAllPosts(posts: Post[]) {
   for (const post of posts) {
     const postFromDB = await getPostFromIdJSON(post.getPostId());
     if (postFromDB === undefined && post.getMediaURL() !== undefined) {
-      console.log(post.getUsername());
       await savePost(post);
       total++;
     }
@@ -83,21 +78,18 @@ export async function startHashtagFetching(repeat: boolean) {
     let allPosts: Post[] = [];
     for (const hashtag of hashtags) {
       global.appStatus = `Fetching #${hashtag.hashtag}`;
-      const graphql = await getHashtagsGraphQuery(hashtag.hashtag);
       const recentPostsOfHashtag = await getRecentPosts(
-        hashtag.hashtag,
-        graphql
+        hashtag.hashtag
       ).finally(() => {
         console.log(
           `Finished fetching the recent posts of #${hashtag.hashtag}`
         );
       });
-      const topPostsOfHashtag = await getTopPosts(
-        hashtag.hashtag,
-        graphql
-      ).finally(() => {
-        console.log(`Finished fetching the top posts of #${hashtag.hashtag}`);
-      });
+      const topPostsOfHashtag = await getTopPosts(hashtag.hashtag).finally(
+        () => {
+          console.log(`Finished fetching the top posts of #${hashtag.hashtag}`);
+        }
+      );
       if (recentPostsOfHashtag)
         allPosts = allPosts.concat(recentPostsOfHashtag);
       if (topPostsOfHashtag) allPosts = allPosts.concat(topPostsOfHashtag);
