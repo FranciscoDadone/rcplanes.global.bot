@@ -9,7 +9,7 @@ const DatabaseHandler = require('./DatabaseHandler');
  */
 export function savePostFromHashtag(post: Post) {
   console.log(
-    `Saving (${post.getMediaType()}): ${post.getPostId()} (#${post.getHashtag()})`
+    `Saving (${post.getMediaType()}): ${post.getPostId()} (#${post.getHashtag()}) (@${post.getUsername()})`
   );
   const db = DatabaseHandler.getDatabase();
 
@@ -167,7 +167,11 @@ export async function deleteHashtag(hashtag: string) {
 export async function getCredentials(): Promise<{
   username: string;
   password: string;
-  lastSessionId: string;
+  sessionid: string;
+  fbId: string;
+  accessToken: string;
+  clientSecret: string;
+  clientId: string;
 }> {
   const db = DatabaseHandler.getDatabase();
   const sql = 'SELECT * FROM credentials;';
@@ -176,7 +180,11 @@ export async function getCredentials(): Promise<{
       resolve({
         username: rows[0].username,
         password: rows[0].password,
-        lastSessionId: rows[0].lastSessionId,
+        sessionid: rows[0].sessionid,
+        fbId: rows[0].fbId,
+        accessToken: rows[0].accessToken,
+        clientSecret: rows[0].clientSecret,
+        clientId: rows[0].clientId,
       });
     });
   });
@@ -185,10 +193,14 @@ export async function getCredentials(): Promise<{
 export async function setCredentials(
   username: string,
   password: string,
-  lastSessionId: string
+  sessionid: string,
+  fbId: string,
+  accessToken: string,
+  clientSecret: string,
+  clientId: string
 ) {
   const db = DatabaseHandler.getDatabase();
-  const sql = `UPDATE credentials SET (username, password, lastSessionId)=('${username}', '${password}', '${lastSessionId}') WHERE id=1`;
+  const sql = `UPDATE credentials SET (username, password, sessionid, fbId, accessToken, clientSecret, clientId)=('${username}', '${password}', '${sessionid}', '${fbId}', '${accessToken}', '${clientSecret}', '${clientId}') WHERE id=1`;
   db.run(sql);
 }
 

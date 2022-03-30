@@ -15,7 +15,7 @@ async function initDB() {
   database.run(sql, ['rcplanes']);
 
   database.run(
-    'INSERT INTO credentials (username, password, lastSessionId) VALUES ("","","");'
+    'INSERT INTO credentials (username, password, sessionid) VALUES ("","","");'
   );
 
   database.run(
@@ -67,7 +67,11 @@ function createTables() {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT,
     password TEXT,
-    lastSessionId TEXT);`);
+    sessionid TEXT,
+    fbId TEXT,
+    accessToken TEXT,
+    clientSecret TEXT,
+    clientId TEXT);`);
 
   // generalConfig
   database.exec(`CREATE TABLE IF NOT EXISTS generalConfig (

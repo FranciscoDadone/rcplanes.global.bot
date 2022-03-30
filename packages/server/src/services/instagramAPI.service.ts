@@ -17,7 +17,7 @@ async function checkIgAuth(sessionid: string): Promise<any> {
  */
 export async function igLogin(): Promise<boolean> {
   const credentials = await getCredentials();
-  const isAuth = await checkIgAuth(credentials.lastSessionId);
+  const isAuth = await checkIgAuth(credentials.sessionid);
   if (!isAuth) {
     try {
       return await axios
@@ -33,7 +33,11 @@ export async function igLogin(): Promise<boolean> {
             setCredentials(
               credentials.username,
               credentials.password,
-              res.data
+              res.data,
+              credentials.fbId,
+              credentials.accessToken,
+              credentials.clientSecret,
+              credentials.clientId
             );
           }
           return true;
@@ -56,7 +60,7 @@ export function publish(url: string, mediaType: string, caption: string) {
 
 async function getPosts(hashtag: string, postsFromIgGraphAPI: any) {
   const ret: Post[] = [];
-  const sessionid = (await getCredentials()).lastSessionId;
+  const { sessionid } = await getCredentials();
 
   for (const post of postsFromIgGraphAPI) {
     // eslint-disable-next-line no-underscore-dangle
@@ -137,18 +141,48 @@ async function getPosts(hashtag: string, postsFromIgGraphAPI: any) {
   return ret;
 }
 
-export async function getRecentPosts(hashtag: string): Promise<Post[]> {
-  const posts = (
-    await axios.get(`https://www.instagram.com/explore/tags/${hashtag}/?__a=1`)
-  ).data.graphql.hashtag.edge_hashtag_to_media.edges;
-  return getPosts(hashtag, posts);
+export async function getHashtagsGraphQuery(hashtag: string) {
+  const request = axios.get(
+    `https://www.instagram.com/explore/tags/${hashtag}/?__a=1`,
+    {
+      data: {
+        sessionid: '51088662819%3Adg1RYr5QWLOJTf%3A7',
+      },
+    }
+  );
+  request.then((err) => {
+    console.log(err);
+  });
+  return (await request).data.graphql;
 }
 
-export async function getTopPosts(hashtag: string): Promise<Post[]> {
-  const posts = (
-    await axios.get(`https://www.instagram.com/explore/tags/${hashtag}/?__a=1`)
-  ).data.graphql.hashtag.edge_hashtag_to_top_posts.edges;
-  return getPosts(hashtag, posts);
+export async function getRecentPosts(
+  graphQuery,
+  hashtag: string
+): Promise<Post[] | undefined> {
+  if (!graphQuery.hashtag) return;
+  return getPosts(hashtag, graphQuery.hashtag.edge_hashtag_to_media.edges);
+}
+
+export async function getTopPosts(
+  graphQuery,
+  hashtag: string
+): Promise<Post[] | undefined> {
+  if (!graphQuery.hashtag) return;
+  return getPosts(hashtag, graphQuery.hashtag.edge_hashtag_to_top_posts.edges);
+}
+
+export async function getUsernameFromId(id: string): Promise<string> {
+  const { sessionid } = await getCredentials();
+  return (
+    await axios.post(
+      `${process.env.BASE_URL}/user/info`,
+      new URLSearchParams({
+        sessionid,
+        user_id: id,
+      })
+    )
+  ).data.username;
 }
 
 module.exports = {
@@ -157,4 +191,6 @@ module.exports = {
   publish,
   getRecentPosts,
   getTopPosts,
+  getUsernameFromId,
+  getHashtagsGraphQuery,
 };

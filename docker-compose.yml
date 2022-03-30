@@ -21,6 +21,8 @@ services:
       - "8000:8000"
     networks:
       - app-network
+    volumes:
+      - ./packages/server/storage:/app/storage
 
 networks:
   app-network:

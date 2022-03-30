@@ -49,11 +49,18 @@ router.get('/credentials', authMiddleware, (req: any, res) => {
  * data: { accessToken, clientSecret, clientId, igAccountId }
  */
 router.post('/set_credentials', authMiddleware, async (req: any, res) => {
-  await setCredentials(req.body.data.username, req.body.data.password).catch(
-    (err) => {
-      if (err) res.sendStatus(500);
-    }
-  );
+  const { sessionid } = await getCredentials();
+  await setCredentials(
+    req.body.data.username,
+    req.body.data.password,
+    sessionid,
+    req.body.data.fbId,
+    req.body.data.accessToken,
+    req.body.data.clientSecret,
+    req.body.data.clientId
+  ).catch((err) => {
+    if (err) res.sendStatus(500);
+  });
   res.sendStatus(200);
 });
 

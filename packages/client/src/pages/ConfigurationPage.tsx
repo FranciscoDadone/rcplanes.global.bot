@@ -22,6 +22,10 @@ function ConfigurationPage() {
     username: string;
     password: string;
     authenticator: string;
+    fbId: string;
+    accessToken: string;
+    clientSecret: string;
+    clientId: string;
   }>();
   const [configState, setConfigState] = useState<{
     uploadRate: number | undefined;
@@ -74,8 +78,12 @@ function ConfigurationPage() {
         if (isMounted)
           setauthenticationState({
             username: res.data.username,
-            password: '',
+            password: res.data.password,
             authenticator: '',
+            fbId: res.data.fbId,
+            accessToken: res.data.accessToken,
+            clientSecret: res.data.clientSecret,
+            clientId: res.data.clientId,
           });
       });
     }
@@ -99,6 +107,10 @@ function ConfigurationPage() {
           username: formDataObj.username,
           password: formDataObj.password,
           authenticator: formDataObj.authenticator,
+          fbId: formDataObj.fbId,
+          accessToken: formDataObj.accessToken,
+          clientSecret: formDataObj.clientSecret,
+          clientId: formDataObj.clientId,
         },
       });
       event.preventDefault();
@@ -398,9 +410,61 @@ function ConfigurationPage() {
             </Form.Group>
           </Col>
         </Row>
+        <Row>
+          <Col>
+            <Form.Group as={Col}>
+              <Form.Label>Access Token</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                defaultValue={authenticationState?.accessToken}
+                name="accessToken"
+              />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+        <Col>
+            <Form.Group as={Col}>
+              <Form.Label>Facebook Id</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                defaultValue={authenticationState?.fbId}
+                name="fbId"
+              />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group as={Col}>
+              <Form.Label>Client Id</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                defaultValue={authenticationState?.clientId}
+                name="clientId"
+              />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group as={Col}>
+              <Form.Label>Client secret</Form.Label>
+              <Form.Control
+                required
+                type="text"
+                defaultValue={authenticationState?.clientSecret}
+                name="clientSecret"
+              />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+        </Row>
         <br />
         <Button type="submit" className="saveButton">
-          Save Instagram authentication
+          Save Ig/Fb authentication
         </Button>
       </Form>
       <hr />
