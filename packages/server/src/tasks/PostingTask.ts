@@ -1,3 +1,5 @@
+import path from 'path';
+import fs from 'fs';
 import {
   getGeneralConfig,
   getQueue,
@@ -6,7 +8,6 @@ import {
   setUtil,
   addPostToHistory,
 } from '../database/DatabaseQueries';
-import { uploadToImgur } from '../utils/uploadToImgur';
 import { publish } from '../services/instagramAPI.service';
 
 async function uploadNewPost() {
@@ -18,25 +19,31 @@ async function uploadNewPost() {
     return;
   }
   const post = mediaQueue[0];
-  let mediaLink = post.media;
 
-  if (post.mediaType === 'IMAGE') {
-    mediaLink = await uploadToImgur(post.media, 'IMAGE');
-  }
-  await new Promise((resolve) => setTimeout(resolve, 20000));
-
-  // let igLink = await publish(mediaLink, post.mediaType, post.caption);
-  // if (igLink === undefined) igLink = 'unknown';
-  // addPostToHistory(
-  //   igLink,
-  //   mediaLink,
-  //   post.mediaType,
-  //   post.owner,
-  //   post.caption,
-  //   new Date().toString()
-  // );
+  let igLink = await publish(
+    post.media,
+    post.mediaType,
+    post.caption,
+    post.owner
+  );
+  if (igLink === undefined) igLink = 'unknown';
+  addPostToHistory(
+    igLink,
+    post.media,
+    post.mediaType,
+    post.owner,
+    post.caption,
+    new Date().toString()
+  );
 
   removePostFromQueue(post.id);
+
+  const pathToDelete = path.join(__dirname, `../../storage/${post.media}`);
+  try {
+    fs.unlinkSync(pathToDelete);
+  } catch (_err) {
+    console.log('Aready deleted! (', pathToDelete, ')');
+  }
 
   const utils = await getUtil();
   await setUtil(
@@ -47,6 +54,7 @@ async function uploadNewPost() {
 }
 
 export async function startPostingTask() {
+  await new Promise((resolve) => setTimeout(resolve, 10000));
   const { autoPosting } = await getGeneralConfig();
   if (autoPosting) {
     const postingDelay = (await getGeneralConfig()).uploadRate;

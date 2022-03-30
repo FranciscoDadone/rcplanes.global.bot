@@ -1,6 +1,12 @@
+import fetch from 'node-fetch';
 import axios from 'axios';
+import path from 'path';
 import { getCredentials, setCredentials } from '../database/DatabaseQueries';
 import { Post } from '../models/Post';
+import { addWatermark } from '../utils/addWatermark';
+import { uploadToImgur } from '../utils/uploadToImgur';
+
+const FormData = require('form-data');
 
 async function checkIgAuth(sessionid: string): Promise<any> {
   const res = axios.get(
@@ -52,10 +58,40 @@ export async function igLogin(): Promise<boolean> {
 
 /**
  * Publish a post passed by param.
- * Make sure to edit the caption and url(image)
+ * Returns permalink
  */
-export function publish(url: string, mediaType: string, caption: string) {
-  // return createMediaObject(mediaType, caption, url);
+export async function publish(
+  file: string,
+  mediaType: string,
+  caption: string,
+  username: string
+): Promise<string> {
+  const { sessionid } = await getCredentials();
+  if (mediaType === 'IMAGE') {
+    const imagePath = path.join(__dirname, `../../storage/${file}`);
+
+    const formData = new FormData();
+    formData.append('sessionid', sessionid);
+    const base64Content = await addWatermark(imagePath, username);
+
+    const url = await uploadToImgur(base64Content, 'IMAGE');
+
+    formData.append('caption', caption);
+    formData.append('url', url);
+    return fetch(`${process.env.BASE_URL}/photo/upload/by_url`, {
+      method: 'POST',
+      headers: formData.getHeaders(),
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((results) => {
+        return `https://www.instagram.com/p/${results.code}`;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+  return '';
 }
 
 async function getHashtagId(hashtag: string) {

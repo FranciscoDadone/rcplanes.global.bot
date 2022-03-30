@@ -11,8 +11,7 @@ import {
   addPostToQueue,
   getAllPostsJSON,
 } from '../../database/DatabaseQueries';
-import { addWatermark } from '../../utils/addWatermark';
-import { uploadToImgur } from '../../utils/uploadToImgur';
+import { imageToBase64 } from '../../utils/imageToBase64';
 
 const bodyParser = require('body-parser');
 
@@ -86,17 +85,11 @@ router.delete('/delete', authMiddleware, (req: any, res) => {
 router.post('/queue', authMiddleware, async (req: any, res) => {
   let media;
   if (req.body.data.mediaType === 'IMAGE') {
-    media = await addWatermark(
-      path.join(__dirname, `../../../storage/${req.body.data.mediaPath}`),
-      req.body.data.usernameInImg
+    media = await imageToBase64(
+      path.join(__dirname, `../../../storage/${req.body.data.mediaPath}`)
     );
   } else {
-    await uploadToImgur(
-      path.join(__dirname, `../../../storage/${req.body.data.mediaPath}`),
-      'VIDEO'
-    ).then((url) => {
-      media = url;
-    });
+    media = req.body.data.mediaPath;
   }
   const promise = addPostToQueue(
     media,

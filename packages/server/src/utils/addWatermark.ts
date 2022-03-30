@@ -1,9 +1,16 @@
 const Jimp = require('jimp');
 
-export async function addWatermark(imageUrl: string, username: string) {
+export async function addWatermark(base64Image: string, username: string) {
   if (username === undefined) return;
-  const image = await Jimp.read(imageUrl);
-
+  const image =
+    base64Image.length < 200
+      ? await Jimp.read(base64Image)
+      : await Jimp.read(
+          Buffer.from(
+            base64Image.replace('data:image/png;base64,', ''),
+            'base64'
+          )
+        );
   return Jimp.loadFont(Jimp.FONT_SANS_32_WHITE).then((font: any) =>
     (async () => {
       image.resize(1280, Jimp.AUTO);
@@ -37,6 +44,7 @@ export async function addWatermark(imageUrl: string, username: string) {
 
       image.print(font, 105, image.getHeight() - 48, username);
 
+      // const buff = await image.getBase64Async(Jimp.MIME_PNG);
       const buff = await image.getBase64Async(Jimp.MIME_PNG);
       return buff;
     })()

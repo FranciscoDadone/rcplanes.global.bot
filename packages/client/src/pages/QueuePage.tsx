@@ -37,7 +37,7 @@ function QueuePage() {
 
   useEffect(() => {
     let isMounted = true;
-    if (queuedPosts === undefined || queuedPosts[0].mediaType === '') {
+    if (!queuedPosts || queuedPosts[0]) {
       axios.get('/api/queue/queue').then((data) => {
         if (isMounted) setQueuedPosts(data.data);
       });
@@ -47,8 +47,12 @@ function QueuePage() {
     };
   }, [queuedPosts]);
 
-  if (queuedPosts[0].owner === '') {
+  if (queuedPosts[0] && queuedPosts[0].owner === '') {
     return <Loading text="Loading queue..." spinner />;
+  }
+
+  if (!queuedPosts[0]) {
+    return <Loading text="Empty queue" />;
   }
 
   const handleUp = (post: {

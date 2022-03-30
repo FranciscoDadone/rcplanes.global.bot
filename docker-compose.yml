@@ -14,7 +14,7 @@ services:
       - .:/app
   instagrapi:
     build:
-      context: https://github.com/adw0rd/instagrapi-rest.git#main
+      context: https://github.com/FranciscoDadone/instagrapi-rest.git#main
     expose:
       - "8000"
     ports:

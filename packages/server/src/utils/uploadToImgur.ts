@@ -1,7 +1,10 @@
 const fs = require('fs');
 const { ImgurClient } = require('imgur');
 
-export function uploadToImgur(path: string, mediaType: string) {
+export function uploadToImgur(
+  path: string,
+  mediaType: string
+): Promise<string> {
   const client = new ImgurClient({ clientId: '3246fe4bdf4e7ef' });
   if (mediaType === 'IMAGE') {
     return client
