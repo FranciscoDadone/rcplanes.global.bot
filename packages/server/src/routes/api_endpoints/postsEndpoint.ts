@@ -84,12 +84,20 @@ router.delete('/delete', authMiddleware, (req: any, res) => {
  */
 router.post('/queue', authMiddleware, async (req: any, res) => {
   let media;
+  const mediaPath = path.join(
+    __dirname,
+    `../../../storage/${req.body.data.mediaPath}`
+  );
+
   if (req.body.data.mediaType === 'IMAGE') {
-    media = await imageToBase64(
-      path.join(__dirname, `../../../storage/${req.body.data.mediaPath}`)
-    );
+    media = await imageToBase64(mediaPath);
+    try {
+      fs.unlinkSync(mediaPath);
+    } catch (_err) {
+      console.log('Aready deleted! (', mediaPath, ')');
+    }
   } else {
-    media = req.body.data.mediaPath;
+    media = `storage/${req.body.data.mediaPath}`;
   }
   const promise = addPostToQueue(
     media,
@@ -99,15 +107,6 @@ router.post('/queue', authMiddleware, async (req: any, res) => {
   );
   promise.then(() => {
     updatePostStatus(req.body.data.id, 'posted');
-    const pathToDelete = path.join(
-      __dirname,
-      `../../../storage/${req.body.data.mediaPath}`
-    );
-    try {
-      fs.unlinkSync(pathToDelete);
-    } catch (_err) {
-      console.log('Aready deleted! (', pathToDelete, ')');
-    }
     res.sendStatus(200);
   });
   promise.catch((err) => {
