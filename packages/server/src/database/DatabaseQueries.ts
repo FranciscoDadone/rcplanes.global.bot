@@ -281,7 +281,13 @@ export async function addPostToHistory(
   db.run(sql, [igLink, imgurLink, mediaType, owner, caption, date]);
 }
 
-export async function getQueuePost(id: number): Promise<any> {
+export async function getQueuePost(id: number): Promise<{
+  id: string;
+  media: string;
+  mediaType: string;
+  caption: string;
+  owner: string;
+}> {
   const db = DatabaseHandler.getDatabase();
   const sql = `SELECT * FROM mediaQueue WHERE id=${id}`;
   return new Promise((resolve) => {

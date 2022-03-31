@@ -17,7 +17,7 @@ function Media(props: {
     imageMinWidth,
   } = props;
 
-  if (mediaType === 'VIDEO') {
+  if (mediaType === 'VIDEO' || mediaType === 'REEL') {
     return (
       <div>
         <video

@@ -2,12 +2,14 @@
 
 import express from 'express';
 import passport from 'passport';
+import fs from 'fs';
 import { authMiddleware } from '../../middlewares/authMiddleware';
 import {
   getQueue,
   swapInQueue,
   removePostFromQueue,
   updateQueuePostCaption,
+  getQueuePost,
 } from '../../database/DatabaseQueries';
 
 const bodyParser = require('body-parser');
@@ -49,8 +51,16 @@ router.post('/swap', authMiddleware, (req: any, res) => {
  * Receives a post id and deletes that post from the queue.
  * params: { id }
  */
-router.delete('/delete', authMiddleware, (req: any, res) => {
+router.delete('/delete', authMiddleware, async (req: any, res) => {
+  const { media, mediaType } = await getQueuePost(req.query.id);
   const promise = removePostFromQueue(req.query.id);
+  if (mediaType === 'VIDEO' || mediaType === 'REEL') {
+    try {
+      fs.unlinkSync(media);
+    } catch (_err) {
+      console.log(_err);
+    }
+  }
   promise.catch((err) => {
     if (err) res.sendStatus(500);
   });

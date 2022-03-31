@@ -23,7 +23,10 @@ export function uploadToImgur(
       description: '',
       type: 'stream',
     })
-    .then((data: any) => data.data.link);
+    .then((data: any) => {
+      console.log('Uploaded to Imgur: ', data.data.link);
+      return data.data.link;
+    });
 }
 
 module.exports = { uploadToImgur };

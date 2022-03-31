@@ -1,5 +1,7 @@
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 import axios from 'axios';
 import Media from './Media';
 import Loading from './Loading';
@@ -12,13 +14,23 @@ function MediaModal(props: {
   mediaType: string;
   handleClose: any;
   handleDelete: any;
+  videoDuration: number;
 }) {
-  const { show, post, media, mediaType, handleClose, handleDelete } = props;
+  const {
+    show,
+    post,
+    media,
+    mediaType,
+    handleClose,
+    handleDelete,
+    videoDuration,
+  } = props;
   const [caption, setCaption] = useState<string>();
   const [mediaModal, setMediaModal] = useState(media);
   const [usernameInImg, setUsernameInImg] = useState(post.username);
   const [loading, setLoading] = useState(false);
   const [postAsReel, setPostAsReel] = useState(true);
+  const [slider, setSlider] = useState([0, 60]);
 
   useEffect(() => {
     let isMounted = true;
@@ -41,9 +53,22 @@ function MediaModal(props: {
     handleClose();
   };
 
-  const handleQueue = () => {
+  const handleQueue = async () => {
     setLoading(true);
-    axios
+    if (
+      (post.mediaType === 'VIDEO' || post.mediaType === 'REEL') &&
+      videoDuration > 60
+    ) {
+      const trim = await axios.post('api/general/trim_video', {
+        data: {
+          path: `storage/${post.storagePath}`,
+          start: slider[0],
+          end: slider[1],
+        },
+      });
+      if (trim.data !== 'SUCCESS') return;
+    }
+    await axios
       .post('api/posts/queue', {
         data: {
           id: post.postId,
@@ -61,6 +86,14 @@ function MediaModal(props: {
           handleClose();
         }
       });
+  };
+
+  const handleSliderChange = (e) => {
+    const start = e[0];
+    const end = e[1];
+    const duration = end - start;
+
+    if (duration > 10 && duration < 60) setSlider(e);
   };
 
   const postProcessUsernameInImg = (username: string) => {
@@ -116,6 +149,42 @@ function MediaModal(props: {
         <Modal.Body style={{ background: '#282c34' }}>
           <div className="modal-container">
             <div className="modal-image">
+              <div style={videoDuration > 60 ? {} : { display: 'none' }}>
+                <h4 className="center">
+                  This video is too long, please trim it
+                </h4>
+                <div className="slider-container">
+                  <div className="slider-time">
+                    {Math.floor(slider[0] / 60) < 10
+                      ? `0${Math.floor(slider[0] / 60)}`
+                      : Math.floor(slider[0] / 60)}
+                    :
+                    {slider[0] - Math.floor(slider[0] / 60) * 60 < 10
+                      ? `0${slider[0] - Math.floor(slider[0] / 60) * 60}`
+                      : slider[0] - Math.floor(slider[0] / 60) * 60}
+                  </div>
+                  <Slider
+                    range
+                    allowCross={false}
+                    defaultValue={[0, 60]}
+                    onChange={handleSliderChange}
+                    value={slider}
+                    max={videoDuration}
+                    pushable
+                    draggableTrack
+                  />
+                  <div className="slider-time">
+                    {Math.floor(slider[1] / 60) < 10
+                      ? `0${Math.floor(slider[1] / 60)}`
+                      : Math.floor(slider[1] / 60)}
+                    :
+                    {slider[1] - Math.floor(slider[1] / 60) * 60 < 10
+                      ? `0${slider[1] - Math.floor(slider[1] / 60) * 60}`
+                      : slider[1] - Math.floor(slider[1] / 60) * 60}
+                  </div>
+                </div>
+                <div className="center">Duration: {slider[1] - slider[0]}s</div>
+              </div>
               <Media
                 mediaType={mediaType}
                 media={mediaModal}

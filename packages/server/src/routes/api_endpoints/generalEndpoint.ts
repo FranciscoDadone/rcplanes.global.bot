@@ -2,6 +2,7 @@
 import bcrypt from 'bcryptjs';
 import express from 'express';
 import passport from 'passport';
+import { getVideoDurationInSeconds } from 'get-video-duration';
 import { authMiddleware } from '../../middlewares/authMiddleware';
 import {
   getGeneralConfig,
@@ -13,6 +14,7 @@ import {
   updateUserFromId,
 } from '../../database/DatabaseQueries';
 import TasksManager from '../../tasks/TasksManager';
+import { trimVideo } from '../../utils/trimVideo';
 
 const bodyParser = require('body-parser');
 
@@ -136,6 +138,27 @@ router.post(
  */
 router.get('/logs', authMiddleware, (req: any, res) => {
   res.send(global.appSTDOUT);
+});
+
+/**
+ * Returns video duration in seconds of a given path.
+ */
+router.post('/video_duration', authMiddleware, async (req: any, res) => {
+  await getVideoDurationInSeconds(`storage/${req.body.data.path}`).then(
+    (duration) => {
+      res.send(Math.ceil(duration).toString());
+    }
+  );
+});
+
+router.post('/trim_video', authMiddleware, async (req: any, res) => {
+  await trimVideo(
+    req.body.data.path,
+    req.body.data.start,
+    req.body.data.end - req.body.data.start
+  ).then((success) => {
+    res.send(success ? 'SUCCESS' : 'FAIL');
+  });
 });
 
 module.exports = router;

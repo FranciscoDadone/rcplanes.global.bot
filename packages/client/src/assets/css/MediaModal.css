@@ -8,3 +8,17 @@
   width: 100%;
   vertical-align: middle;
 }
+
+.slider-container {
+  display: flex;
+}
+
+.slider-time {
+  margin-left: 1em;
+  margin-right: 1em;
+  padding-bottom: 0.6em;
+}
+
+.center {
+  text-align: center;
+}

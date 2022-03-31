@@ -1,5 +1,5 @@
 import { Card, Button } from 'react-bootstrap';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../assets/css/PostCard.css';
 import MediaModal from './MediaModal';
@@ -11,6 +11,26 @@ function PostCard(props: { post: any; updateList: any }) {
   let previewSrc = `/storage/${post.storagePath}`;
 
   const [show, setShow] = useState(false);
+  const [videoDuration, setVideoDuration] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (show && post.mediaType === 'VIDEO') {
+      axios
+        .post('api/general/video_duration', {
+          data: {
+            path: post.storagePath,
+          },
+        })
+        .then((res) => {
+          if (isMounted) setVideoDuration(parseInt(res.data, 10));
+        });
+    }
+    return () => {
+      isMounted = false;
+    };
+  });
+
   const handleShow = () => {
     setShow(true);
   };
@@ -72,7 +92,6 @@ function PostCard(props: { post: any; updateList: any }) {
           </Card.Footer>
         </Card>
       </div>
-
       <MediaModal
         show={show}
         post={post}
@@ -80,6 +99,11 @@ function PostCard(props: { post: any; updateList: any }) {
         mediaType={post.mediaType}
         handleClose={handleClose}
         handleDelete={handleDelete}
+        videoDuration={
+          post.mediaType === 'VIDEO' || post.mediaType === 'REEL'
+            ? videoDuration
+            : 0
+        }
       />
     </>
   );
