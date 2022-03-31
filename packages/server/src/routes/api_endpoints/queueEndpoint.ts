@@ -8,7 +8,7 @@ import {
   getQueue,
   swapInQueue,
   removePostFromQueue,
-  updateQueuePostCaption,
+  updateQueuePost,
   getQueuePost,
 } from '../../database/DatabaseQueries';
 
@@ -74,9 +74,10 @@ router.delete('/delete', authMiddleware, async (req: any, res) => {
  * data: { id, caption }
  */
 router.patch('/update_post', authMiddleware, (req: any, res) => {
-  const promise = updateQueuePostCaption(
+  const promise = updateQueuePost(
     req.body.data.id,
-    req.body.data.caption
+    req.body.data.caption,
+    req.body.data.username
   );
   promise.catch((err) => {
     if (err) res.sendStatus(500);

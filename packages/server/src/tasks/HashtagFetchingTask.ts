@@ -71,8 +71,8 @@ async function saveAllPosts(posts: Post[]) {
 export async function startHashtagFetching(repeat: boolean) {
   await new Promise((resolve) => setTimeout(resolve, 10000));
   const { hashtagFetchingEnabled } = await getGeneralConfig();
-  const { sessionid } = await getCredentials();
-  if (hashtagFetchingEnabled && sessionid) {
+  const { sessionid, accessToken, fbId } = await getCredentials();
+  if (hashtagFetchingEnabled && sessionid && accessToken && fbId) {
     console.log('============= START OF HASHTAG FETCH =============');
     const hashtags: any = await getAllHashtagsToFetch();
     let allPosts: Post[] = [];

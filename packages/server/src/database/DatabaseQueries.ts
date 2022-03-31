@@ -308,10 +308,14 @@ export async function swapInQueue(id1, id2) {
   db.run(sql2, [row1.media, row1.mediaType, row1.caption, row1.owner]);
 }
 
-export async function updateQueuePostCaption(id: string, caption: string) {
+export async function updateQueuePost(
+  id: string,
+  caption: string,
+  owner: string
+) {
   const db = DatabaseHandler.getDatabase();
-  const sql = `UPDATE mediaQueue SET (caption)=(?) WHERE id=${id}`;
-  db.run(sql, [caption]);
+  const sql = `UPDATE mediaQueue SET (caption, owner)=(?,?) WHERE id=${id}`;
+  db.run(sql, [caption, owner]);
 }
 
 export async function getUserFromUsername(username: string) {
@@ -371,7 +375,7 @@ module.exports = {
   removePostFromQueue,
   addPostToHistory,
   swapInQueue,
-  updateQueuePostCaption,
+  updateQueuePost,
   getUserFromUsername,
   getUserFromId,
   getQueuePost,
