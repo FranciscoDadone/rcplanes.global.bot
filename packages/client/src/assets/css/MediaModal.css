@@ -1,3 +1,10 @@
 .modal-image {
   height: 30%;
 }
+
+.postAsReel {
+  height: 100%;
+  margin-top: 2.4em;
+  width: 100%;
+  vertical-align: middle;
+}

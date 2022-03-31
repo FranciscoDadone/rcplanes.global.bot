@@ -1,4 +1,4 @@
-import { Modal, Form, Button } from 'react-bootstrap';
+import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Media from './Media';
@@ -18,6 +18,7 @@ function MediaModal(props: {
   const [mediaModal, setMediaModal] = useState(media);
   const [usernameInImg, setUsernameInImg] = useState(post.username);
   const [loading, setLoading] = useState(false);
+  const [postAsReel, setPostAsReel] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
@@ -48,7 +49,7 @@ function MediaModal(props: {
           id: post.postId,
           mediaPath: post.storagePath,
           usernameInImg,
-          mediaType,
+          mediaType: mediaType === 'VIDEO' && postAsReel ? 'REEL' : mediaType,
           caption,
           owner: post.username,
         },
@@ -84,7 +85,7 @@ function MediaModal(props: {
       <Modal show={show} onHide={handleClose} fullscreen className="modal">
         <Modal.Header closeButton>
           <Modal.Title>
-            Post from: @{post.username} (#{post.hashtag})
+            Post from: @{usernameInImg} (#{post.hashtag})
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ background: '#282c34' }}>
@@ -140,31 +141,52 @@ function MediaModal(props: {
             </div>
             <div style={{ width: '100%', paddingLeft: '1rem' }}>
               <Form>
-                <Form.Group
-                  className="mb-3"
-                  controlId="exampleForm.ControlInput1"
-                >
-                  <Form.Label>Username</Form.Label>
-                  <Form.Control
-                    type="text"
-                    defaultValue={post.username}
-                    onChange={(e) => {
-                      postProcessUsernameInImg(e.target.value);
-                    }}
-                  />
-                </Form.Group>
-                <Form.Group
-                  className="mb-3"
-                  controlId="exampleForm.ControlTextarea1"
-                >
-                  <Form.Label>Caption</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    defaultValue={caption}
-                    rows={16}
-                    onChange={(e) => setCaption(e.target.value)}
-                  />
-                </Form.Group>
+                <Row>
+                  <Col>
+                    <Form.Group
+                      className="mb-3"
+                      controlId="exampleForm.ControlInput1"
+                    >
+                      <Form.Label>Username</Form.Label>
+                      <Form.Control
+                        type="text"
+                        defaultValue={post.username}
+                        onChange={(e) => {
+                          postProcessUsernameInImg(e.target.value);
+                        }}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Form.Group as={Col} md="3">
+                    <Form.Check
+                      type="switch"
+                      name="postAsReel"
+                      label="Post as reel"
+                      defaultChecked
+                      style={
+                        post.mediaType !== 'VIDEO' ? { display: 'none' } : {}
+                      }
+                      className="postAsReel"
+                      onClick={() => setPostAsReel(!postAsReel)}
+                    />
+                  </Form.Group>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Group
+                      className="mb-3"
+                      controlId="exampleForm.ControlTextarea1"
+                    >
+                      <Form.Label>Caption</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        defaultValue={caption}
+                        rows={16}
+                        onChange={(e) => setCaption(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
               </Form>
             </div>
           </div>
