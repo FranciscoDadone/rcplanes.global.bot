@@ -30,7 +30,7 @@ function MediaModal(props: {
   const [usernameInImg, setUsernameInImg] = useState(post.username);
   const [loading, setLoading] = useState(false);
   const [postAsReel, setPostAsReel] = useState(true);
-  const [slider, setSlider] = useState([0, 60]);
+  const [slider, setSlider] = useState([0, 59]);
 
   useEffect(() => {
     let isMounted = true;
@@ -76,7 +76,7 @@ function MediaModal(props: {
           usernameInImg,
           mediaType: mediaType === 'VIDEO' && postAsReel ? 'REEL' : mediaType,
           caption,
-          owner: post.username,
+          owner: usernameInImg,
         },
       })
       .then((code) => {
@@ -149,7 +149,7 @@ function MediaModal(props: {
         <Modal.Body style={{ background: '#282c34' }}>
           <div className="modal-container">
             <div className="modal-image">
-              <div style={videoDuration > 60 ? {} : { display: 'none' }}>
+              <div style={videoDuration > 59 ? {} : { display: 'none' }}>
                 <h4 className="center">
                   This video is too long, please trim it
                 </h4>

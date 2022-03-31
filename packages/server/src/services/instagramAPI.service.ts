@@ -73,6 +73,7 @@ export async function publish(
   if (mediaType === 'IMAGE')
     processedMedia = await addWatermark(media, username);
   const url = await uploadToImgur(processedMedia, mediaType);
+  await new Promise((resolve) => setTimeout(resolve, 20000));
 
   formData.append('sessionid', sessionid);
   formData.append('caption', caption);
@@ -88,6 +89,7 @@ export async function publish(
   })
     .then((res) => res.json())
     .then((results) => {
+      console.log(results);
       return `https://www.instagram.com/p/${results.code}`;
     })
     .catch((error) => {
