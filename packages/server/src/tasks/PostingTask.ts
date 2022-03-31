@@ -38,11 +38,13 @@ async function uploadNewPost() {
 
   removePostFromQueue(post.id);
 
-  const pathToDelete = path.join(__dirname, `../../storage/${post.media}`);
-  try {
-    fs.unlinkSync(pathToDelete);
-  } catch (_err) {
-    console.log('Aready deleted! (', pathToDelete, ')');
+  if (post.mediaType !== 'IMAGE') {
+    const pathToDelete = path.join(__dirname, `../../${post.media}`);
+    try {
+      fs.unlinkSync(pathToDelete);
+    } catch (_err) {
+      console.log('Aready deleted! (', pathToDelete, ')');
+    }
   }
 
   const utils = await getUtil();

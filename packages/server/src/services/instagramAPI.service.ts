@@ -61,37 +61,38 @@ export async function igLogin(): Promise<boolean> {
  * Returns permalink
  */
 export async function publish(
-  file: string,
+  media: string,
   mediaType: string,
   caption: string,
   username: string
 ): Promise<string> {
   const { sessionid } = await getCredentials();
-  if (mediaType === 'IMAGE') {
-    const imagePath = path.join(__dirname, `../../storage/${file}`);
+  const mediaPath = path.join(__dirname, `../../${media}`);
+  const formData = new FormData();
+  let processedMedia = mediaPath;
+  if (mediaType === 'IMAGE')
+    processedMedia = await addWatermark(media, username);
+  const url = await uploadToImgur(processedMedia, mediaType);
 
-    const formData = new FormData();
-    formData.append('sessionid', sessionid);
-    const base64Content = await addWatermark(imagePath, username);
+  formData.append('sessionid', sessionid);
+  formData.append('caption', caption);
+  formData.append('url', url);
 
-    const url = await uploadToImgur(base64Content, 'IMAGE');
-
-    formData.append('caption', caption);
-    formData.append('url', url);
-    return fetch(`${process.env.BASE_URL}/photo/upload/by_url`, {
-      method: 'POST',
-      headers: formData.getHeaders(),
-      body: formData,
+  let type = 'photo';
+  if (mediaType === 'VIDEO') type = 'video';
+  else if (mediaType === 'REEL') type = 'clip';
+  return fetch(`${process.env.BASE_URL}/${type}/upload/by_url`, {
+    method: 'POST',
+    headers: formData.getHeaders(),
+    body: formData,
+  })
+    .then((res) => res.json())
+    .then((results) => {
+      return `https://www.instagram.com/p/${results.code}`;
     })
-      .then((res) => res.json())
-      .then((results) => {
-        return `https://www.instagram.com/p/${results.code}`;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-  return '';
+    .catch((error) => {
+      if (error) console.error(error);
+    });
 }
 
 async function getHashtagId(hashtag: string) {
