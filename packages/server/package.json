@@ -28,7 +28,6 @@
     "express-session": "^1.17.2",
     "fluent-ffmpeg": "^2.1.2",
     "get-video-duration": "3.0.2",
-    "imgur": "^2.1.4",
     "jimp": "^0.16.1",
     "node-ffprobe-installer": "^1.2.3",
     "passport": "^0.5.2",

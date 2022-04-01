@@ -1,10 +1,8 @@
 import fetch from 'node-fetch';
 import axios from 'axios';
-import path from 'path';
 import { getCredentials, setCredentials } from '../database/DatabaseQueries';
 import { Post } from '../models/Post';
 import { addWatermark } from '../utils/addWatermark';
-import { uploadToImgur } from '../utils/uploadToImgur';
 
 const FormData = require('form-data');
 
@@ -67,13 +65,16 @@ export async function publish(
   username: string
 ): Promise<string> {
   const { sessionid } = await getCredentials();
-  const mediaPath = path.join(__dirname, `../../${media}`);
+  const mediaPath = media;
   const formData = new FormData();
   let processedMedia = mediaPath;
-  if (mediaType === 'IMAGE')
-    processedMedia = await addWatermark(media, username);
-  const url = await uploadToImgur(processedMedia, mediaType);
-  await new Promise((resolve) => setTimeout(resolve, 20000));
+  if (mediaType === 'IMAGE') {
+    await addWatermark(media, username, true, 'storage/temp.jpg');
+    processedMedia = 'storage/temp.jpg';
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  const url = `http://backend-frontend:8080/${processedMedia}`;
 
   formData.append('sessionid', sessionid);
   formData.append('caption', caption);
@@ -89,7 +90,6 @@ export async function publish(
   })
     .then((res) => res.json())
     .then((results) => {
-      console.log(results);
       return `https://www.instagram.com/p/${results.code}`;
     })
     .catch((error) => {

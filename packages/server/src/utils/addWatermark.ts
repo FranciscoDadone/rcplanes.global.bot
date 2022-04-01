@@ -1,6 +1,11 @@
 const Jimp = require('jimp');
 
-export async function addWatermark(base64Image: string, username: string) {
+export async function addWatermark(
+  base64Image: string,
+  username: string,
+  writeToDisk?: boolean,
+  pathToWrite?: string
+) {
   if (username === undefined) return;
   const image =
     base64Image.length < 200
@@ -44,7 +49,10 @@ export async function addWatermark(base64Image: string, username: string) {
 
       image.print(font, 105, image.getHeight() - 48, username);
 
-      // const buff = await image.getBase64Async(Jimp.MIME_PNG);
+      if (writeToDisk) {
+        image.writeAsync(pathToWrite);
+        return pathToWrite;
+      }
       const buff = await image.getBase64Async(Jimp.MIME_PNG);
       return buff;
     })()

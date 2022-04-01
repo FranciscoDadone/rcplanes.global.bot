@@ -20,13 +20,17 @@ async function uploadNewPost() {
   }
   const post = mediaQueue[0];
 
-  let igLink = await publish(
+  const igLink = await publish(
     post.media,
     post.mediaType,
     post.caption,
     post.owner
   );
-  if (igLink === undefined) igLink = 'unknown';
+  if (igLink === undefined) {
+    console.log('============= POSTING FAILED, RETRYING =============');
+    uploadNewPost();
+    return;
+  }
   addPostToHistory(
     igLink,
     post.media,
@@ -38,13 +42,16 @@ async function uploadNewPost() {
 
   removePostFromQueue(post.id);
 
-  if (post.mediaType !== 'IMAGE') {
-    const pathToDelete = path.join(__dirname, `../../${post.media}`);
-    try {
-      fs.unlinkSync(pathToDelete);
-    } catch (_err) {
-      console.log('Aready deleted! (', pathToDelete, ')');
-    }
+  const pathToDelete = path.join(
+    __dirname,
+    post.mediaType === 'IMAGE'
+      ? '../../storage/temp.jpg'
+      : `../../${post.media}`
+  );
+  try {
+    fs.unlinkSync(pathToDelete);
+  } catch (_err) {
+    console.log('Aready deleted! (', pathToDelete, ')');
   }
 
   const utils = await getUtil();
