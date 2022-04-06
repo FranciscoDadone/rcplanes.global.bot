@@ -3,10 +3,12 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
 import moment from 'moment';
+import fs from 'fs';
 import path from 'path';
 import { connect } from './database/DatabaseHandler';
 import TasksManager from './tasks/TasksManager';
 import { igLogin } from './services/instagramAPI.service';
+import { getQueue } from './database/DatabaseQueries';
 
 const bodyParser = require('body-parser');
 
@@ -74,6 +76,32 @@ igLogin().then(async (loggedIn) => {
   }
 });
 // ----------------------- END OF INSTAGRAM INIT -----------------------
+
+/**
+ * This is to check for dangling uploaded files on every restart.
+ * Checks the current queue, finds custom files and compares it to the storage,
+ * if there is a file (custom) in storage that is not in queue it deletes it.
+ */
+(async () => {
+  const queuedMedias = await getQueue();
+  const customPostsPathsInDB: string[] = [];
+  queuedMedias.forEach((post) => {
+    if (post.media.includes('storage/'))
+      customPostsPathsInDB.push(post.media.split('/')[1]);
+  });
+  const pathToStorage = path.join(__dirname, `../storage`);
+  const files = fs.readdirSync(pathToStorage);
+  files.forEach((file) => {
+    if (file.includes('custom_') && !customPostsPathsInDB.includes(file)) {
+      try {
+        fs.unlinkSync(path.join(pathToStorage, file));
+      } catch (ex) {
+        console.log(ex);
+      }
+    }
+  });
+})();
+// ----------------------- END OF CUSTOM POSTS CHECK -----------------------
 
 captureConsole.startCapture(process.stdout, (stdout) => {
   global.appSTDOUT += `[${moment(new Date(), 'DD/MM/YYYY HH:mm:ss').format(

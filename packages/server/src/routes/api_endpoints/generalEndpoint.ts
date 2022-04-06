@@ -2,6 +2,8 @@
 import bcrypt from 'bcryptjs';
 import express from 'express';
 import passport from 'passport';
+import fs from 'fs';
+import path from 'path';
 import { getVideoDurationInSeconds } from 'get-video-duration';
 import { authMiddleware } from '../../middlewares/authMiddleware';
 import {
@@ -159,6 +161,19 @@ router.post('/trim_video', authMiddleware, async (req: any, res) => {
   ).then((success) => {
     res.send(success ? 'SUCCESS' : 'FAIL');
   });
+});
+
+router.post('/delete_from_storage', authMiddleware, async (req: any, res) => {
+  const pathToDelete = path.join(
+    __dirname,
+    `../../../storage/${req.body.data.fileName}`
+  );
+  try {
+    fs.unlinkSync(pathToDelete);
+  } catch (ex) {
+    console.log(ex);
+  }
+  res.sendStatus(200);
 });
 
 module.exports = router;

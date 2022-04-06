@@ -40,10 +40,13 @@ function QueuePage() {
     filename: '',
     mimetype: '',
   });
+  const mediaType = newPostModal.mimetype.includes('image/')
+    ? 'IMAGE'
+    : 'VIDEO';
 
   useEffect(() => {
     let isMounted = true;
-    if (!queuedPosts || queuedPosts[0]) {
+    if (!queuedPosts || !queuedPosts[0] || queuedPosts[0].mediaType === '') {
       axios.get('/api/queue/queue').then((data) => {
         if (isMounted) setQueuedPosts(data.data);
       });
@@ -139,7 +142,7 @@ function QueuePage() {
   const refreshQueue = (post: any, type: string) => {
     const aux = queuedPosts;
 
-    const ret: any = [];
+    let ret: any = [];
     if (type === 'DELETE') {
       const postIndex = queuedPosts.indexOf(
         queuedPosts.filter((p) => p.id === post.id)[0]
@@ -154,7 +157,7 @@ function QueuePage() {
           ret.push({
             id: post.id,
             caption: post.caption,
-            owner: aux[i].owner,
+            owner: post.username,
             media: aux[i].media,
             mediaType: aux[i].mediaType,
           });
@@ -162,6 +165,10 @@ function QueuePage() {
           ret.push(aux[i]);
         }
       }
+    } else if (type === 'REFRESH') {
+      axios.get('/api/queue/queue').then((data) => {
+        ret = data.data;
+      });
     }
     setQueuedPosts(ret);
   };
@@ -269,30 +276,32 @@ function QueuePage() {
         id="file"
         ref={inputCustomPost}
         onChange={(e) => inputChangeEvent(e)}
-        accept="image/*"
+        accept="image/*,video/*"
         style={{ display: 'none' }}
       />
       <MediaModal
         show={newPostModal.filename !== ''}
         post={{
           username: '',
-          mediaType: 'IMAGE',
+          mediaType,
           storagePath: newPostModal.filename,
           caption: '',
           permalink: '',
           postId: 0,
         }}
         media={`/storage/${newPostModal.filename}`}
-        mediaType={newPostModal.mimetype.includes('image/') ? 'IMAGE' : 'VIDEO'}
+        mediaType={mediaType}
         handleClose={() =>
           setNewPostModal({
             filename: '',
             mimetype: '',
           })
         }
-        handleDelete={{}}
-        videoDuration={10}
+        handleDelete={() => {}}
+        videoDuration={0}
         showDelete={false}
+        deleteFromStorageOnClose
+        refreshQueue={() => refreshQueue({}, 'REFRESH')}
       />
     </>
   );

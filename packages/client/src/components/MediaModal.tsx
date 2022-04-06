@@ -16,6 +16,8 @@ function MediaModal(props: {
   handleDelete: any;
   videoDuration: number;
   showDelete?: boolean;
+  deleteFromStorageOnClose?: boolean;
+  refreshQueue?: any;
 }) {
   const {
     show,
@@ -26,6 +28,8 @@ function MediaModal(props: {
     handleDelete,
     videoDuration,
     showDelete,
+    deleteFromStorageOnClose,
+    refreshQueue,
   } = props;
   const [caption, setCaption] = useState<string>();
   const [mediaModal, setMediaModal] = useState(media);
@@ -49,6 +53,12 @@ function MediaModal(props: {
         });
     }
   };
+  if (
+    (mediaModal.includes('/storage') || mediaModal === '') &&
+    show &&
+    post.mediaType === 'IMAGE'
+  )
+    postProcessUsernameInImg(usernameInImg);
 
   useEffect(() => {
     let isMounted = true;
@@ -61,8 +71,6 @@ function MediaModal(props: {
         setCaption(captionFormatted);
       }
     });
-    if (mediaModal.includes('/storage'))
-      postProcessUsernameInImg(usernameInImg);
     return () => {
       isMounted = false;
     };
@@ -106,6 +114,9 @@ function MediaModal(props: {
           handleClose();
         }
       });
+    setMediaModal('');
+    setUsernameInImg('');
+    refreshQueue();
   };
 
   const handleSliderChange = (e) => {
@@ -116,11 +127,28 @@ function MediaModal(props: {
     if (duration > 10 && duration < 60) setSlider(e);
   };
 
-  if (!show) return <div />;
+  const handleCloseIntern = () => {
+    setMediaModal('');
+    setUsernameInImg('');
+    if (deleteFromStorageOnClose) {
+      const fileName = media.includes('/') ? media.split('/')[2] : media;
+      axios.post('/api/general/delete_from_storage', {
+        data: {
+          fileName,
+        },
+      });
+    }
+    handleClose();
+  };
 
   if (loading || media === '' || post.storagePath === '') {
     return (
-      <Modal show={show} onHide={handleClose} fullscreen className="modal">
+      <Modal
+        show={show}
+        onHide={handleCloseIntern}
+        fullscreen
+        className="modal"
+      >
         <Modal.Header closeButton>
           <Modal.Title>
             Post from: @{usernameInImg} (#{post.hashtag})
@@ -145,7 +173,12 @@ function MediaModal(props: {
   }
   return (
     <>
-      <Modal show={show} onHide={handleClose} fullscreen className="modal">
+      <Modal
+        show={show}
+        onHide={handleCloseIntern}
+        fullscreen
+        className="modal"
+      >
         <Modal.Header closeButton>
           <Modal.Title>
             Post from: @{post.username} (#{post.hashtag})
@@ -192,7 +225,7 @@ function MediaModal(props: {
               </div>
               <Media
                 mediaType={mediaType}
-                media={mediaModal}
+                media={post.mediaType === 'IMAGE' ? mediaModal : media}
                 autoplay
                 imageMinWidth="60vh"
               />
@@ -226,6 +259,7 @@ function MediaModal(props: {
                         type="text"
                         defaultValue={post.username}
                         onChange={(e) => {
+                          setUsernameInImg(e.target.value);
                           postProcessUsernameInImg(e.target.value);
                         }}
                       />
@@ -266,7 +300,7 @@ function MediaModal(props: {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleCloseIntern}>
             Close
           </Button>
           <Button
@@ -287,6 +321,8 @@ function MediaModal(props: {
 
 MediaModal.defaultProps = {
   showDelete: true,
+  deleteFromStorageOnClose: false,
+  refreshQueue: {},
 };
 
 export default MediaModal;
