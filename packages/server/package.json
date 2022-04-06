@@ -29,6 +29,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "get-video-duration": "3.0.2",
     "jimp": "^0.16.1",
+    "multer": "^1.4.4",
     "node-ffprobe-installer": "^1.2.3",
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",

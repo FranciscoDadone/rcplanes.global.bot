@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { useEffect, useState, useRef } from 'react';
+import { Button, Table, Container } from 'react-bootstrap';
 import {
   faArrowDownLong,
   faArrowUpLong,
@@ -10,6 +10,7 @@ import Media from '../components/Media';
 import '../assets/css/QueuePage.css';
 import EditModal from '../components/EditModal';
 import Loading from '../components/Loading';
+import MediaModal from '../components/MediaModal';
 
 function QueuePage() {
   const [queuedPosts, setQueuedPosts] = useState<
@@ -34,6 +35,11 @@ function QueuePage() {
 
   const [showModal, setShowModal] = useState(false);
   const [showId, setShowId] = useState('');
+  const inputCustomPost = useRef<any>(null);
+  const [newPostModal, setNewPostModal] = useState({
+    filename: '',
+    mimetype: '',
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -171,6 +177,22 @@ function QueuePage() {
     setShowId(post.id.toString());
   };
 
+  const handleAddCustomPost = () => {
+    inputCustomPost?.current.click();
+  };
+
+  const inputChangeEvent = (e) => {
+    const file = e.target.files[0];
+
+    const data = new FormData();
+    data.append('file', file);
+    axios.post('/api/queue/upload', data).then(async (res) => {
+      if (res.statusText === 'OK') {
+        setNewPostModal(res.data);
+      }
+    });
+  };
+
   return (
     <>
       <Table striped bordered hover variant="dark">
@@ -206,7 +228,7 @@ function QueuePage() {
               <td className="vertical-middle">{post.id}</td>
               <td className="vertical-middle">{post.owner}</td>
               <td className="vertical-middle">{post.mediaType}</td>
-              <td>{post.caption}</td>
+              <td style={{ wordBreak: 'break-word' }}>{post.caption}</td>
               <th className="vertical-middle">
                 <Button variant="primary" onClick={() => handleUp(post)}>
                   <FontAwesomeIcon icon={faArrowUpLong} />
@@ -233,6 +255,45 @@ function QueuePage() {
           ))}
         </tbody>
       </Table>
+      <Container className="customPostBtn">
+        <br />
+        <br />
+        <hr />
+        <Button variant="primary" onClick={handleAddCustomPost}>
+          Upload custom post
+        </Button>
+        <hr />
+      </Container>
+      <input
+        type="file"
+        id="file"
+        ref={inputCustomPost}
+        onChange={(e) => inputChangeEvent(e)}
+        accept="image/*"
+        style={{ display: 'none' }}
+      />
+      <MediaModal
+        show={newPostModal.filename !== ''}
+        post={{
+          username: '',
+          mediaType: 'IMAGE',
+          storagePath: newPostModal.filename,
+          caption: '',
+          permalink: '',
+          postId: 0,
+        }}
+        media={`/storage/${newPostModal.filename}`}
+        mediaType={newPostModal.mimetype.includes('image/') ? 'IMAGE' : 'VIDEO'}
+        handleClose={() =>
+          setNewPostModal({
+            filename: '',
+            mimetype: '',
+          })
+        }
+        handleDelete={{}}
+        videoDuration={10}
+        showDelete={false}
+      />
     </>
   );
 }

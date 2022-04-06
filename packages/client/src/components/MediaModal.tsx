@@ -15,6 +15,7 @@ function MediaModal(props: {
   handleClose: any;
   handleDelete: any;
   videoDuration: number;
+  showDelete?: boolean;
 }) {
   const {
     show,
@@ -24,6 +25,7 @@ function MediaModal(props: {
     handleClose,
     handleDelete,
     videoDuration,
+    showDelete,
   } = props;
   const [caption, setCaption] = useState<string>();
   const [mediaModal, setMediaModal] = useState(media);
@@ -31,6 +33,22 @@ function MediaModal(props: {
   const [loading, setLoading] = useState(false);
   const [postAsReel, setPostAsReel] = useState(true);
   const [slider, setSlider] = useState([0, 59]);
+
+  const postProcessUsernameInImg = (username: string) => {
+    if (show && post.mediaType === 'IMAGE') {
+      axios
+        .get('api/post_process_image', {
+          params: {
+            image: post.storagePath,
+            username,
+          },
+        })
+        .then((data) => {
+          setMediaModal(data.data);
+          setUsernameInImg(username);
+        });
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -43,6 +61,8 @@ function MediaModal(props: {
         setCaption(captionFormatted);
       }
     });
+    if (mediaModal.includes('/storage'))
+      postProcessUsernameInImg(usernameInImg);
     return () => {
       isMounted = false;
     };
@@ -96,24 +116,9 @@ function MediaModal(props: {
     if (duration > 10 && duration < 60) setSlider(e);
   };
 
-  const postProcessUsernameInImg = (username: string) => {
-    if (show && post.mediaType === 'IMAGE') {
-      axios
-        .get('api/post_process_image', {
-          params: {
-            image: post.storagePath,
-            username,
-          },
-        })
-        .then((data) => {
-          setMediaModal(data.data);
-          setUsernameInImg(username);
-        });
-    }
-  };
-  if (mediaModal === media) postProcessUsernameInImg(post.username);
+  if (!show) return <div />;
 
-  if (loading) {
+  if (loading || media === '' || post.storagePath === '') {
     return (
       <Modal show={show} onHide={handleClose} fullscreen className="modal">
         <Modal.Header closeButton>
@@ -264,7 +269,11 @@ function MediaModal(props: {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="danger" onClick={sendDelete}>
+          <Button
+            variant="danger"
+            onClick={sendDelete}
+            style={{ display: showDelete ? 'block' : 'none' }}
+          >
             Delete
           </Button>
           <Button variant="success" onClick={handleQueue}>
@@ -275,5 +284,9 @@ function MediaModal(props: {
     </>
   );
 }
+
+MediaModal.defaultProps = {
+  showDelete: true,
+};
 
 export default MediaModal;

@@ -48,7 +48,9 @@ router.get(
   '/post_process_image/by_id',
   authMiddleware,
   async (req: any, res) => {
-    const { media } = await getQueuePost(req.query.id);
+    const queuePost = await getQueuePost(req.query.id);
+    if (!queuePost) return;
+    const { media } = queuePost;
     addWatermark(media, req.query.username).then((data) => {
       res.send(data);
     });

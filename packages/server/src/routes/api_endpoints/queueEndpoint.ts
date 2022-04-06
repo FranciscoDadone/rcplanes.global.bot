@@ -1,6 +1,7 @@
 // /api/queue/<endpoint>
 
 import express from 'express';
+import multer from 'multer';
 import passport from 'passport';
 import fs from 'fs';
 import { authMiddleware } from '../../middlewares/authMiddleware';
@@ -86,5 +87,33 @@ router.patch('/update_post', authMiddleware, (req: any, res) => {
     res.sendStatus(200);
   });
 });
+
+/**
+ * Multer configuration
+ * This is to save the uploaded custom post file.
+ */
+const storage = multer.diskStorage({
+  destination: (req1, file, callBack) => {
+    callBack(null, 'storage');
+  },
+  filename: (req1, file, callBack) => {
+    const { mimetype } = file;
+    const extension = mimetype.includes('image/');
+    callBack(null, `custom_${Date.now()}.${extension ? 'png' : 'mp4'}`);
+  },
+});
+const upload = multer({ storage });
+/**
+ * Receives a file from a multipart/form and saves the file as temp.* in storage.
+ */
+router.post(
+  '/upload',
+  authMiddleware,
+  upload.single('file'),
+  (req: any, res) => {
+    const { file } = req;
+    res.send(file);
+  }
+);
 
 module.exports = router;

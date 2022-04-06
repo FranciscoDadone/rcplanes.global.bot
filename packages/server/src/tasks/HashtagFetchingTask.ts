@@ -102,7 +102,6 @@ export async function startHashtagFetching(repeat: boolean) {
   }
   if (repeat) {
     if (hashtagFetchingEnabled) console.log('Waiting 1 hour to fetch again.');
-    else console.log('Fetching try failed (fetching not enabled)');
     await new Promise((resolve) => setTimeout(resolve, 3600000));
     startHashtagFetching(true);
   }

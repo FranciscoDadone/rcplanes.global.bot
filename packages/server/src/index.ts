@@ -20,7 +20,6 @@ const app = express();
 const port = process.env.PORT || 8080; // default port to listen
 
 if (!process.env.BASE_URL) process.env.BASE_URL = 'http://localhost:8000';
-
 // ----------------------- END OF CONSTANTS -----------------------
 
 connect();

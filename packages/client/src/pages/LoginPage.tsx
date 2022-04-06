@@ -1,14 +1,16 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { Form, Button, Container, Image } from 'react-bootstrap';
+import { Form, Button, Container, Image, Alert } from 'react-bootstrap';
 import '../assets/css/LoginPage.css';
 import icon from '../assets/images/icon.png';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showError, setShowError] = useState(false);
 
-  const login = () => {
+  const login = (e) => {
+    e.preventDefault();
     axios({
       method: 'post',
       data: {
@@ -20,6 +22,8 @@ function LoginPage() {
     }).then((res) => {
       if (res.data === 'SUCCESS') {
         window.location.href = '/';
+      } else {
+        setShowError(true);
       }
     });
   };
@@ -34,6 +38,14 @@ function LoginPage() {
         <br />
         <Image src={icon} fluid roundedCircle />
         <h4>RcPlanesGlobal</h4>
+        <Alert
+          variant="danger"
+          onClose={() => setShowError(false)}
+          dismissible
+          style={{ display: showError ? 'block' : 'none' }}
+        >
+          <p>Incorrect username or password!</p>
+        </Alert>
       </Container>
       <Form>
         <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -55,7 +67,7 @@ function LoginPage() {
           />
         </Form.Group>
         <Button variant="primary" type="submit" onClick={login}>
-          Submit
+          Login
         </Button>
       </Form>
     </Container>
