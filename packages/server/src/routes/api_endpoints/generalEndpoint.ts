@@ -172,8 +172,9 @@ router.post('/delete_from_storage', authMiddleware, async (req: any, res) => {
     fs.unlinkSync(pathToDelete);
   } catch (ex) {
     console.log(ex);
+    res.send('FAIL');
   }
-  res.sendStatus(200);
+  res.send('SUCCESS');
 });
 
 module.exports = router;

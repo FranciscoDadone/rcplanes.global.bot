@@ -55,6 +55,12 @@ This project is based on my other project that is the same app but built using E
 <img src=".github/images/logs.png" />
 
 ### Installation
+### Docker install (recomended)
+1. Build the image
+    ```Dockerfile
+    $ docker-compose up
+    ```
+
 #### Regular install
 1. Clone the repo.
    ```sh
@@ -82,18 +88,6 @@ This project is based on my other project that is the same app but built using E
    ```sh
    docker run -p 8081:8000 instagrapi-rest
    ```
-
-
-### Docker install
-1. Build the image
-    ```Dockerfile
-    $ docker build . -t rcplanes.global.bot
-    ```
-
-2. Running the image
-    ```Dockerfile
-    $ docker run -d -p <PORT>:8080 --restart unless-stopped rcplanes.global.bot
-    ```
 
 # API Endpoints
   ## /auth/
@@ -154,6 +148,11 @@ This project is based on my other project that is the same app but built using E
   Server logs at runtime.
   * Return: logs as string
 
+  ### POST ```/api/general/delete_from_storage```
+  Receives a file name and deletes it from storage.
+  * data: { fileName }
+  * Return: ```SUCCESS``` or ```FAIL```
+
   ## /api/hashtags/
   ### GET ```/api/hashtags/hashtags```
   Returns an array of all hashtags to fetch.
@@ -206,6 +205,11 @@ This project is based on my other project that is the same app but built using E
   Receives a post id and the caption and updates it on the database.
   * data: { id, caption }
 
+  ### POST ```/api/queue/upload```
+  Receives a file and stores it on server storage.
+  * data: { file }
+  * Return: uploaded file details.
+  
 <!-- CONTACT -->
 # Contact
 
