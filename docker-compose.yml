@@ -13,8 +13,6 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-    volumes:
-      - .:/app
   instagrapi:
     build:
       context: https://github.com/FranciscoDadone/instagrapi-rest.git#main
