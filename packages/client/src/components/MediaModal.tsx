@@ -116,7 +116,7 @@ function MediaModal(props: {
       });
     setMediaModal('');
     setUsernameInImg('');
-    refreshQueue();
+    if (deleteFromStorageOnClose) refreshQueue();
   };
 
   const handleSliderChange = (e) => {
