@@ -30,7 +30,6 @@ connect();
 // Serve static resources from the "public" folder
 app.use(express.static(path.join(__dirname, clientPath)));
 
-console.log(path.join(__dirname, '../storage'));
 app.use('/storage', express.static(path.join(__dirname, '../storage')));
 
 app.use(bodyParser.json());
