@@ -14,7 +14,6 @@ function MediaModal(props: {
   mediaType: string;
   handleClose: any;
   handleDelete: any;
-  videoDuration: number;
   showDelete?: boolean;
   deleteFromStorageOnClose?: boolean;
   refreshQueue?: any;
@@ -26,7 +25,6 @@ function MediaModal(props: {
     mediaType,
     handleClose,
     handleDelete,
-    videoDuration,
     showDelete,
     deleteFromStorageOnClose,
     refreshQueue,
@@ -36,7 +34,31 @@ function MediaModal(props: {
   const [usernameInImg, setUsernameInImg] = useState(post.username);
   const [loading, setLoading] = useState(false);
   const [postAsReel, setPostAsReel] = useState(true);
-  const [slider, setSlider] = useState([0, 59]);
+  const [slider, setSlider] = useState([0, 0]);
+  const [sliderChanged, setSliderChanged] = useState(false);
+  const [videoDuration, setVideoDuration] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (post.mediaType === 'VIDEO' && slider[1] === 0) {
+      axios
+        .post('api/general/video_duration', {
+          data: {
+            path: post.storagePath,
+          },
+        })
+        .then((res) => {
+          if (isMounted) {
+            const duration = parseInt(res.data, 10);
+            setSlider([0, duration]);
+            setVideoDuration(duration);
+          }
+        });
+    }
+    return () => {
+      isMounted = false;
+    };
+  });
 
   const postProcessUsernameInImg = (username: string) => {
     if (show && post.mediaType === 'IMAGE') {
@@ -85,8 +107,9 @@ function MediaModal(props: {
     setLoading(true);
     if (
       (post.mediaType === 'VIDEO' || post.mediaType === 'REEL') &&
-      videoDuration > 60
+      sliderChanged
     ) {
+      console.log('trim');
       const trim = await axios.post('api/general/trim_video', {
         data: {
           path: `storage/${post.storagePath}`,
@@ -94,6 +117,7 @@ function MediaModal(props: {
           end: slider[1],
         },
       });
+      console.log(trim.data);
       if (trim.data !== 'SUCCESS') return;
     }
     await axios
@@ -120,11 +144,12 @@ function MediaModal(props: {
   };
 
   const handleSliderChange = (e) => {
+    setSliderChanged(true);
     const start = e[0];
     const end = e[1];
     const duration = end - start;
 
-    if (duration > 10 && duration < 60) setSlider(e);
+    if (duration > 5 && duration < 60) setSlider(e);
   };
 
   const handleCloseIntern = () => {
@@ -187,11 +212,17 @@ function MediaModal(props: {
         <Modal.Body style={{ background: '#282c34' }}>
           <div className="modal-container">
             <div className="modal-image">
-              <div style={videoDuration > 59 ? {} : { display: 'none' }}>
-                <h4 className="center">
+              <div>
+                <h4
+                  className="center"
+                  style={slider[1] > 59 ? {} : { display: 'none' }}
+                >
                   This video is too long, please trim it
                 </h4>
-                <div className="slider-container">
+                <div
+                  className="slider-container"
+                  style={mediaType !== 'IMAGE' ? {} : { display: 'none' }}
+                >
                   <div className="slider-time">
                     {Math.floor(slider[0] / 60) < 10
                       ? `0${Math.floor(slider[0] / 60)}`
@@ -204,7 +235,7 @@ function MediaModal(props: {
                   <Slider
                     range
                     allowCross={false}
-                    defaultValue={[0, 60]}
+                    defaultValue={slider}
                     onChange={handleSliderChange}
                     value={slider}
                     max={videoDuration}

@@ -40,9 +40,9 @@ function QueuePage() {
     filename: '',
     mimetype: '',
   });
-  const mediaType = newPostModal.mimetype.includes('image/')
-    ? 'IMAGE'
-    : 'VIDEO';
+  const mediaType = newPostModal.mimetype.includes('video/')
+    ? 'VIDEO'
+    : 'IMAGE';
 
   useEffect(() => {
     let isMounted = true;
@@ -298,7 +298,6 @@ function QueuePage() {
           })
         }
         handleDelete={() => {}}
-        videoDuration={0}
         showDelete={false}
         deleteFromStorageOnClose
         refreshQueue={() => refreshQueue({}, 'REFRESH')}
