@@ -144,6 +144,9 @@ async function getUsername(post: { permalink: any }): Promise<string> {
           return resolve(data.data.author_name);
         }
         return resolve('Unknown');
+      })
+      .catch((err) => {
+        if (err) return resolve('Unknown');
       });
     setTimeout(() => {
       resolve('Unknown');
