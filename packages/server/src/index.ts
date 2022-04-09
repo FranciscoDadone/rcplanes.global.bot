@@ -73,6 +73,7 @@ igLogin().then(async (loggedIn) => {
     await new Promise((resolve) => setTimeout(resolve, 120000));
     igLogin();
   }
+  console.log('Successfully logged in to Instagram!');
 });
 // ----------------------- END OF INSTAGRAM INIT -----------------------
 
