@@ -149,7 +149,7 @@ function MediaModal(props: {
     const end = e[1];
     const duration = end - start;
 
-    if (duration > 5 && duration < 60) setSlider(e);
+    if (duration > 5) setSlider(e);
   };
 
   const handleCloseIntern = () => {
@@ -212,17 +212,14 @@ function MediaModal(props: {
         <Modal.Body style={{ background: '#282c34' }}>
           <div className="modal-container">
             <div className="modal-image">
-              <div>
+              <div style={mediaType !== 'IMAGE' ? {} : { display: 'none' }}>
                 <h4
                   className="center"
                   style={slider[1] > 59 ? {} : { display: 'none' }}
                 >
                   This video is too long, please trim it
                 </h4>
-                <div
-                  className="slider-container"
-                  style={mediaType !== 'IMAGE' ? {} : { display: 'none' }}
-                >
+                <div className="slider-container">
                   <div className="slider-time">
                     {Math.floor(slider[0] / 60) < 10
                       ? `0${Math.floor(slider[0] / 60)}`
