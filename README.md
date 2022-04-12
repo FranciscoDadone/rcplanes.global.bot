@@ -2,7 +2,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/FranciscoDadone/rcplanes.global.bot-webversion">
+  <a href="https://github.com/FranciscoDadone/rcplanes.global.bot">
     <img src="packages/client/src/assets/images/icon.png" />
 </a>
 
@@ -68,7 +68,7 @@ This project is based on my other project that is the same app but built using E
 #### Regular install
 1. Clone the repo.
    ```sh
-   $ git clone https://github.com/FranciscoDadone/rcplanes.global.bot-webversion
+   $ git clone https://github.com/FranciscoDadone/rcplanes.global.bot
    ```
 2. Install dependencies
    ```sh
