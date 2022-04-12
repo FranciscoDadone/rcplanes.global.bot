@@ -16,7 +16,7 @@
 
 This started as a way to advertise and make more visible RC stuff.
 
-It's a bot that fetches posts from different hashtags using the Instagram API and let you add media to a queue to later be autoposted (with a rate that is configurable). It also adds a watermark with the page mention and original post owner credit in the left bottom of all the images. It has a user-friendly web interface built with ```ReactJS``` that let you know all that is happening in the app.
+It's a bot that fetches posts from different hashtags using the Instagram API and let you add media to a queue to later be auto-posted (with a given rate). It also adds a watermark with the page mention and original post owner credit in the left bottom of all the images. It has a user-friendly web interface built with ```ReactJS``` that let you know all that is happening in the app.
 
 This project is based on my other project that is the same app but built using Electron for Desktop.
 
@@ -28,6 +28,9 @@ This project is based on my other project that is the same app but built using E
 * [ReactBootstrap](https://react-bootstrap.github.io/)
 * [ReactJS](https://reactjs.org/)
 * [TypeScript](https://www.typescriptlang.org/)
+* [Docker](https://www.docker.com/)
+* [Instagrapi (modified)](https://github.com/FranciscoDadone/instagrapi-rest)
+* [Facebook-public-API](https://developers.facebook.com/)
 
 # Images
 - Login page: Dashboard login (default creds: admin:admin)
@@ -56,7 +59,8 @@ This project is based on my other project that is the same app but built using E
 
 ### Installation
 ### Docker install (recomended)
-1. Build the image
+1. Edit the ```docker-compose.yml``` fields (target: development or production; and volumes)
+2. Build the image
     ```Dockerfile
     $ docker-compose up
     ```
@@ -213,14 +217,14 @@ This project is based on my other project that is the same app but built using E
 <!-- CONTACT -->
 # Contact
 
-- Francisco Dadone - [@FranDadone](https://twitter.com/FranDadone) - dadonefran@gmail.com
+- Francisco Dadone - [@franciscodadone](https://www.instagram.com/franciscodadone/) - dadonefran@gmail.com
 
-- Project Link: [https://github.com/FranciscoDadone/rcplanes.global.bot-webversion](https://github.com/FranciscoDadone/rcplanes.global.bot-webversion)
+- Project Link: [https://github.com/FranciscoDadone/rcplanes.global.bot](https://github.com/FranciscoDadone/rcplanes.global.bot)
 
 
 # TO-DO
 - Access Token auto-refresh
 - Profiles fetching
 - Posting schedule
-- Manually add post to queue
+- Manually add post to queue (DONE)
 - 2FA Authentication to the panel
