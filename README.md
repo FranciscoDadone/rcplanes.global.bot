@@ -30,7 +30,7 @@ This project is based on my other project that is the same app but built using E
 * [TypeScript](https://www.typescriptlang.org/)
 * [Docker](https://www.docker.com/)
 * [Instagrapi (modified)](https://github.com/FranciscoDadone/instagrapi-rest)
-* [Facebook-public-API](https://developers.facebook.com/)
+* [Facebook Public API](https://developers.facebook.com/)
 
 # Images
 - Login page: Dashboard login (default creds: admin:admin)
