@@ -117,6 +117,7 @@ export async function publish(
   })
     .then((res) => res.json())
     .then((results) => {
+      console.log('API RESULT (debugging): ', results);
       return `https://www.instagram.com/p/${results.code}`;
     })
     .catch((error) => {

@@ -20,6 +20,8 @@ async function uploadNewPost() {
   }
   const post = mediaQueue[0];
 
+  console.log('DETAILS: ', post);
+
   const igLink = await publish(
     post.media,
     post.mediaType,
