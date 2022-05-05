@@ -64,7 +64,7 @@ export class Post {
   getUsername() {
     return this.username;
   }
-  getChildrenOf() {
+  getChildrenOf(): string {
     return this.childrenOf;
   }
   getMediaURL() {

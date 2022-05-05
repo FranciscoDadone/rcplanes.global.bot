@@ -131,7 +131,7 @@ async function getHashtagId(hashtag: string) {
     `https://graph.facebook.com/v12.0/ig_hashtag_search?q=${hashtag}&user_id=${fbId}&access_token=${accessToken}`
   );
   hashtagIdRequest.catch((err) => {
-    if (err) console.log(err.data);
+    if (err) console.log(err.response.data);
   });
   return (await hashtagIdRequest).data.data[0].id;
 }
@@ -255,6 +255,66 @@ export async function getUsernameFromId(id: string): Promise<string> {
   ).data.username;
 }
 
+export async function getPostsFromUsername(username: string): Promise<Post[]> {
+  const { sessionid } = await getCredentials();
+  const userId = (
+    await axios.post(
+      `${process.env.BASE_URL}/user/id_from_username`,
+      new URLSearchParams({
+        sessionid,
+        username,
+      })
+    )
+  ).data;
+
+  const userMedias = await axios.post(
+    `${process.env.BASE_URL}/media/user_medias`,
+    new URLSearchParams({
+      user_id: userId,
+      sessionid,
+    })
+  );
+  const posts: Post[] = [];
+  for (const post of userMedias.data) {
+    if (post.resources.length > 0) {
+      for (const subPost of post.resources) {
+        posts.push(
+          new Post(
+            subPost.pk,
+            subPost.media_type === 1 ? 'IMAGE' : 'VIDEO',
+            '',
+            post.caption_text,
+            `https://www.instagram.com/p/${post.code}/`,
+            '',
+            '',
+            new Date().toLocaleDateString('en-GB'),
+            post.user.username,
+            post.pk,
+            subPost.media_type === 1 ? subPost.thumbnail_url : subPost.video_url
+          )
+        );
+      }
+    } else {
+      posts.push(
+        new Post(
+          post.pk,
+          post.media_type === 1 ? 'IMAGE' : 'VIDEO',
+          '',
+          post.caption_text,
+          `https://www.instagram.com/p/${post.code}/`,
+          '',
+          '',
+          new Date().toLocaleDateString('en-GB'),
+          post.user.username,
+          '',
+          post.media_type === 1 ? post.thumbnail_url : post.video_url
+        )
+      );
+    }
+  }
+  return posts;
+}
+
 module.exports = {
   igLogin,
   checkIgAuth,
@@ -262,4 +322,5 @@ module.exports = {
   getRecentPosts,
   getTopPosts,
   getUsernameFromId,
+  getPostsFromUsername,
 };

@@ -54,6 +54,11 @@ function createTables() {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 hashtag TEXT NOT NULL);`);
 
+  // profilesToFetch
+  database.exec(`CREATE TABLE IF NOT EXISTS profilesToFetch (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL);`);
+
   // mediaQueue
   database.exec(`CREATE TABLE IF NOT EXISTS mediaQueue (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,6 +84,7 @@ function createTables() {
     uploadRate NUMBER NOT NULL,
     descriptionBoilerplate TEXT NOT NULL,
     hashtagFetchingEnabled INTEGER NOT NULL,
+    profilesFetchingEnabled INTEGER NOT NULL,
     autoPosting INTEGER NOT NULL);`);
 
   // util

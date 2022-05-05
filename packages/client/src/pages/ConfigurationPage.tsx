@@ -17,7 +17,11 @@ function ConfigurationPage() {
   const [hashtagsToFetch, setHashtagsToFetch] = useState<
     [{ id: number; hashtag: string }]
   >([{ id: 0, hashtag: 'null' }]);
+  const [profilesToFetch, setProfilesToFetch] = useState<
+    [{ id: number; profile: string }]
+  >([{ id: 0, profile: 'null' }]);
   const [addHashtagState, setAddHashtagState] = useState<string>('');
+  const [addProfileState, setAddProfileState] = useState<string>('');
   const [authenticationState, setauthenticationState] = useState<{
     username: string;
     password: string;
@@ -67,12 +71,20 @@ function ConfigurationPage() {
     }
     if (
       hashtagsToFetch === undefined ||
-      hashtagsToFetch[0].hashtag === 'null'
+      (hashtagsToFetch[0] && hashtagsToFetch[0].hashtag === 'null')
     ) {
       axios.get('/api/hashtags/hashtags').then((res) => {
         if (isMounted) setHashtagsToFetch(res.data);
       });
     }
+    // if (
+    //   profilesToFetch === undefined ||
+    //   profilesToFetch[0].profile === 'null'
+    // ) {
+    //   axios.get('/api/profiles/profiles').then((res) => {
+    //     if (isMounted) setProfilesToFetch(res.data);
+    //   });
+    // }
     if (authenticationState === undefined) {
       axios.get('/api/general/credentials').then((res) => {
         if (isMounted)
@@ -225,6 +237,41 @@ function ConfigurationPage() {
     setAddHashtagState('');
   };
 
+  const handleDeleteProfile = (index: number) => {
+    const profiles: any = [];
+    axios.delete('/api/profiles/delete', {
+      params: {
+        profile: profilesToFetch[index].profile,
+      },
+    });
+    profilesToFetch.forEach((h, i) => {
+      if (i !== index) profiles.push(h);
+    });
+    setHashtagsToFetch(profiles);
+  };
+
+  const handleAddProfile = () => {
+    const aux = profilesToFetch;
+    if (addProfileState !== '') {
+      let lastElem: any = { id: 0, hashtag: '' };
+      if (hashtagsToFetch.length > 0) {
+        lastElem = hashtagsToFetch[hashtagsToFetch.length - 1];
+      }
+      aux.push({
+        id: lastElem.id + 1,
+        profile: addProfileState,
+      });
+
+      axios.post('/api/profiles/add', {
+        data: {
+          profile: addProfileState,
+        },
+      });
+    }
+    setProfilesToFetch(aux);
+    setAddProfileState('');
+  };
+
   const handleSubmitCredentialsChange = (event: any) => {
     const formData = new FormData(event?.currentTarget);
     const formDataObj = Object.fromEntries(formData.entries());
@@ -329,40 +376,84 @@ function ConfigurationPage() {
       </Row>
       <hr />
       <Row>
-        <Form>
-          <h1>Hashtags to fetch</h1>
-          {hashtagsToFetch.map((hashtag: any, index) => (
-            <InputGroup className="mb-3" key={hashtag.id}>
+        <Col>
+          <Form>
+            <h1>Hashtags to fetch</h1>
+            <div style={{ height: '320px', overflow: 'auto' }}>
+              {hashtagsToFetch.map((hashtag: any, index) => (
+                <InputGroup className="mb-3" key={hashtag.id}>
+                  <FormControl
+                    aria-describedby="basic-addon2"
+                    defaultValue={hashtag.hashtag}
+                    name={`hashtag${index}`}
+                    readOnly
+                  />
+                  <Button
+                    variant="outline-danger"
+                    onClick={() => handleDeleteHashtag(index)}
+                  >
+                    Delete
+                  </Button>
+                </InputGroup>
+              ))}
+            </div>
+            <InputGroup className="mb-3">
               <FormControl
                 aria-describedby="basic-addon2"
-                defaultValue={hashtag.hashtag}
-                name={`hashtag${index}`}
-                readOnly
+                name="addHashtag"
+                value={addHashtagState}
+                placeholder="Add new hashtag to fetch"
+                onChange={(e) => setAddHashtagState(e.target.value)}
               />
               <Button
-                variant="outline-danger"
-                onClick={() => handleDeleteHashtag(index)}
+                variant="outline-primary"
+                id="button-addon2"
+                onClick={handleAddHashtag}
               >
-                Delete
+                Add hashtag
               </Button>
             </InputGroup>
-          ))}
-          <InputGroup className="mb-3">
-            <FormControl
-              aria-describedby="basic-addon2"
-              name="addHashtag"
-              value={addHashtagState}
-              onChange={(e) => setAddHashtagState(e.target.value)}
-            />
-            <Button
-              variant="outline-primary"
-              id="button-addon2"
-              onClick={handleAddHashtag}
-            >
-              Add hashtag
-            </Button>
-          </InputGroup>
-        </Form>
+          </Form>
+        </Col>
+        <Col>
+          <Form>
+            <h1>Profiles to fetch</h1>
+            <div style={{ height: '320px', overflow: 'auto' }}>
+              {profilesToFetch.map((profile: any, index) => (
+                <InputGroup className="mb-3" key={profile.id}>
+                  <FormControl
+                    aria-describedby="basic-addon2"
+                    defaultValue={profile.username}
+                    name={`hashtag${index}`}
+                    readOnly
+                  />
+                  <Button
+                    variant="outline-danger"
+                    onClick={() => handleDeleteProfile(index)}
+                  >
+                    Delete
+                  </Button>
+                </InputGroup>
+              ))}
+            </div>
+            <InputGroup className="mb-3">
+              <FormControl
+                aria-describedby="basic-addon2"
+                name="addProfile"
+                value={addProfileState}
+                placeholder="Add new profile to fetch"
+                onChange={(e) => setAddProfileState(e.target.value)}
+              />
+              <Button
+                variant="outline-primary"
+                id="button-addon2"
+                onClick={handleAddProfile}
+              >
+                Add profile
+              </Button>
+            </InputGroup>
+          </Form>
+        </Col>
       </Row>
       <hr />
       <h1>Instagram Authentication</h1>

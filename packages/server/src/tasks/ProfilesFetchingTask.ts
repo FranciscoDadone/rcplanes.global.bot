@@ -1,13 +1,13 @@
 import download from 'download';
-import { getRecentPosts, getTopPosts } from '../services/instagramAPI.service';
 import {
   savePostFromHashtag,
   getPostFromIdJSON,
-  getAllHashtagsToFetch,
+  getAllProfilesToFetch,
   getGeneralConfig,
   getCredentials,
   getPostFromPermalinkJSON,
 } from '../database/DatabaseQueries';
+import { getPostsFromUsername } from '../services/instagramAPI.service';
 import { Post } from '../models/Post';
 
 async function saveMediaToStorage(
@@ -82,43 +82,35 @@ async function saveAllPosts(posts: Post[]) {
   console.log(`Finished saving images and videos. (Total ${total})`);
 }
 
-export async function startHashtagFetching(repeat: boolean) {
+export async function startProfilesFetching(repeat: boolean) {
   await new Promise((resolve) => setTimeout(resolve, 10000));
-  const { hashtagFetchingEnabled } = await getGeneralConfig();
+  const { profilesFetchingEnabled } = await getGeneralConfig();
   const { sessionid, accessToken, fbId } = await getCredentials();
-  if (hashtagFetchingEnabled && sessionid && accessToken && fbId) {
-    console.log('============= START OF HASHTAG FETCH =============');
-    const hashtags: any = await getAllHashtagsToFetch();
+  if (profilesFetchingEnabled && sessionid && accessToken && fbId) {
+    console.log('============= START OF PROFILES FETCH =============');
+    const profiles: any = await getAllProfilesToFetch();
     let allPosts: Post[] = [];
-    for (const hashtag of hashtags) {
-      global.appStatus = `Fetching #${hashtag.hashtag}`;
-      const recentPostsOfHashtag = await getRecentPosts(
-        hashtag.hashtag
+    for (const profile of profiles) {
+      global.appStatus = `Fetching @${profile.username}`;
+      const postsFromUsername = await getPostsFromUsername(
+        profile.username
       ).finally(() => {
-        console.log(
-          `Finished fetching the recent posts of #${hashtag.hashtag}`
-        );
+        console.log(`Finished fetching posts of @${profile.username}`);
       });
-      const topPostsOfHashtag = await getTopPosts(hashtag.hashtag).finally(
-        () => {
-          console.log(`Finished fetching the top posts of #${hashtag.hashtag}`);
-        }
-      );
-      if (recentPostsOfHashtag)
-        allPosts = allPosts.concat(recentPostsOfHashtag);
-      if (topPostsOfHashtag) allPosts = allPosts.concat(topPostsOfHashtag);
+      if (postsFromUsername) allPosts = allPosts.concat(postsFromUsername);
     }
 
     global.appStatus = 'Saving posts';
     await saveAllPosts(allPosts);
     global.appStatus = 'Idling...';
-    console.log('============= END OF HASHTAG FETCH =============');
+    console.log('============= END OF PROFILES FETCH =============');
   }
   if (repeat) {
-    if (hashtagFetchingEnabled) console.log('Waiting 1 hour to fetch again.');
-    await new Promise((resolve) => setTimeout(resolve, 3600000));
-    startHashtagFetching(true);
+    if (profilesFetchingEnabled)
+      console.log('Waiting 12 hours to fetch again.');
+    await new Promise((resolve) => setTimeout(resolve, 3600000 * 12));
+    startProfilesFetching(true);
   }
 }
 
-module.exports = { startHashtagFetching };
+module.exports = { startProfilesFetching };

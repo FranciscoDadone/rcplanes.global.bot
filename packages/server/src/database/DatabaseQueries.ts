@@ -49,6 +49,20 @@ export async function getPostFromIdJSON(id: string) {
   });
 }
 
+/**
+ * Gets a post from the database.
+ */
+export async function getPostFromPermalinkJSON(permalink: string) {
+  const db = DatabaseHandler.getDatabase();
+  const sql = 'SELECT * FROM postsFromHashtags WHERE (permalink=?);';
+  return new Promise((resolve) => {
+    db.all(sql, [permalink], (_err: any, rows: any) => {
+      if (Object.keys(rows).length === 0) resolve(undefined);
+      else resolve(rows);
+    });
+  });
+}
+
 export async function addHashtagToFetch(hashtag: string) {
   const db = DatabaseHandler.getDatabase();
   const sql = 'INSERT INTO hashtagsToFetch (hashtag) VALUES (?)';
@@ -60,6 +74,18 @@ export async function getAllHashtagsToFetch(): Promise<{
 }> {
   const db = DatabaseHandler.getDatabase();
   const sql = 'SELECT * FROM hashtagsToFetch;';
+  return new Promise((resolve) => {
+    db.all(sql, (_err: any, rows: any) => {
+      resolve(rows);
+    });
+  });
+}
+
+export async function getAllProfilesToFetch(): Promise<{
+  [key: string]: any[];
+}> {
+  const db = DatabaseHandler.getDatabase();
+  const sql = 'SELECT * FROM profilesToFetch;';
   return new Promise((resolve) => {
     db.all(sql, (_err: any, rows: any) => {
       resolve(rows);
@@ -209,6 +235,7 @@ export async function getGeneralConfig(): Promise<{
   uploadRate: number;
   descriptionBoilerplate: string;
   hashtagFetchingEnabled: boolean;
+  profilesFetchingEnabled: boolean;
   autoPosting: boolean;
 }> {
   const db = DatabaseHandler.getDatabase();
@@ -220,6 +247,7 @@ export async function getGeneralConfig(): Promise<{
         uploadRate: rows[0].uploadRate,
         descriptionBoilerplate: rows[0].descriptionBoilerplate,
         hashtagFetchingEnabled: rows[0].hashtagFetchingEnabled === 1,
+        profilesFetchingEnabled: rows[0].profilesFetchingEnabled === 1,
         autoPosting: rows[0].autoPosting === 1,
       });
     });
@@ -380,4 +408,6 @@ module.exports = {
   getUserFromId,
   getQueuePost,
   updateUserFromId,
+  getAllProfilesToFetch,
+  getPostFromPermalinkJSON,
 };
