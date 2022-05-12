@@ -8,7 +8,7 @@ export default async function TasksManager(turn?: string) {
   if (turn === undefined) {
     startPostingTask();
     startHashtagFetching(true);
-    startProfilesFetching(true);
+    // startProfilesFetching(true);
     if (config.autoPosting) {
       console.log('Auto-posting enabled! :)');
     } else {
