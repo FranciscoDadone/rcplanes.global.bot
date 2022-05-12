@@ -65,16 +65,20 @@ app.use('/api/hashtags', hashtagsRouter);
 global.appStatus = 'Idling...';
 global.appSTDOUT = '';
 // ----------------------- END OF GLOBAL VARS -----------------------
-
-igLogin().then(async (loggedIn) => {
-  if (!loggedIn) {
-    console.log('INCORRECT INSTAGRAM CREDENTIALS!');
-    console.log('RETRYING LOGIN IN 2 MINUTES...');
-    await new Promise((resolve) => setTimeout(resolve, 120000));
-    igLogin();
-  }
-  console.log('Successfully logged in to Instagram!');
-});
+function login() {
+  igLogin().then(async (loggedIn) => {
+    if (!loggedIn) {
+      console.log('INCORRECT INSTAGRAM CREDENTIALS!');
+      console.log('RETRYING LOGIN IN 30 SECONDS...');
+      await new Promise((resolve) => setTimeout(resolve, 30000));
+      login();
+    } else {
+      console.log('Successfully logged in to Instagram!');
+      TasksManager();
+    }
+  });
+}
+login();
 // ----------------------- END OF INSTAGRAM INIT -----------------------
 
 /**
@@ -108,7 +112,6 @@ captureConsole.startCapture(process.stdout, (stdout) => {
     'DD/MM/YYYY HH:mm:ss'
   )}] ${stdout}`;
 });
-TasksManager();
 // ----------------------- END OF TASKS -----------------------
 
 app.listen(port, () => {
