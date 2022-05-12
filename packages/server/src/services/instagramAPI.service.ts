@@ -82,7 +82,11 @@ export async function publish(
       body: userFormData,
     })
   ).json();
-  if (!userInfo.exc_type || userInfo.exc_type !== 'UserNotFound') {
+  if (
+    !userInfo.exc_type ||
+    userInfo.exc_type !== 'UserNotFound' ||
+    userInfo.pk !== undefined
+  ) {
     axios.post(
       `${process.env.BASE_URL}/user/follow`,
       new URLSearchParams({
