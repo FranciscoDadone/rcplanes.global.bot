@@ -87,6 +87,7 @@ export async function publish(
     userInfo.exc_type !== 'UserNotFound' ||
     userInfo.pk !== undefined
   ) {
+    console.log(userInfo);
     axios.post(
       `${process.env.BASE_URL}/user/follow`,
       new URLSearchParams({
@@ -121,11 +122,11 @@ export async function publish(
   })
     .then((res) => res.json())
     .then((results) => {
-      console.log('API RESULT (debugging): ', results);
+      // console.log('API RESULT (debugging): ', results);
       return `https://www.instagram.com/p/${results.code}`;
     })
     .catch((error) => {
-      if (error) console.error(error);
+      // if (error) console.error(error);
     });
 }
 
