@@ -14,6 +14,7 @@ import {
   getUtil,
   getUserFromId,
   updateUserFromId,
+  updatePostStatus,
 } from '../../database/DatabaseQueries';
 import TasksManager from '../../tasks/TasksManager';
 import { trimVideo } from '../../utils/trimVideo';
@@ -154,11 +155,19 @@ router.get('/logs', authMiddleware, (req: any, res) => {
  * Returns video duration in seconds of a given path.
  */
 router.post('/video_duration', authMiddleware, async (req: any, res) => {
-  await getVideoDurationInSeconds(`storage/${req.body.data.path}`).then(
-    (duration) => {
-      res.send(Math.ceil(duration).toString());
-    }
-  );
+  const pathToStorage = path.join(__dirname, `../../../storage`);
+  const files = fs.readdirSync(pathToStorage);
+  if (!files.includes(req.body.data.path)) {
+    const postId: string = req.body.data.path;
+    await updatePostStatus(postId.split('.')[0], 'deleted');
+    res.send('0');
+  } else {
+    await getVideoDurationInSeconds(`storage/${req.body.data.path}`).then(
+      (duration) => {
+        res.send(Math.ceil(duration).toString());
+      }
+    );
+  }
 });
 
 router.post('/trim_video', authMiddleware, async (req: any, res) => {

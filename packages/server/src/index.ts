@@ -8,7 +8,7 @@ import path from 'path';
 import { connect } from './database/DatabaseHandler';
 import TasksManager from './tasks/TasksManager';
 import { igLogin } from './services/instagramAPI.service';
-import { getQueue } from './database/DatabaseQueries';
+import { getQueue, getAllNonDeletedPosts } from './database/DatabaseQueries';
 
 const bodyParser = require('body-parser');
 
@@ -99,6 +99,45 @@ login();
   const files = fs.readdirSync(pathToStorage);
   files.forEach((file) => {
     if (file.includes('custom_') && !customPostsPathsInDB.includes(file)) {
+      try {
+        fs.unlinkSync(path.join(pathToStorage, file));
+      } catch (ex) {
+        console.log(ex);
+      }
+    }
+  });
+})();
+
+/**
+ * This deletes files that may be dangling.
+ */
+(async () => {
+  const nonDeletedPosts = await getAllNonDeletedPosts();
+  const queuePosts = await getQueue();
+  const pathToStorage = path.join(__dirname, `../storage`);
+  const files = fs.readdirSync(pathToStorage);
+
+  const notToDelete: string[] = [];
+
+  files.forEach((file) => {
+    for (const post of nonDeletedPosts) {
+      if (file.includes(post.getPostId())) {
+        notToDelete.push(file);
+        break;
+      }
+    }
+    for (const post of queuePosts) {
+      if (
+        post.mediaType !== 'IMAGE' &&
+        file.includes(post.media.split('/')[1])
+      ) {
+        notToDelete.push(file);
+        break;
+      }
+    }
+  });
+  files.forEach((file) => {
+    if (!notToDelete.includes(file) && !file.includes('custom')) {
       try {
         fs.unlinkSync(path.join(pathToStorage, file));
       } catch (ex) {
