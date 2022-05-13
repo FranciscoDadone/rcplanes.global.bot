@@ -52,6 +52,7 @@ const postsRouter = require('./routes/api_endpoints/postsEndpoint');
 const generalRouter = require('./routes/api_endpoints/generalEndpoint');
 const queueRouter = require('./routes/api_endpoints/queueEndpoint');
 const hashtagsRouter = require('./routes/api_endpoints/hashtagsEndpoint');
+const profilesRouter = require('./routes/api_endpoints/profilesEndpoint');
 
 app.use('/auth', authRouter(passport));
 app.use('/api', apiRouter);
@@ -59,6 +60,7 @@ app.use('/api/posts', postsRouter);
 app.use('/api/general', generalRouter);
 app.use('/api/queue', queueRouter);
 app.use('/api/hashtags', hashtagsRouter);
+app.use('/api/profiles', profilesRouter);
 
 // ----------------------- END OF ROUTES -----------------------
 

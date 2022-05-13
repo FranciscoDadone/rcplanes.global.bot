@@ -18,8 +18,8 @@ function ConfigurationPage() {
     [{ id: number; hashtag: string }]
   >([{ id: 0, hashtag: 'null' }]);
   const [profilesToFetch, setProfilesToFetch] = useState<
-    [{ id: number; profile: string }]
-  >([{ id: 0, profile: 'null' }]);
+    [{ id: number; username: string }]
+  >([{ id: 0, username: 'null' }]);
   const [addHashtagState, setAddHashtagState] = useState<string>('');
   const [addProfileState, setAddProfileState] = useState<string>('');
   const [authenticationState, setauthenticationState] = useState<{
@@ -35,6 +35,7 @@ function ConfigurationPage() {
     uploadRate: number | undefined;
     descriptionBoilerplate: string | undefined;
     hashtagFetchingEnabled: boolean | undefined;
+    profilesFetchingEnabled: boolean | undefined;
     autoPosting: boolean | undefined;
   }>();
   const [appStatus, setAppStatus] = useState('Idling...');
@@ -77,14 +78,14 @@ function ConfigurationPage() {
         if (isMounted) setHashtagsToFetch(res.data);
       });
     }
-    // if (
-    //   profilesToFetch === undefined ||
-    //   profilesToFetch[0].profile === 'null'
-    // ) {
-    //   axios.get('/api/profiles/profiles').then((res) => {
-    //     if (isMounted) setProfilesToFetch(res.data);
-    //   });
-    // }
+    if (
+      profilesToFetch === undefined ||
+      (profilesToFetch[0] && profilesToFetch[0].username === 'null')
+    ) {
+      axios.get('/api/profiles/profiles').then((res) => {
+        if (isMounted) setProfilesToFetch(res.data);
+      });
+    }
     if (authenticationState === undefined) {
       axios.get('/api/general/credentials').then((res) => {
         if (isMounted)
@@ -143,11 +144,12 @@ function ConfigurationPage() {
       uploadRate: value,
       descriptionBoilerplate: configState?.descriptionBoilerplate,
       hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+      profilesFetchingEnabled: configState?.profilesFetchingEnabled,
       autoPosting: configState?.autoPosting,
     });
   };
 
-  const changeFetchingEnabled = async () => {
+  const changeHashtagFetchingEnabled = async () => {
     axios.post('/api/general/set_general_config', {
       data: {
         uploadRate: configState?.uploadRate,
@@ -160,6 +162,26 @@ function ConfigurationPage() {
       uploadRate: configState?.uploadRate,
       descriptionBoilerplate: configState?.descriptionBoilerplate,
       hashtagFetchingEnabled: !configState?.hashtagFetchingEnabled,
+      profilesFetchingEnabled: configState?.profilesFetchingEnabled,
+      autoPosting: configState?.autoPosting,
+    });
+  };
+
+  const changeProfilesFetchingEnabled = async () => {
+    axios.post('/api/general/set_general_config', {
+      data: {
+        uploadRate: configState?.uploadRate,
+        descriptionBoilerplate: configState?.descriptionBoilerplate,
+        hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+        profilesFetchingEnabled: !configState?.profilesFetchingEnabled,
+        autoPosting: configState?.autoPosting,
+      },
+    });
+    setConfigState({
+      uploadRate: configState?.uploadRate,
+      descriptionBoilerplate: configState?.descriptionBoilerplate,
+      hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+      profilesFetchingEnabled: !configState?.profilesFetchingEnabled,
       autoPosting: configState?.autoPosting,
     });
   };
@@ -177,6 +199,7 @@ function ConfigurationPage() {
       uploadRate: configState?.uploadRate,
       descriptionBoilerplate: configState?.descriptionBoilerplate,
       hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+      profilesFetchingEnabled: configState?.profilesFetchingEnabled,
       autoPosting: !configState?.autoPosting,
     });
   };
@@ -196,6 +219,7 @@ function ConfigurationPage() {
       uploadRate: configState?.uploadRate,
       descriptionBoilerplate: formDataObj.descriptionBoilerplate.toString(),
       hashtagFetchingEnabled: configState?.hashtagFetchingEnabled,
+      profilesFetchingEnabled: configState?.profilesFetchingEnabled,
       autoPosting: configState?.autoPosting,
     });
     event.preventDefault();
@@ -241,25 +265,25 @@ function ConfigurationPage() {
     const profiles: any = [];
     axios.delete('/api/profiles/delete', {
       params: {
-        profile: profilesToFetch[index].profile,
+        profile: profilesToFetch[index].username,
       },
     });
     profilesToFetch.forEach((h, i) => {
       if (i !== index) profiles.push(h);
     });
-    setHashtagsToFetch(profiles);
+    setProfilesToFetch(profiles);
   };
 
   const handleAddProfile = () => {
     const aux = profilesToFetch;
     if (addProfileState !== '') {
       let lastElem: any = { id: 0, hashtag: '' };
-      if (hashtagsToFetch.length > 0) {
-        lastElem = hashtagsToFetch[hashtagsToFetch.length - 1];
+      if (profilesToFetch.length > 0) {
+        lastElem = profilesToFetch[profilesToFetch.length - 1];
       }
       aux.push({
         id: lastElem.id + 1,
-        profile: addProfileState,
+        username: addProfileState,
       });
 
       axios.post('/api/profiles/add', {
@@ -325,18 +349,30 @@ function ConfigurationPage() {
               onChange={(e) => changeUploadRate(parseInt(e.target.value, 10))}
             />
           </Form.Group>
-
-          <Form.Group as={Col} md="2">
-            <Form.Check
-              type="switch"
-              name="hashtagFetchingSwitch"
-              label="Fetching"
-              defaultChecked={configState?.hashtagFetchingEnabled}
-              className="hashtagFetchingSwitch"
-              onClick={changeFetchingEnabled}
-              disabled={appStatus !== 'Idling...'}
-            />
-          </Form.Group>
+          <Row>
+            <Form.Group as={Col} md="2">
+              <Form.Check
+                type="switch"
+                name="hashtagFetchingSwitch"
+                label="Hashtag fetching"
+                defaultChecked={configState?.hashtagFetchingEnabled}
+                className="hashtagFetchingSwitch"
+                onClick={changeHashtagFetchingEnabled}
+                disabled={appStatus !== 'Idling...'}
+              />
+            </Form.Group>
+            <Form.Group as={Col} md="2">
+              <Form.Check
+                type="switch"
+                name="profilesFetchingSwitch"
+                label="Profiles fetching"
+                defaultChecked={configState?.profilesFetchingEnabled}
+                className="hashtagFetchingSwitch"
+                onClick={changeProfilesFetchingEnabled}
+                disabled={appStatus !== 'Idling...'}
+              />
+            </Form.Group>
+          </Row>
           <Form.Group as={Col} md="2">
             <Form.Check
               type="switch"
@@ -424,7 +460,7 @@ function ConfigurationPage() {
                   <FormControl
                     aria-describedby="basic-addon2"
                     defaultValue={profile.username}
-                    name={`hashtag${index}`}
+                    name={`profile${profile}`}
                     readOnly
                   />
                   <Button

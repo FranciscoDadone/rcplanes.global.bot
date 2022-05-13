@@ -69,6 +69,12 @@ export async function addHashtagToFetch(hashtag: string) {
   db.run(sql, [hashtag]);
 }
 
+export async function addProfileToFetch(profile: string) {
+  const db = DatabaseHandler.getDatabase();
+  const sql = 'INSERT INTO profilesToFetch (username) VALUES (?)';
+  db.run(sql, [profile]);
+}
+
 export async function getAllHashtagsToFetch(): Promise<{
   [key: string]: any[];
 }> {
@@ -190,6 +196,12 @@ export async function deleteHashtag(hashtag: string) {
   db.run(sql);
 }
 
+export async function deleteProfile(profile: string) {
+  const db = DatabaseHandler.getDatabase();
+  const sql = `DELETE FROM profilesToFetch WHERE (username)=('${profile}');`;
+  db.run(sql);
+}
+
 export async function getCredentials(): Promise<{
   username: string;
   password: string;
@@ -258,15 +270,17 @@ export async function setGeneralConfig(
   uploadRate: number,
   descriptionBoilerplate: string,
   hashtagFetchingEnabled: boolean,
+  profilesFetchingEnabled: boolean,
   autoPosting: boolean
 ) {
   const db = DatabaseHandler.getDatabase();
-  const sql = `UPDATE generalConfig SET (uploadRate, descriptionBoilerplate, hashtagFetchingEnabled, autoPosting)=(?,?,?,?) WHERE id=1`;
+  const sql = `UPDATE generalConfig SET (uploadRate, descriptionBoilerplate, hashtagFetchingEnabled, autoPosting, profilesFetchingEnabled)=(?,?,?,?,?) WHERE id=1`;
   db.run(sql, [
     uploadRate,
     descriptionBoilerplate,
     hashtagFetchingEnabled,
     autoPosting,
+    profilesFetchingEnabled,
   ]);
 }
 
@@ -417,4 +431,6 @@ module.exports = {
   updateUserFromId,
   getAllProfilesToFetch,
   getPostFromPermalinkJSON,
+  addProfileToFetch,
+  deleteProfile,
 };

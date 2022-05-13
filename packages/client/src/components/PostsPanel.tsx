@@ -94,7 +94,7 @@ function PostsPanel(props: { posts: any }) {
           </div>
 
           <Row className="fluid" xs="auto">
-            {auxPosts[activeTab - 1].map((post: any) => (
+            {auxPosts[activeTab - 1]?.map((post: any) => (
               <PostCard
                 post={post}
                 key={post.postId}

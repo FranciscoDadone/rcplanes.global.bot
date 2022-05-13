@@ -73,11 +73,17 @@ router.post('/set_credentials', authMiddleware, async (req: any, res) => {
  * data: { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
  */
 router.post('/set_general_config', authMiddleware, async (req: any, res) => {
-  const { hashtagFetchingEnabled, autoPosting } = await getGeneralConfig();
+  const { hashtagFetchingEnabled, autoPosting, profilesFetchingEnabled } =
+    await getGeneralConfig();
+
   let sendTaskFetching = false;
+  let sendProfilesFetching = false;
   let sendTaskPosting = false;
   if (hashtagFetchingEnabled !== req.body.data.hashtagFetchingEnabled) {
     sendTaskFetching = true;
+  }
+  if (profilesFetchingEnabled !== req.body.data.profilesFetchingEnabled) {
+    sendProfilesFetching = true;
   }
   if (autoPosting !== req.body.data.autoPosting) {
     sendTaskPosting = true;
@@ -86,9 +92,11 @@ router.post('/set_general_config', authMiddleware, async (req: any, res) => {
     req.body.data.uploadRate,
     req.body.data.descriptionBoilerplate,
     req.body.data.hashtagFetchingEnabled,
+    req.body.data.profilesFetchingEnabled,
     req.body.data.autoPosting
   );
   if (sendTaskFetching) TasksManager('fetching');
+  if (sendProfilesFetching) TasksManager('profiles');
   if (sendTaskPosting) {
     if (req.body.data.autoPosting) console.log('Auto-posting enabled! :)');
     else console.log('Auto-posting disabled! :(');
