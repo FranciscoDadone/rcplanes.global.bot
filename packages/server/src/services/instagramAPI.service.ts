@@ -286,13 +286,24 @@ export async function getPostsFromUsername(username: string): Promise<Post[]> {
 
   if (error) return [];
 
-  const userMedias = await axios.post(
-    `${process.env.BASE_URL}/media/user_medias`,
-    new URLSearchParams({
-      user_id: userId,
-      sessionid,
+  let userMedias;
+  await axios
+    .post(
+      `${process.env.BASE_URL}/media/user_medias`,
+      new URLSearchParams({
+        user_id: userId,
+        sessionid,
+      })
+    )
+    .then((res) => {
+      userMedias = res;
     })
-  );
+    .catch((err) => {
+      if (err) error = true;
+    });
+
+  if (error) return [];
+
   const posts: Post[] = [];
   for (const post of userMedias.data) {
     if (post.resources.length > 0) {

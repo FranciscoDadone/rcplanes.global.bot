@@ -25,12 +25,20 @@ async function saveMediaToStorage(
   if (mediaType === 'IMAGE') {
     return download(originalUrl, `./storage`, {
       filename: `${mediaId}.png`,
-    }).then(() => `${mediaId}.png`);
+    })
+      .then(() => `${mediaId}.png`)
+      .catch((err) => {
+        if (err) return null;
+      });
   }
   if (mediaType === 'VIDEO') {
     return download(originalUrl, `./storage`, {
       filename: `${mediaId}.mp4`,
-    }).then(() => `${mediaId}.mp4`);
+    })
+      .then(() => `${mediaId}.mp4`)
+      .catch((err) => {
+        if (err) return null;
+      });
   }
   return null;
 }
@@ -41,7 +49,7 @@ async function savePost(post: Post) {
     post.getMediaType(),
     post.getPostId()
   );
-  if (path !== null) {
+  if (path !== null && path !== undefined) {
     post.setStoragePath(path);
     savePostFromHashtag(post);
   }
