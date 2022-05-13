@@ -267,15 +267,25 @@ export async function getUsernameFromId(id: string): Promise<string> {
 
 export async function getPostsFromUsername(username: string): Promise<Post[]> {
   const { sessionid } = await getCredentials();
-  const userId = (
-    await axios.post(
+  let userId = '';
+  let error = false;
+
+  await axios
+    .post(
       `${process.env.BASE_URL}/user/id_from_username`,
       new URLSearchParams({
         sessionid,
         username,
       })
     )
-  ).data;
+    .then((res) => {
+      userId = res.data;
+    })
+    .catch((err) => {
+      if (err) error = true;
+    });
+
+  if (error) return [];
 
   const userMedias = await axios.post(
     `${process.env.BASE_URL}/media/user_medias`,
