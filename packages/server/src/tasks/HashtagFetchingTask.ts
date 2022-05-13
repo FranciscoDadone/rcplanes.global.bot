@@ -54,7 +54,7 @@ async function saveAllPosts(posts: Post[]) {
       return;
     }
   }
-  console.log('Now saving images or videos...');
+  console.log('Now saving images and videos...');
   let total = 0;
   for (const post of posts) {
     let postFromDB = await getPostFromIdJSON(post.getPostId());

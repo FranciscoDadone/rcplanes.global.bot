@@ -56,7 +56,12 @@ function QueuePage() {
     };
   }, [queuedPosts]);
 
-  if (queuedPosts[0] && queuedPosts[0].owner === '') {
+  if (
+    queuedPosts[0] &&
+    queuedPosts[0].owner === '' &&
+    queuedPosts[0].caption === '' &&
+    queuedPosts[0].mediaType === ''
+  ) {
     return <Loading text="Loading queue..." spinner />;
   }
 
