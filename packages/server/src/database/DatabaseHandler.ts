@@ -19,11 +19,11 @@ async function initDB() {
   );
 
   database.run(
-    `INSERT INTO util (lastUploadDate, totalPostedMedias, queuedMedias) VALUES ('${new Date().toString()}', 0, 0);`
+    `INSERT INTO util (lastUploadDate, lastAccessTokenRenewDate, totalPostedMedias, queuedMedias) VALUES ('${new Date().toString()}', '${new Date().toString()}', 0, 0);`
   );
 
   database.run(
-    'INSERT INTO generalConfig (uploadRate, descriptionBoilerplate, hashtagFetchingEnabled, autoPosting) VALUES (3, "%description%", true, true);'
+    'INSERT INTO generalConfig (uploadRate, descriptionBoilerplate, hashtagFetchingEnabled, profilesFetchingEnabled, autoPosting) VALUES (24, "%description%", 0, 0, 1);'
   );
 
   const hashedPassword = await bcrypt.hash('admin', 10);
