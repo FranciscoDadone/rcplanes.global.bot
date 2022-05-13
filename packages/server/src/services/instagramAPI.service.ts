@@ -92,7 +92,6 @@ export async function publish(
     userInfo.exc_type !== 'UserNotFound' ||
     userInfo.pk !== undefined
   ) {
-    console.log(userInfo);
     axios.post(
       `${process.env.BASE_URL}/user/follow`,
       new URLSearchParams({
