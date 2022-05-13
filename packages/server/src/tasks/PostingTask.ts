@@ -59,6 +59,7 @@ async function uploadNewPost() {
   const utils = await getUtil();
   await setUtil(
     new Date().toString(),
+    utils.lastAccessTokenRenewDate,
     utils.totalPostedMedias + 1,
     utils.queuedMedias - 1
   );

@@ -2,13 +2,16 @@ import { getGeneralConfig } from '../database/DatabaseQueries';
 import { startHashtagFetching } from './HashtagFetchingTask';
 import { startPostingTask } from './PostingTask';
 import { startProfilesFetching } from './ProfilesFetchingTask';
+import { startAccessTokenRenewTask } from './AccessTokenRenewTask';
 
 export default async function TasksManager(turn?: string) {
   const config = await getGeneralConfig();
   if (turn === undefined) {
     startPostingTask();
     startHashtagFetching(true);
-    // startProfilesFetching(true);
+    startProfilesFetching(true);
+    startAccessTokenRenewTask();
+
     if (config.autoPosting) {
       console.log('Auto-posting enabled! :)');
     } else {
@@ -25,6 +28,7 @@ export default async function TasksManager(turn?: string) {
       console.log('Profiles fetching disabled :(');
     }
   }
+
   if (turn === 'fetching') {
     if (config.hashtagFetchingEnabled) {
       console.log('Hashtag fetching enabled! :)');

@@ -273,6 +273,7 @@ export async function setGeneralConfig(
 export async function getUtil(): Promise<{
   id: number;
   lastUploadDate: string;
+  lastAccessTokenRenewDate: string;
   totalPostedMedias: number;
   queuedMedias: number;
 }> {
@@ -287,12 +288,18 @@ export async function getUtil(): Promise<{
 
 export async function setUtil(
   lastUploadDate: string,
+  lastAccessTokenRenewDate: string,
   totalPostedMedias: number,
   queuedMedias: number
 ) {
   const db = DatabaseHandler.getDatabase();
-  const sql = `UPDATE util SET (lastUploadDate, totalPostedMedias, queuedMedias)=(?,?,?) WHERE id=1`;
-  db.run(sql, [lastUploadDate, totalPostedMedias, queuedMedias]);
+  const sql = `UPDATE util SET (lastUploadDate, totalPostedMedias, queuedMedias, lastAccessTokenRenewDate)=(?,?,?,?) WHERE id=1`;
+  db.run(sql, [
+    lastUploadDate,
+    totalPostedMedias,
+    queuedMedias,
+    lastAccessTokenRenewDate,
+  ]);
 }
 
 export async function addPostToHistory(

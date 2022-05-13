@@ -91,6 +91,7 @@ function createTables() {
   database.exec(`CREATE TABLE IF NOT EXISTS util (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     lastUploadDate TEXT NOT NULL,
+    lastAccessTokenRenewDate TEXT NOT NULL,
     totalPostedMedias NUMBER NOT NULL,
     queuedMedias NUMBER NOT NULL);`);
 

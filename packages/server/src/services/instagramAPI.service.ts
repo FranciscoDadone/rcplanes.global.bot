@@ -1,6 +1,11 @@
 import fetch from 'node-fetch';
 import axios from 'axios';
-import { getCredentials, setCredentials } from '../database/DatabaseQueries';
+import {
+  getCredentials,
+  getUtil,
+  setCredentials,
+  setUtil,
+} from '../database/DatabaseQueries';
 import { Post } from '../models/Post';
 import { addWatermark } from '../utils/addWatermark';
 
@@ -320,6 +325,37 @@ export async function getPostsFromUsername(username: string): Promise<Post[]> {
   return posts;
 }
 
+export async function renewAccessToken() {
+  const credentials = await getCredentials();
+  const util = await getUtil();
+
+  axios
+    .post(
+      `https://graph.facebook.com/v12.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${credentials.clientId}&client_secret=${credentials.clientSecret}&fb_exchange_token=${credentials.accessToken}`
+    )
+    .then((res) => {
+      setCredentials(
+        credentials.username,
+        credentials.password,
+        credentials.sessionid,
+        credentials.fbId,
+        res.data.access_token,
+        credentials.clientSecret,
+        credentials.clientId
+      );
+      console.log('Renewed access token!');
+      setUtil(
+        util.lastUploadDate,
+        new Date().toString(),
+        util.totalPostedMedias,
+        util.queuedMedias
+      );
+    })
+    .catch((err) => {
+      console.log(err.response.data);
+    });
+}
+
 module.exports = {
   igLogin,
   checkIgAuth,
@@ -328,4 +364,5 @@ module.exports = {
   getTopPosts,
   getUsernameFromId,
   getPostsFromUsername,
+  renewAccessToken,
 };
