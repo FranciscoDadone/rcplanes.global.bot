@@ -170,6 +170,12 @@ router.post('/video_duration', authMiddleware, async (req: any, res) => {
   }
 });
 
+/**
+ * Receives a storage path of a video,
+ * seconds from the start and the end to cut that video.
+ * Returns SUCCESS or FAIL
+ * data: { path, start, end }
+ */
 router.post('/trim_video', authMiddleware, async (req: any, res) => {
   await trimVideo(
     req.body.data.path,
@@ -180,6 +186,11 @@ router.post('/trim_video', authMiddleware, async (req: any, res) => {
   });
 });
 
+/**
+ * Receives a file name and deletes it from storage.
+ * data: { fileName }
+ * Return: SUCCESS or FAIL
+ */
 router.post('/delete_from_storage', authMiddleware, async (req: any, res) => {
   const pathToDelete = path.join(
     __dirname,

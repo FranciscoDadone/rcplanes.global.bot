@@ -265,7 +265,7 @@ function ConfigurationPage() {
     const profiles: any = [];
     axios.delete('/api/profiles/delete', {
       params: {
-        profile: profilesToFetch[index].username,
+        username: profilesToFetch[index].username,
       },
     });
     profilesToFetch.forEach((h, i) => {
@@ -288,7 +288,7 @@ function ConfigurationPage() {
 
       axios.post('/api/profiles/add', {
         data: {
-          profile: addProfileState,
+          username: addProfileState,
         },
       });
     }

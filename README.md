@@ -94,7 +94,7 @@ This project is based on my other project that is the same app but built using E
    ```
 
 # API Endpoints
-  ## /auth/
+  # /auth/
   ### POST ```/auth/login```
   Receives a username and password.
   * data: { username, password }
@@ -107,7 +107,7 @@ This project is based on my other project that is the same app but built using E
   ### GET ```/auth/user```
   Gets the current logged user. Same as ```/api/user```
 
-  ## /api/
+  # /api/
   ### GET ```/api/user```
   Returns current authenticated user. Same as ```/auth/user```
   
@@ -122,7 +122,12 @@ This project is based on my other project that is the same app but built using E
     * username: username to add to the watermark.
   * Return: Base64 image with the watermark added.
   
-  ## /api/general/
+  ### GET ```/api/post_process_image/by_id```
+  Receives a post id stored in the queue and username and returns a postprocessed image with the watermark.
+  * params: { image, username }
+    * image: instagram post id (stored image path)
+
+  # /api/general/
   ### GET ```/api/general/general_config```
   Returns the general config: 
   * Return: { uploadRate, descriptionBoilerplate, hashtagFetching, autoPosting }
@@ -157,7 +162,12 @@ This project is based on my other project that is the same app but built using E
   * data: { fileName }
   * Return: ```SUCCESS``` or ```FAIL```
 
-  ## /api/hashtags/
+  ### POST ```/api/general/trim_video```
+  Receives a storage path of a video, seconds from the start and the end to cut that video.
+  * data: { path, start, end }
+  * Return: ```SUCCESS``` or ```FAIL```
+
+  # /api/hashtags/
   ### GET ```/api/hashtags/hashtags```
   Returns an array of all hashtags to fetch.
   * Return: [{ hashtag }]
@@ -170,7 +180,7 @@ This project is based on my other project that is the same app but built using E
   Receives a hashtag and deletes it from the database of hashtags to fetch.
   * params: { hashtag }
 
-  ## /api/posts/
+  # /api/posts/
   ### GET ```/api/posts/non_deleted_fetched_posts```
   Returns an array of all the posts that have not been deleted, queued or posted.
   * Return: [{ postId, mediaType, storagePath, caption, permalink, hashtag, status, date, username, childrenOf }]
@@ -192,7 +202,7 @@ This project is based on my other project that is the same app but built using E
     * caption: post caption
     * owner: post owner aka username
 
-  ## /api/queue/
+  # /api/queue/
   ### GET ```/api/queue/queue```
   Returns an array of the current posts in queue.
   * Return: [{ id, media, mediaType, caption, owner }]
@@ -214,6 +224,18 @@ This project is based on my other project that is the same app but built using E
   * data: { file }
   * Return: uploaded file details.
   
+  # /api/profiles/
+  ### POST ```/api/profiles/add```
+  Receives a new username and adds it to the database of profiles to fetch.
+  * data: { username }
+
+  ### POST ```/api/profiles/delete```
+  Receives a username and deletes it from the database of profiles to fetch.
+  * params: { username }
+
+  ### POST ```/api/profiles/profiles```
+  Returns all the profiles stored in the database to fetch.
+
 <!-- CONTACT -->
 # Contact
 
@@ -223,8 +245,11 @@ This project is based on my other project that is the same app but built using E
 
 
 # TO-DO
-- Access Token auto-refresh
-- Profiles fetching
+- Access Token auto-refresh (DONE)
+- Profiles fetching (DONE)
 - Posting schedule
 - Manually add post to queue (DONE)
 - 2FA Authentication to the panel
+- Modify database page to show all tables
+- Add more info to the Info page
+- Add Insights

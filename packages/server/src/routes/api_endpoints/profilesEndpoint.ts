@@ -20,22 +20,22 @@ require('../../authentication/passportConfig')(passport);
 // -------------------------- END OF MIDDLEWARES -----------------------------
 
 /**
- * Receives a new profile and adds it to the database of profiles to fetch.
- * data: { profile }
+ * Receives a new username and adds it to the database of profiles to fetch.
+ * data: { username }
  */
 router.post('/add', authMiddleware, async (req: any, res) => {
-  await addProfileToFetch(req.body.data.profile).catch((err) => {
+  await addProfileToFetch(req.body.data.username).catch((err) => {
     if (err) res.sendStatus(500);
   });
   res.sendStatus(200);
 });
 
 /**
- * Receives a profile and deletes it from the database of profiles to fetch.
- * params: { profile }
+ * Receives a username and deletes it from the database of profiles to fetch.
+ * params: { username }
  */
 router.delete('/delete', authMiddleware, async (req: any, res) => {
-  await deleteProfile(req.query.profile).catch((err) => {
+  await deleteProfile(req.query.username).catch((err) => {
     if (err) res.sendStatus(500);
   });
   res.sendStatus(200);
