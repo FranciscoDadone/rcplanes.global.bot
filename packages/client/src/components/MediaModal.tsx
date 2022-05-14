@@ -211,7 +211,7 @@ function MediaModal(props: {
         </Modal.Header>
         <Modal.Body style={{ background: '#282c34' }}>
           <div className="modal-container">
-            <div className="modal-image">
+            <div className="modal-image" style={{ maxHeight: '70vh' }}>
               <div style={mediaType !== 'IMAGE' ? {} : { display: 'none' }}>
                 <h4
                   className="center"
@@ -256,6 +256,7 @@ function MediaModal(props: {
                 media={post.mediaType === 'IMAGE' ? mediaModal : media}
                 autoplay
                 imageMinWidth="60vh"
+                videoMinWidth="60vh"
               />
               <div style={{ display: 'flex' }}>
                 <div>

@@ -23,7 +23,12 @@ function Media(props: {
           className="video"
           autoPlay={autoplay}
           controls
-          style={{ minWidth: videoMinWidth, width: videoWidth }}
+          style={{
+            minWidth: videoMinWidth,
+            width: videoWidth,
+            maxHeight: '70vh',
+            height: '70vh',
+          }}
         >
           <source src={media} type="video/mp4" />
         </video>
