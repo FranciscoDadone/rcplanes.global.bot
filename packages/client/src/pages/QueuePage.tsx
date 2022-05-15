@@ -34,6 +34,7 @@ function QueuePage() {
   ]);
 
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showId, setShowId] = useState('');
   const inputCustomPost = useRef<any>(null);
   const [newPostModal, setNewPostModal] = useState({
@@ -57,10 +58,11 @@ function QueuePage() {
   }, [queuedPosts]);
 
   if (
-    queuedPosts[0] &&
-    queuedPosts[0].owner === '' &&
-    queuedPosts[0].caption === '' &&
-    queuedPosts[0].mediaType === ''
+    (queuedPosts[0] &&
+      queuedPosts[0].owner === '' &&
+      queuedPosts[0].caption === '' &&
+      queuedPosts[0].mediaType === '') ||
+    loading
   ) {
     return <Loading text="Loading queue..." spinner />;
   }
@@ -76,6 +78,7 @@ function QueuePage() {
     mediaType: string;
     owner: string;
   }) => {
+    setLoading(true);
     const arr: any = [];
     let index = 0;
 
@@ -87,7 +90,9 @@ function QueuePage() {
     }
 
     if (index - 1 < 0) {
-      axios.post('/api/queue/top_to_bottom');
+      axios.post('/api/queue/top_to_bottom').finally(() => {
+        setLoading(false);
+      });
       for (const i of queuedPosts) {
         if (i !== post) arr.push(i);
       }
@@ -130,6 +135,7 @@ function QueuePage() {
     mediaType: string;
     owner: string;
   }) => {
+    setLoading(true);
     const arr: any = [];
     let index = 0;
     for (let i = 0; i < queuedPosts.length; i++) {
@@ -138,7 +144,9 @@ function QueuePage() {
       }
     }
     if (index + 1 >= queuedPosts.length) {
-      axios.post('/api/queue/bottom_to_top');
+      axios.post('/api/queue/bottom_to_top').finally(() => {
+        setLoading(false);
+      });
       arr.push(post);
       for (const i of queuedPosts) {
         if (i !== post) arr.push(i);

@@ -353,8 +353,8 @@ export async function swapInQueue(id1, id2) {
 
   const sql1 = `UPDATE mediaQueue SET (media, mediaType, caption, owner)=(?,?,?,?) WHERE id=${id1}`;
   const sql2 = `UPDATE mediaQueue SET (media, mediaType, caption, owner)=(?,?,?,?) WHERE id=${id2}`;
-  db.run(sql1, [row2.media, row2.mediaType, row2.caption, row2.owner]);
-  db.run(sql2, [row1.media, row1.mediaType, row1.caption, row1.owner]);
+  await db.run(sql1, [row2.media, row2.mediaType, row2.caption, row2.owner]);
+  await db.run(sql2, [row1.media, row1.mediaType, row1.caption, row1.owner]);
 }
 
 export async function updateQueuePost(
