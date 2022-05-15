@@ -78,45 +78,42 @@ export async function publish(
     processedMedia = 'storage/temp.jpg';
   }
 
-  if (username !== '') {
-    let userInfo;
-    axios
-      .post(
-        `${process.env.BASE_URL}/user/info_by_username`,
-        new URLSearchParams({
-          sessionid,
-          username,
-        })
-      )
-      .then((res) => {
-        console.log(res);
-        userInfo = res;
+  let userInfo;
+  await axios
+    .post(
+      `${process.env.BASE_URL}/user/info_by_username`,
+      new URLSearchParams({
+        sessionid,
+        username,
       })
-      .catch((err) => {
-        if (err) userInfo = { exc_type: 'UserNotFound' };
-      });
-    if (
-      !userInfo.exc_type ||
-      userInfo.exc_type !== 'UserNotFound' ||
-      userInfo.pk !== undefined
-    ) {
-      axios.post(
-        `${process.env.BASE_URL}/user/follow`,
-        new URLSearchParams({
-          sessionid,
-          user_id: userInfo.pk,
-        })
-      );
+    )
+    .then((res) => {
+      userInfo = res.data;
+    })
+    .catch((err) => {
+      if (err) userInfo = { exc_type: 'UserNotFound' };
+    });
+  if (
+    !userInfo.exc_type ||
+    userInfo.exc_type !== 'UserNotFound' ||
+    userInfo.pk !== undefined
+  ) {
+    axios.post(
+      `${process.env.BASE_URL}/user/follow`,
+      new URLSearchParams({
+        sessionid,
+        user_id: userInfo.pk,
+      })
+    );
 
-      formData.append(
-        'usertags',
-        JSON.stringify({
-          user: userInfo,
-          x: 0.5,
-          y: 0.5,
-        })
-      );
-    }
+    formData.append(
+      'usertags',
+      JSON.stringify({
+        user: userInfo,
+        x: 0.5,
+        y: 0.5,
+      })
+    );
   }
 
   const url = `http://backend-frontend:8080/${processedMedia}`;
