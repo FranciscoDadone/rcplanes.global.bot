@@ -77,37 +77,46 @@ export async function publish(
     await addWatermark(media, username, true, 'storage/temp.jpg');
     processedMedia = 'storage/temp.jpg';
   }
-  const userFormData = new FormData();
-  userFormData.append('sessionid', sessionid);
-  userFormData.append('username', username);
-  const userInfo = await (
-    await fetch(`${process.env.BASE_URL}/user/info_by_username`, {
-      method: 'POST',
-      headers: userFormData.getHeaders(),
-      body: userFormData,
-    })
-  ).json();
-  if (
-    !userInfo.exc_type ||
-    userInfo.exc_type !== 'UserNotFound' ||
-    userInfo.pk !== undefined
-  ) {
-    axios.post(
-      `${process.env.BASE_URL}/user/follow`,
-      new URLSearchParams({
-        sessionid,
-        user_id: userInfo.pk,
-      })
-    );
 
-    formData.append(
-      'usertags',
-      JSON.stringify({
-        user: userInfo,
-        x: 0.5,
-        y: 0.5,
+  if (username !== '') {
+    let userInfo;
+    axios
+      .post(
+        `${process.env.BASE_URL}/user/info_by_username`,
+        new URLSearchParams({
+          sessionid,
+          username,
+        })
+      )
+      .then((res) => {
+        console.log(res);
+        userInfo = res;
       })
-    );
+      .catch((err) => {
+        if (err) userInfo = { exc_type: 'UserNotFound' };
+      });
+    if (
+      !userInfo.exc_type ||
+      userInfo.exc_type !== 'UserNotFound' ||
+      userInfo.pk !== undefined
+    ) {
+      axios.post(
+        `${process.env.BASE_URL}/user/follow`,
+        new URLSearchParams({
+          sessionid,
+          user_id: userInfo.pk,
+        })
+      );
+
+      formData.append(
+        'usertags',
+        JSON.stringify({
+          user: userInfo,
+          x: 0.5,
+          y: 0.5,
+        })
+      );
+    }
   }
 
   const url = `http://backend-frontend:8080/${processedMedia}`;
