@@ -331,7 +331,7 @@ export async function addPostToHistory(
 }
 
 export async function getQueuePost(id: number): Promise<{
-  id: string;
+  id: number;
   media: string;
   mediaType: string;
   caption: string;

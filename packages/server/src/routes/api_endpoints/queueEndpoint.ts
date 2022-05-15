@@ -116,4 +116,36 @@ router.post(
   }
 );
 
+/**
+ * Moves a post from the buttom to the top of the queue.
+ */
+router.post('/bottom_to_top', authMiddleware, async (req: any, res) => {
+  const queue = await getQueue();
+  for (let i = queue.length; i > 0; i--) {
+    const post1 = queue.at(i);
+    const post2 = queue.at(i - 1);
+    if (post1 && post2) {
+      await swapInQueue(post1.id, post2.id);
+    }
+  }
+  res.sendStatus(200);
+});
+
+/**
+ * Moves a post from the top to the bottom of the queue.
+ */
+router.post('/top_to_bottom', authMiddleware, async (req: any, res) => {
+  const queue = await getQueue();
+
+  for (let i = 0; i < queue.length - 1; i++) {
+    const post1 = queue.at(i);
+    const post2 = queue.at(i + 1);
+    if (post1 && post2) {
+      console.log(post1.id, post2.id);
+      await swapInQueue(post1.id, post2.id);
+    }
+  }
+  res.sendStatus(200);
+});
+
 module.exports = router;

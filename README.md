@@ -224,6 +224,12 @@ This project is based on my other project that is the same app but built using E
   * data: { file }
   * Return: uploaded file details.
   
+  ### POST ```/api/queue/top_to_bottom```
+  Moves a post from the top to the bottom of the queue.
+
+  ### POST ```/api/queue/bottom_to_top```
+  Moves a post from the buttom to the top of the queue.
+
   # /api/profiles/
   ### POST ```/api/profiles/add```
   Receives a new username and adds it to the database of profiles to fetch.

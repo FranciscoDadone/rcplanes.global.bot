@@ -78,36 +78,49 @@ function QueuePage() {
   }) => {
     const arr: any = [];
     let index = 0;
+
     for (let i = 0; i < queuedPosts.length; i++) {
       if (post === queuedPosts[i]) {
         index = i;
+        break;
       }
-      arr.push(queuedPosts[i]);
     }
-    if (index - 1 < 0) return;
-    const aux = arr[index];
-    arr[index] = {
-      id: arr[index].id,
-      caption: arr[index - 1].caption,
-      media: arr[index - 1].media,
-      mediaType: arr[index - 1].mediaType,
-      owner: arr[index - 1].owner,
-    };
-    arr[index - 1] = {
-      id: arr[index - 1].id,
-      caption: aux.caption,
-      media: aux.media,
-      mediaType: aux.mediaType,
-      owner: aux.owner,
-    };
 
-    setQueuedPosts(arr);
-    axios.post('/api/queue/swap', {
-      data: {
-        id1: queuedPosts[index].id,
-        id2: queuedPosts[index - 1].id,
-      },
-    });
+    if (index - 1 < 0) {
+      axios.post('/api/queue/top_to_bottom');
+      for (const i of queuedPosts) {
+        if (i !== post) arr.push(i);
+      }
+      arr.push(post);
+      setQueuedPosts(arr);
+    } else {
+      for (let i = 0; i < queuedPosts.length; i++) {
+        arr.push(queuedPosts[i]);
+      }
+      const aux = arr[index];
+      arr[index] = {
+        id: arr[index].id,
+        caption: arr[index - 1].caption,
+        media: arr[index - 1].media,
+        mediaType: arr[index - 1].mediaType,
+        owner: arr[index - 1].owner,
+      };
+      arr[index - 1] = {
+        id: arr[index - 1].id,
+        caption: aux.caption,
+        media: aux.media,
+        mediaType: aux.mediaType,
+        owner: aux.owner,
+      };
+
+      setQueuedPosts(arr);
+      axios.post('/api/queue/swap', {
+        data: {
+          id1: queuedPosts[index].id,
+          id2: queuedPosts[index - 1].id,
+        },
+      });
+    }
   };
 
   const handleDown = (post: {
@@ -123,25 +136,41 @@ function QueuePage() {
       if (post === queuedPosts[i]) {
         index = i;
       }
-      arr.push(queuedPosts[i]);
     }
-    if (index + 1 >= queuedPosts.length) return;
-    const aux = arr[index];
-    arr[index] = {
-      id: arr[index].id,
-      caption: arr[index + 1].caption,
-      media: arr[index + 1].media,
-      mediaType: arr[index + 1].mediaType,
-      owner: arr[index + 1].owner,
-    };
-    arr[index + 1] = {
-      id: arr[index + 1].id,
-      caption: aux.caption,
-      media: aux.media,
-      mediaType: aux.mediaType,
-      owner: aux.owner,
-    };
-    setQueuedPosts(arr);
+    if (index + 1 >= queuedPosts.length) {
+      axios.post('/api/queue/bottom_to_top');
+      arr.push(post);
+      for (const i of queuedPosts) {
+        if (i !== post) arr.push(i);
+      }
+      setQueuedPosts(arr);
+    } else {
+      for (let i = 0; i < queuedPosts.length; i++) {
+        arr.push(queuedPosts[i]);
+      }
+      const aux = arr[index];
+      arr[index] = {
+        id: arr[index].id,
+        caption: arr[index + 1].caption,
+        media: arr[index + 1].media,
+        mediaType: arr[index + 1].mediaType,
+        owner: arr[index + 1].owner,
+      };
+      arr[index + 1] = {
+        id: arr[index + 1].id,
+        caption: aux.caption,
+        media: aux.media,
+        mediaType: aux.mediaType,
+        owner: aux.owner,
+      };
+      setQueuedPosts(arr);
+      axios.post('/api/queue/swap', {
+        data: {
+          id1: queuedPosts[index].id,
+          id2: queuedPosts[index + 1].id,
+        },
+      });
+    }
   };
 
   const refreshQueue = (post: any, type: string) => {
