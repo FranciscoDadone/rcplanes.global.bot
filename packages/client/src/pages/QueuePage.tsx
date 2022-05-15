@@ -264,6 +264,7 @@ function QueuePage() {
                   imageMinWidth="10vw"
                   videoWidth="20%"
                   videoMinWidth="10vw"
+                  videoMaxHeight="10vw"
                 />
               </td>
               <td className="vertical-middle">{post.id}</td>

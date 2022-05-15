@@ -4,6 +4,7 @@ function Media(props: {
   autoplay: boolean;
   videoWidth?: string;
   videoMinWidth?: string;
+  videoMaxHeight?: string;
   imageWidth?: string;
   imageMinWidth?: string;
 }) {
@@ -13,6 +14,7 @@ function Media(props: {
     autoplay,
     videoWidth,
     videoMinWidth,
+    videoMaxHeight,
     imageWidth,
     imageMinWidth,
   } = props;
@@ -26,7 +28,7 @@ function Media(props: {
           style={{
             minWidth: videoMinWidth,
             width: videoWidth,
-            maxHeight: '70vh',
+            maxHeight: videoMaxHeight || '70vh',
             height: '70vh',
           }}
         >
@@ -52,6 +54,7 @@ Media.defaultProps = {
   videoMinWidth: '43vw',
   imageWidth: '40%',
   imageMinWidth: '40vw',
+  videoMaxHeight: '70vh',
 };
 
 export default Media;
