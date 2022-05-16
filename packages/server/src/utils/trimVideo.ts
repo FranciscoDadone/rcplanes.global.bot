@@ -19,6 +19,8 @@ export async function trimVideo(
 
   const output = path.replace('.mp4', '.temp.mp4');
 
+  console.log('Trimming video:', path, start, duration);
+
   return new Promise((resolve) => {
     ffmpeg(path)
       .setStartTime(start)
@@ -32,6 +34,7 @@ export async function trimVideo(
             console.log(_err);
           }
           fs.renameSync(output, path);
+          console.log('Finished trimming video (', path, ')');
           return resolve(true);
         }
       })

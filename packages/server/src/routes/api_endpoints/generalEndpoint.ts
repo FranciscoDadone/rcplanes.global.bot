@@ -177,13 +177,15 @@ router.post('/video_duration', authMiddleware, async (req: any, res) => {
  * data: { path, start, end }
  */
 router.post('/trim_video', authMiddleware, async (req: any, res) => {
-  await trimVideo(
+  trimVideo(
     req.body.data.path,
     req.body.data.start,
     req.body.data.end - req.body.data.start
-  ).then((success) => {
-    res.send(success ? 'SUCCESS' : 'FAIL');
-  });
+  );
+  res.send('SUCCESS');
+  // ).then((success) => {
+  //   res.send(success ? 'SUCCESS' : 'FAIL');
+  // });
 });
 
 /**

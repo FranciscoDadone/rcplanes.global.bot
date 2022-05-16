@@ -116,7 +116,10 @@ function MediaModal(props: {
           end: slider[1],
         },
       });
-      if (trim.data !== 'SUCCESS') return;
+      if (trim.data !== 'SUCCESS') {
+        console.log('Error trimming video.');
+        return;
+      }
     }
     await axios
       .post('api/posts/queue', {
@@ -213,7 +216,7 @@ function MediaModal(props: {
               <div style={mediaType !== 'IMAGE' ? {} : { display: 'none' }}>
                 <h4
                   className="center"
-                  style={slider[1] > 59 ? {} : { display: 'none' }}
+                  style={slider[1] - slider[0] > 59 ? {} : { display: 'none' }}
                 >
                   This video is too long, please trim it
                 </h4>
