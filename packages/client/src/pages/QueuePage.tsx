@@ -67,9 +67,21 @@ function QueuePage() {
     return <Loading text="Loading queue..." spinner />;
   }
 
-  if (!queuedPosts[0]) {
-    return <Loading text="Empty queue" />;
-  }
+  const handleAddCustomPost = () => {
+    inputCustomPost?.current.click();
+  };
+
+  const inputChangeEvent = (e) => {
+    const file = e.target.files[0];
+
+    const data = new FormData();
+    data.append('file', file);
+    axios.post('/api/queue/upload', data).then(async (res) => {
+      if (res.statusText === 'OK') {
+        setNewPostModal(res.data);
+      }
+    });
+  };
 
   const handleUp = (post: {
     id: number;
@@ -226,21 +238,53 @@ function QueuePage() {
     setShowId(post.id.toString());
   };
 
-  const handleAddCustomPost = () => {
-    inputCustomPost?.current.click();
-  };
-
-  const inputChangeEvent = (e) => {
-    const file = e.target.files[0];
-
-    const data = new FormData();
-    data.append('file', file);
-    axios.post('/api/queue/upload', data).then(async (res) => {
-      if (res.statusText === 'OK') {
-        setNewPostModal(res.data);
-      }
-    });
-  };
+  if (!queuedPosts[0]) {
+    return (
+      <>
+        <Loading text="Empty queue" />;
+        <Container className="customPostBtn">
+          <br />
+          <br />
+          <hr />
+          <Button variant="primary" onClick={handleAddCustomPost}>
+            Upload custom post
+          </Button>
+          <hr />
+        </Container>
+        <input
+          type="file"
+          id="file"
+          ref={inputCustomPost}
+          onChange={(e) => inputChangeEvent(e)}
+          accept="image/*,video/*"
+          style={{ display: 'none' }}
+        />
+        <MediaModal
+          show={newPostModal.filename !== ''}
+          post={{
+            username: '',
+            mediaType,
+            storagePath: newPostModal.filename,
+            caption: '',
+            permalink: '',
+            postId: 0,
+          }}
+          media={`/storage/${newPostModal.filename}`}
+          mediaType={mediaType}
+          handleClose={() =>
+            setNewPostModal({
+              filename: '',
+              mimetype: '',
+            })
+          }
+          handleDelete={() => {}}
+          showDelete={false}
+          deleteFromStorageOnClose
+          refreshQueue={() => refreshQueue({}, 'REFRESH')}
+        />
+      </>
+    );
+  }
 
   return (
     <>

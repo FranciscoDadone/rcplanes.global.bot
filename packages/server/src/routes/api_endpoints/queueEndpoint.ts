@@ -127,7 +127,7 @@ router.post('/bottom_to_top', authMiddleware, async (req: any, res) => {
     if (post1 && post2) {
       await swapInQueue(post1.id, post2.id);
     }
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 50));
   }
   res.sendStatus(200);
 });
@@ -144,7 +144,7 @@ router.post('/top_to_bottom', authMiddleware, async (req: any, res) => {
     if (post1 && post2) {
       await swapInQueue(post1.id, post2.id);
     }
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 50));
   }
   res.sendStatus(200);
 });

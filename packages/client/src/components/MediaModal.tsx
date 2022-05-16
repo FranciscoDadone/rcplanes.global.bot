@@ -109,7 +109,6 @@ function MediaModal(props: {
       (post.mediaType === 'VIDEO' || post.mediaType === 'REEL') &&
       sliderChanged
     ) {
-      console.log('trim');
       const trim = await axios.post('api/general/trim_video', {
         data: {
           path: `storage/${post.storagePath}`,
@@ -117,7 +116,6 @@ function MediaModal(props: {
           end: slider[1],
         },
       });
-      console.log(trim.data);
       if (trim.data !== 'SUCCESS') return;
     }
     await axios
