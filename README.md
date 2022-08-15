@@ -259,3 +259,4 @@ This project is based on my other project that is the same app but built using E
 - Modify database page to show all tables
 - Add more info to the Info page
 - Add Insights
+- Fix infinite loading times when moving media in queue
