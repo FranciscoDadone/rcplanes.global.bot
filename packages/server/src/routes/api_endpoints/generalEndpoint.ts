@@ -83,10 +83,13 @@ router.post('/set_general_config', authMiddleware, async (req: any, res) => {
   if (hashtagFetchingEnabled !== req.body.data.hashtagFetchingEnabled) {
     sendTaskFetching = true;
   }
-  if (profilesFetchingEnabled !== req.body.data.profilesFetchingEnabled) {
+  if (
+    req.body.data.profilesFetchingEnabled &&
+    profilesFetchingEnabled !== req.body.data.profilesFetchingEnabled
+  ) {
     sendProfilesFetching = true;
   }
-  if (autoPosting !== req.body.data.autoPosting) {
+  if (req.body.data.autoPosting && autoPosting !== req.body.data.autoPosting) {
     sendTaskPosting = true;
   }
   await setGeneralConfig(

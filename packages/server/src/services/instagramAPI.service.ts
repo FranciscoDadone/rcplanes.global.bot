@@ -24,7 +24,7 @@ async function checkIgAuth(sessionid: string): Promise<any> {
 /**
  * Returns if logged in or not
  */
-export async function igLogin(): Promise<boolean> {
+export async function igLogin(): Promise<boolean | string> {
   const credentials = await getCredentials();
   const isAuth = await checkIgAuth(credentials.sessionid);
   if (!isAuth) {
@@ -51,8 +51,8 @@ export async function igLogin(): Promise<boolean> {
           }
           return true;
         });
-    } catch (ex) {
-      return false;
+    } catch (ex: any) {
+      return ex.response.data.exc_type;
     }
   }
   console.log('Already logged in!');
@@ -98,13 +98,17 @@ export async function publish(
     userInfo.exc_type !== 'UserNotFound' ||
     userInfo.pk !== undefined
   ) {
-    axios.post(
-      `${process.env.BASE_URL}/user/follow`,
-      new URLSearchParams({
-        sessionid,
-        user_id: userInfo.pk,
-      })
-    );
+    axios
+      .post(
+        `${process.env.BASE_URL}/user/follow`,
+        new URLSearchParams({
+          sessionid,
+          user_id: userInfo.pk,
+        })
+      )
+      .catch((err) => {
+        if (err) console.log(err);
+      });
 
     formData.append(
       'usertags',
