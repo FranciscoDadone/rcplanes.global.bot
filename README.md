@@ -32,6 +32,12 @@ This project is based on my other project that is the same app but built using E
 * [Instagrapi (modified)](https://github.com/FranciscoDadone/instagrapi-rest)
 * [Facebook Public API](https://developers.facebook.com/)
 
+# Known issues
+If the server says that it cannot login, use this command to open a stdin and enter the code.
+```sh
+docker attach rcplanesglobalbot-webversion-instagrapi-1
+```
+
 # Images
 - Login page: Dashboard login (default creds: admin:admin)
 <img src=".github/images/login.png" />

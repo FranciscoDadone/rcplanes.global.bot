@@ -71,8 +71,8 @@ function login() {
   igLogin().then(async (loggedIn) => {
     if (!loggedIn) {
       console.log('INCORRECT INSTAGRAM CREDENTIALS!');
-      console.log('RETRYING LOGIN IN 30 SECONDS...');
-      await new Promise((resolve) => setTimeout(resolve, 30000));
+      console.log('RETRYING LOGIN IN 60 SECONDS...');
+      await new Promise((resolve) => setTimeout(resolve, 60000));
       login();
     } else {
       console.log('Successfully logged in to Instagram!');
