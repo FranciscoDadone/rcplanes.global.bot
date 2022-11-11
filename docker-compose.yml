@@ -13,10 +13,13 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-    # ------ FOR PRODUCTION COMMENT THIS LINES (volumes) ------
     volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    # ------ FOR PRODUCTION COMMENT THIS LINES (volumes) ------
       - .:/app
     # ---------------------------------------------------------
+
   instagrapi:
     build:
      context: https://github.com/adw0rd/instagrapi-rest.git#main
@@ -28,6 +31,8 @@ services:
       - app-network
     volumes:
       - ./packages/server/storage:/app/storage
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
     restart: unless-stopped
 
 networks:
