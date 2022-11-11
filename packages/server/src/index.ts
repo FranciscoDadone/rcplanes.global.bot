@@ -69,7 +69,13 @@ global.appSTDOUT = '';
 // ----------------------- END OF GLOBAL VARS -----------------------
 function login() {
   igLogin().then(async (loggedIn) => {
-    if (!loggedIn) {
+    console.log(loggedIn);
+    if (loggedIn === 'RateLimitError') {
+      console.log('RATE LIMIT REACHED!');
+      console.log('RETRYING LOGIN IN 5 MINUTES...');
+      await new Promise((resolve) => setTimeout(resolve, 300000));
+      // login();
+    } else if (loggedIn !== true) {
       console.log('INCORRECT INSTAGRAM CREDENTIALS!');
       console.log('RETRYING LOGIN IN 60 SECONDS...');
       await new Promise((resolve) => setTimeout(resolve, 60000));

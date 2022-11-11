@@ -274,13 +274,20 @@ export async function setGeneralConfig(
   autoPosting: boolean
 ) {
   const db = DatabaseHandler.getDatabase();
+  const curr = await getGeneralConfig();
   const sql = `UPDATE generalConfig SET (uploadRate, descriptionBoilerplate, hashtagFetchingEnabled, autoPosting, profilesFetchingEnabled)=(?,?,?,?,?) WHERE id=1`;
   db.run(sql, [
-    uploadRate,
-    descriptionBoilerplate,
-    hashtagFetchingEnabled,
-    autoPosting,
-    profilesFetchingEnabled,
+    uploadRate != null ? uploadRate : curr.uploadRate,
+    descriptionBoilerplate != null
+      ? descriptionBoilerplate
+      : curr.descriptionBoilerplate,
+    hashtagFetchingEnabled != null
+      ? hashtagFetchingEnabled
+      : curr.hashtagFetchingEnabled,
+    autoPosting != null ? autoPosting : curr.autoPosting,
+    profilesFetchingEnabled != null
+      ? profilesFetchingEnabled
+      : curr.profilesFetchingEnabled,
   ]);
 }
 

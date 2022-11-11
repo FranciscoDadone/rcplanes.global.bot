@@ -7,11 +7,11 @@ export async function startAccessTokenRenewTask() {
   const lastDate = new Date(lastAccessTokenRenewDate);
   const currentDate = new Date();
 
-  lastDate.setDate(lastDate.getDate() + 10);
+  lastDate.setDate(lastDate.getDate() + 2);
 
   if (lastDate < currentDate) renewAccessToken();
 
-  await new Promise((resolve) => setTimeout(resolve, 86400000));
+  await new Promise((resolve) => setTimeout(resolve, 3600000));
   startAccessTokenRenewTask();
 }
 
