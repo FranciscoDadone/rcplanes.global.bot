@@ -9,8 +9,7 @@ export async function startAccessTokenRenewTask() {
 
   lastDate.setDate(lastDate.getDate() + 2);
 
-  // if (lastDate < currentDate) renewAccessToken();
-  renewAccessToken();
+  if (lastDate < currentDate) renewAccessToken();
 
   await new Promise((resolve) => setTimeout(resolve, 3600000));
   startAccessTokenRenewTask();
