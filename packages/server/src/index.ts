@@ -69,7 +69,6 @@ global.appSTDOUT = '';
 // ----------------------- END OF GLOBAL VARS -----------------------
 function login() {
   igLogin().then(async (loggedIn) => {
-    console.log(loggedIn);
     if (loggedIn === 'RateLimitError') {
       console.log('RATE LIMIT REACHED!');
       console.log('RETRYING LOGIN IN 5 MINUTES...');
