@@ -16,6 +16,8 @@ services:
     volumes:
       - "/etc/timezone:/etc/timezone:ro"
       - "/etc/localtime:/etc/localtime:ro"
+      - "./packages/server/database.sqlite:/app/packages/server/database.sqlite"
+      - "./packages/server/storage:/app/packages/server/storage"
     # ------ FOR PRODUCTION COMMENT THIS LINES (volumes) ------
       - .:/app
     # ---------------------------------------------------------
